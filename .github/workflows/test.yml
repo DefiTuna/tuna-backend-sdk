@@ -1,0 +1,44 @@
+name: Test
+on:
+  push:
+    branches:
+      - "**"
+      - "!main"
+  pull_request:
+    branches:
+      - "**"
+      - "!main"
+
+jobs:
+  test:
+    # IMPORTANT: prevent this action from running on forks
+    if: github.repository == 'DefiTuna/tuna-backend-sdk'
+    name: Test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ["22.x"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "pnpm"
+      - run: pnpm i
+      - run: pnpm build
+      - name: Lint
+        run: pnpm lint
+      - name: Test
+        run: |
+          run: |
+            touch ts-sdk/api/.env
+            echo RPC_URL=$RPC_URL >> ts-sdk/api/.env
+            echo API_BASE_URL=$API_BASE_URL >> ts-sdk/api/.env
+            pnpm test
+        env:
+          RPC_URL: ${{ secrets.RPC_URL }}
+          API_BASE_URL: "https://api-dev.defituna.com/api"
