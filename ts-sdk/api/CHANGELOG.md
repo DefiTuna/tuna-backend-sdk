@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.1.29
+
+### Patch Changes
+
+- f324ea5: Update LimitOrder amount fields
+
 ## 1.1.28
 
 ### Patch Changes
