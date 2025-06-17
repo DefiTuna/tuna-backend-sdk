@@ -242,7 +242,8 @@ export const LimitOrder = z.object({
   fillRatio: z.number(),
   openTxSignature: z.string(),
   closeTxSignature: z.string().nullable(),
-  amount: amountWithUsd,
+  amountIn: amountWithUsd,
+  amountOut: amountWithUsd,
   openedAt: z.coerce.date(),
   closedAt: z.coerce.date().nullable(),
 });
