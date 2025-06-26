@@ -23,6 +23,9 @@ export const NotificationEntity = {
   POOL_SWAP: "pool_swap",
   POOL_PRICE: "pool_price",
   ORDER_BOOK: "order_book",
+  TUNA_POSITION: "tuna_position",
+  LENDING_POSITION: "lending_position",
+  FUSION_LIMIT_ORDER: "fusion_limit_order",
 } as const;
 export const NotificationAction = {
   CREATE: "create",
