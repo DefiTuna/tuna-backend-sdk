@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.1.30
+
+### Patch Changes
+
+- 1804dcf: Add general stream endpoint
+
 ## 1.1.29
 
 ### Patch Changes
