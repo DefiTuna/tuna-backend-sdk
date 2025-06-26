@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.1.31
+
+### Patch Changes
+
+- f11e6ee: Extend notifications entities list
+
 ## 1.1.30
 
 ### Patch Changes
