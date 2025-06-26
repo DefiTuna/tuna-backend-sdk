@@ -4,7 +4,8 @@ import { EventSource as NodeEventSource } from "eventsource";
 import { once } from "node:events";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 
-import { NotificationEntity, schemas, TunaApiClient } from "./client";
+import { NotificationEntity, schemas, SubscriptionPayload, TunaApiClient } from "./client";
+import { PoolSubscriptionTopic } from "./schemas";
 import * as testUtils from "./testUtils";
 
 vi.stubGlobal("EventSource", NodeEventSource);
@@ -434,6 +435,38 @@ describe(
       const event = (await once(poolUpdatesStream, "message")) as MessageEvent<string>[];
       const rawUpdate = camelcaseKeys(JSON.parse(event[0].data), { deep: true });
 
+      if (rawUpdate.entity === NotificationEntity.POOL_SWAP) {
+        const poolSwapNotification = schemas.PoolSwapNotification.parse(rawUpdate);
+        expect(poolSwapNotification.data.amountIn).toBeGreaterThan(0n);
+        expect(poolSwapNotification.data.amountOut).toBeGreaterThan(0n);
+      }
+    });
+  },
+  { timeout: 30000 },
+);
+
+describe(
+  "General updates stream",
+  async () => {
+    let updatesStream: EventSource;
+
+    beforeAll(async () => {
+      updatesStream = await client.getUpdatesStream();
+    });
+
+    afterAll(() => {
+      updatesStream.close();
+    });
+
+    it("Receives messages", async () => {
+      const firstEvent = (await once(updatesStream, "message")) as MessageEvent<string>[];
+      const streamId = camelcaseKeys(JSON.parse(firstEvent[0].data), { deep: true }).streamId as string;
+      const subscription: SubscriptionPayload = {
+        pools: [{ address: SOL_USDC_POOL_ADDRESS, topics: [PoolSubscriptionTopic.POOL_SWAPS] }],
+      };
+      await client.updateStreamSubscription(streamId, subscription);
+      const secondEvent = (await once(updatesStream, "message")) as MessageEvent<string>[];
+      const rawUpdate = camelcaseKeys(JSON.parse(secondEvent[0].data), { deep: true });
       if (rawUpdate.entity === NotificationEntity.POOL_SWAP) {
         const poolSwapNotification = schemas.PoolSwapNotification.parse(rawUpdate);
         expect(poolSwapNotification.data.amountIn).toBeGreaterThan(0n);

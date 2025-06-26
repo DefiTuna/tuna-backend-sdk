@@ -1,4 +1,5 @@
 import camelcaseKeys from "camelcase-keys";
+import snakecaseKeys from "snakecase-keys";
 import { z } from "zod";
 
 import * as schemas from "./schemas";
@@ -12,6 +13,8 @@ export { PoolProvider, TunaPositionState, NotificationAction, NotificationEntity
 export type PoolProviderType = z.infer<typeof schemas.PoolProviderSchema>;
 export type TunaPositionStateType = z.infer<typeof schemas.TunaPositionStateSchema>;
 export type LimitOrderStateType = z.infer<typeof schemas.LimitOrderStateSchema>;
+export type PoolSubscriptionTopicType = z.infer<typeof schemas.PoolSubscriptionTopicSchema>;
+export type WalletSubscriptionTopicType = z.infer<typeof schemas.WalletSubscriptionTopicSchema>;
 
 /* Entity types */
 export type Mint = z.infer<typeof schemas.Mint>;
@@ -29,6 +32,20 @@ export type TunaPosition = z.infer<typeof schemas.TunaPosition>;
 export type LimitOrder = z.infer<typeof schemas.LimitOrder>;
 export type PoolPriceCandle = z.infer<typeof schemas.PoolPriceCandle>;
 export type PoolPriceUpdate = z.infer<typeof schemas.PoolPriceUpdate>;
+
+/* Request payloads */
+export type SubscriptionPayload = {
+  pools?: {
+    address: string;
+    topics: PoolSubscriptionTopicType[];
+    orderBookPriceStep?: number;
+    isInverted?: boolean;
+  }[];
+  wallet?: {
+    address: string;
+    topics: WalletSubscriptionTopicType[];
+  };
+};
 
 /* Client configuration */
 export type DurationInMs = number;
@@ -125,7 +142,7 @@ export class TunaApiClient {
       const response = await fetch(url, {
         ...options,
         signal,
-        headers: { ...this.headers, ...options?.headers },
+        headers: { "Content-Type": "application/json", ...this.headers, ...options?.headers },
       });
       clearTimeout(abort);
       if (!response.ok) {
@@ -265,6 +282,9 @@ export class TunaApiClient {
     return await this.httpRequest(url.toString(), schemas.LimitOrder);
   }
 
+  /**
+   * @deprecated Use getUpdatesStream instead
+   */
   async getPoolUpdatesStream(poolAddress: string, priceStep?: number, inverted?: boolean): Promise<EventSource> {
     const url = this.buildURL(`stream`);
     this.appendUrlSearchParams(url, { pool: poolAddress });
@@ -276,6 +296,17 @@ export class TunaApiClient {
     }
 
     return new EventSource(url.toString());
+  }
+
+  async getUpdatesStream(): Promise<EventSource> {
+    const url = this.buildURL(`streams/sse`);
+    return new EventSource(url.toString());
+  }
+
+  async updateStreamSubscription(streamId: string, subscription: SubscriptionPayload): Promise<unknown> {
+    const url = this.buildURL(`streams/${streamId}/subscription`);
+    const body = JSON.stringify(snakecaseKeys(subscription, { deep: true }));
+    return await this.httpRequest(url.toString(), schemas.UpdateStreamSubscriptionResult, { method: "PUT", body });
   }
 
   /* Utility functions */

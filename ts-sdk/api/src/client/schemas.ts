@@ -45,12 +45,30 @@ export const LimitOrderState = {
   COMPLETE: "complete",
   CANCELLED: "cancelled",
 } as const;
+export const PoolSubscriptionTopic = {
+  ORDER_BOOK: "order_book",
+  POOL_PRICES: "pool_prices",
+  POOL_SWAPS: "pool_swaps",
+} as const;
+export const WalletSubscriptionTopic = {
+  TUNA_POSITIONS: "tuna_positions",
+  LENDING_POSITIONS: "lending_positions",
+  FUSION_LIMIT_ORDERS: "fusion_limit_orders",
+} as const;
 
 export const NotificationEntitySchema = z.enum([NotificationEntity.POOL_SWAP, ...Object.values(NotificationEntity)]);
 export const NotificationActionSchema = z.enum([NotificationAction.CREATE, ...Object.values(NotificationAction)]);
 export const PoolProviderSchema = z.enum([PoolProvider.ORCA, ...Object.values(PoolProvider)]);
 export const TunaPositionStateSchema = z.enum([TunaPositionState.OPEN, ...Object.values(TunaPositionState)]);
 export const LimitOrderStateSchema = z.enum([LimitOrderState.OPEN, ...Object.values(LimitOrderState)]);
+export const PoolSubscriptionTopicSchema = z.enum([
+  PoolSubscriptionTopic.ORDER_BOOK,
+  ...Object.values(PoolSubscriptionTopic),
+]);
+export const WalletSubscriptionTopicSchema = z.enum([
+  WalletSubscriptionTopic.TUNA_POSITIONS,
+  ...Object.values(WalletSubscriptionTopic),
+]);
 
 export const Mint = z.object({
   symbol: z.string(),
@@ -196,6 +214,7 @@ export const TunaPosition = z.object({
   pnlUsd: usdPnl,
   openedAt: z.coerce.date(),
   updatedAtSlot: z.coerce.bigint(),
+  closedAt: z.nullable(z.coerce.date()),
 });
 
 export const PoolSwap = z.object({
@@ -241,11 +260,11 @@ export const LimitOrder = z.object({
   tickIndex: z.number(),
   fillRatio: z.number(),
   openTxSignature: z.string(),
-  closeTxSignature: z.string().nullable(),
+  closeTxSignature: z.nullable(z.string()),
   amountIn: amountWithUsd,
   amountOut: amountWithUsd,
   openedAt: z.coerce.date(),
-  closedAt: z.coerce.date().nullable(),
+  closedAt: z.nullable(z.coerce.date()),
 });
 
 export const PoolPriceCandle = z.object({
@@ -254,6 +273,10 @@ export const PoolPriceCandle = z.object({
   close: z.number(),
   high: z.number(),
   low: z.number(),
+});
+
+export const UpdateStreamSubscriptionResult = z.object({
+  status: z.string(),
 });
 
 const createNotificationSchema = <DataType extends z.ZodTypeAny, MetaType extends z.ZodTypeAny>(
