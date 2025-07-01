@@ -294,7 +294,8 @@ export class TunaApiClient {
     if (inverted) {
       this.appendUrlSearchParams(url, { inverted: inverted.toString() });
     }
-
+    // Required for multiple SSE connections to receive messages
+    this.appendUrlSearchParams(url, { ts: Date.now().toString() });
     return new EventSource(url.toString());
   }
 
