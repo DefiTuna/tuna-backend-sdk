@@ -303,3 +303,6 @@ export const OrderBookNotificationMeta = z.object({
 export const PoolSwapNotification = createNotificationSchema(PoolSwap);
 export const PoolPriceUpdateNotification = createNotificationSchema(PoolPriceUpdate);
 export const OrderBookNotification = createNotificationSchema(OrderBook, OrderBookNotificationMeta);
+export const TunaPositionNotification = createNotificationSchema(TunaPosition);
+export const LendingPositionNotification = createNotificationSchema(LendingPosition);
+export const LimitOrderNotification = createNotificationSchema(LimitOrder);
