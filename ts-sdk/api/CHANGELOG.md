@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.1.35
+
+### Patch Changes
+
+- 47fac79: Add ts to getPoolUpdatesStream query
+
 ## 1.1.34
 
 ### Patch Changes
