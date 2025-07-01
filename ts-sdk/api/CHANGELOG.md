@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.1.34
+
+### Patch Changes
+
+- 1ed0e03: Add amountUsd to PoolSwap
+
 ## 1.1.33
 
 ### Patch Changes
