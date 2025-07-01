@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.1.33
+
+### Patch Changes
+
+- 2368f4c: Add price candle volume
+
 ## 1.1.32
 
 ### Patch Changes

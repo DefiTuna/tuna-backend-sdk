@@ -1,6 +1,6 @@
 {
   "name": "@crypticdot/defituna-api",
-  "version": "1.1.32",
+  "version": "1.1.33",
   "private": false,
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
