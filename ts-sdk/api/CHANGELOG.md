@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.1.32
+
+### Patch Changes
+
+- 4f6538e: Add wallet entities notification types
+
 ## 1.1.31
 
 ### Patch Changes
