@@ -276,6 +276,7 @@ export const PoolPriceCandle = z.object({
   close: z.number(),
   high: z.number(),
   low: z.number(),
+  volume: z.number(),
 });
 
 export const UpdateStreamSubscriptionResult = z.object({
