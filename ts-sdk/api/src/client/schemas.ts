@@ -224,6 +224,7 @@ export const PoolSwap = z.object({
   id: z.string(),
   amountIn: z.coerce.bigint(),
   amountOut: z.coerce.bigint(),
+  amountUsd: z.number(),
   aToB: z.boolean(),
   pool: z.string(),
   time: z.coerce.date(),
