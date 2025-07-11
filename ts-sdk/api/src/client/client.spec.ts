@@ -222,10 +222,15 @@ describe("Single Vault", async () => {
   const sampleVault = rpcVaults[0];
   const unsavedVaultAddress = "FeR8VBqNRSUD5NtXAj2n3j1dAHkZHfyDktKuLXD4pump";
   const vault = await client.getVault(sampleVault.address);
+  const history = await client.getVaultHistory(sampleVault.address, new Date(2025, 3, 1), new Date(2025, 5, 1));
 
   it("Returns vault data", () => {
     expect(vault.address).toBe(sampleVault.address);
     expect(vault.mint).toBe(sampleVault.data.mint);
+  });
+
+  it("Returns vault historical data", () => {
+    expect(history.length).toBeGreaterThan(0);
   });
 
   it("Returns 404 for unsaved vault", async () => {
