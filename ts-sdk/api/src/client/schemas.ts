@@ -123,6 +123,26 @@ export const Vault = z.object({
   pythOraclePriceUpdate: z.string(),
 });
 
+export const VaultHistoricalStats = z.object({
+  date: z.preprocess((val, ctx) => {
+    if (typeof val === "string") {
+      const [year, month, day] = val.split("-").map(Number);
+      return new Date(year, month - 1, day);
+    }
+
+    ctx.addIssue({
+      code: "custom",
+      message: "Not a valid date string",
+    });
+
+    return z.NEVER;
+  }, z.date()),
+  supply: amountWithUsd,
+  borrow: amountWithUsd,
+  supplyApy: z.number(),
+  borrowApr: z.number(),
+});
+
 export const Pool = z.object({
   address: z.string(),
   provider: PoolProviderSchema,

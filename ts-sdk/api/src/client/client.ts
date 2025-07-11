@@ -21,6 +21,7 @@ export type Mint = z.infer<typeof schemas.Mint>;
 export type Market = z.infer<typeof schemas.Market>;
 export type TokenOraclePrice = z.infer<typeof schemas.TokenOraclePrice>;
 export type Vault = z.infer<typeof schemas.Vault>;
+export type VaultHistoricalStats = z.infer<typeof schemas.VaultHistoricalStats>;
 export type Pool = z.infer<typeof schemas.Pool>;
 export type Tick = z.infer<typeof schemas.Tick>;
 export type PoolTicks = z.infer<typeof schemas.PoolTicks>;
@@ -198,9 +199,21 @@ export class TunaApiClient {
     return await this.httpRequest(url.toString(), schemas.Vault.array());
   }
 
-  async getVault(vaultAddress): Promise<Vault> {
+  async getVault(vaultAddress: string): Promise<Vault> {
     const url = this.buildURL(`vaults/${vaultAddress}`);
     return await this.httpRequest(url.toString(), schemas.Vault);
+  }
+
+  /**
+   *  Returns vault historical data for selected time interval.
+   *
+   *  Example usage: getVaultHistory('H3ifgix98vzi3yCPbmZDLTheeTRf2jykXx8FpY5L7Sfd', '2025-03-10', '2025-04-10')
+   */
+  async getVaultHistory(vaultAddress: string, from: Date, to: Date): Promise<VaultHistoricalStats[]> {
+    const url = this.buildURL(`vaults/${vaultAddress}/history`);
+    this.appendUrlSearchParams(url, { from: from.toISOString().slice(0, 10), to: to.toISOString().slice(0, 10) });
+    // @ts-expect-error
+    return await this.httpRequest(url.toString(), schemas.VaultHistoricalStats.array());
   }
 
   async getPools(providerFilter?: ProviderFilter): Promise<Pool[]> {
