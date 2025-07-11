@@ -13,6 +13,7 @@ export { PoolProvider, TunaPositionState, NotificationAction, NotificationEntity
 export type PoolProviderType = z.infer<typeof schemas.PoolProviderSchema>;
 export type TunaPositionStateType = z.infer<typeof schemas.TunaPositionStateSchema>;
 export type LimitOrderStateType = z.infer<typeof schemas.LimitOrderStateSchema>;
+export type StakingPositionHistoryActionType = z.infer<typeof schemas.StakingPositionHistoryActionTypeSchema>;
 export type PoolSubscriptionTopicType = z.infer<typeof schemas.PoolSubscriptionTopicSchema>;
 export type WalletSubscriptionTopicType = z.infer<typeof schemas.WalletSubscriptionTopicSchema>;
 
@@ -31,6 +32,9 @@ export type OrderBook = z.infer<typeof schemas.OrderBook>;
 export type LendingPosition = z.infer<typeof schemas.LendingPosition>;
 export type TunaPosition = z.infer<typeof schemas.TunaPosition>;
 export type LimitOrder = z.infer<typeof schemas.LimitOrder>;
+export type StakingPosition = z.infer<typeof schemas.StakingPosition>;
+export type StakingTreasury = z.infer<typeof schemas.StakingTreasury>;
+export type StakingPositionHistoryAction = z.infer<typeof schemas.StakingPositionHistoryAction>;
 export type PoolPriceCandle = z.infer<typeof schemas.PoolPriceCandle>;
 export type PoolPriceUpdate = z.infer<typeof schemas.PoolPriceUpdate>;
 
@@ -262,6 +266,11 @@ export class TunaApiClient {
     return await this.httpRequest(url.toString(), schemas.PoolPriceCandle.array());
   }
 
+  async getStakingTreasury(): Promise<StakingTreasury> {
+    const url = this.buildURL(`staking/treasury`);
+    return await this.httpRequest(url.toString(), schemas.StakingTreasury);
+  }
+
   async getUserLendingPositions(userAddress: string): Promise<LendingPosition[]> {
     const url = this.buildURL(`users/${userAddress}/lending-positions`);
     return await this.httpRequest(url.toString(), schemas.LendingPosition.array());
@@ -293,6 +302,16 @@ export class TunaApiClient {
   async getUserLimitOrderByAddress(userAddress: string, limitOrderAddress: string): Promise<LimitOrder> {
     const url = this.buildURL(`users/${userAddress}/limit-orders/${limitOrderAddress}`);
     return await this.httpRequest(url.toString(), schemas.LimitOrder);
+  }
+
+  async getUserStakingPosition(userAddress: string): Promise<StakingPosition> {
+    const url = this.buildURL(`users/${userAddress}/staking-position`);
+    return await this.httpRequest(url.toString(), schemas.StakingPosition);
+  }
+
+  async getUserStakingPositionHistory(userAddress: string): Promise<StakingPositionHistoryAction[]> {
+    const url = this.buildURL(`users/${userAddress}/staking-position/history`);
+    return await this.httpRequest(url.toString(), schemas.StakingPositionHistoryAction.array());
   }
 
   /**

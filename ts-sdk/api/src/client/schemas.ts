@@ -48,6 +48,12 @@ export const LimitOrderState = {
   COMPLETE: "complete",
   CANCELLED: "cancelled",
 } as const;
+export const StakingPositionHistoryActionType = {
+  STAKE: "stake",
+  UNSTAKE: "unstake",
+  WITHDRAW: "withdraw",
+  CLAIM_REWARDS: "claim_rewards",
+} as const;
 export const PoolSubscriptionTopic = {
   ORDER_BOOK: "order_book",
   POOL_PRICES: "pool_prices",
@@ -64,6 +70,10 @@ export const NotificationActionSchema = z.enum([NotificationAction.CREATE, ...Ob
 export const PoolProviderSchema = z.enum([PoolProvider.ORCA, ...Object.values(PoolProvider)]);
 export const TunaPositionStateSchema = z.enum([TunaPositionState.OPEN, ...Object.values(TunaPositionState)]);
 export const LimitOrderStateSchema = z.enum([LimitOrderState.OPEN, ...Object.values(LimitOrderState)]);
+export const StakingPositionHistoryActionTypeSchema = z.enum([
+  StakingPositionHistoryActionType.STAKE,
+  ...Object.values(StakingPositionHistoryActionType),
+]);
 export const PoolSubscriptionTopicSchema = z.enum([
   PoolSubscriptionTopic.ORDER_BOOK,
   ...Object.values(PoolSubscriptionTopic),
@@ -289,6 +299,42 @@ export const LimitOrder = z.object({
   amountOut: amountWithUsd,
   openedAt: z.coerce.date(),
   closedAt: z.nullable(z.coerce.date()),
+});
+
+export const StakingTreasury = z.object({
+  address: z.string(),
+  stakedTokenMint: z.string(),
+  rewardTokenMint: z.string(),
+  apy: z.number(),
+  totalStaked: amountWithUsd,
+  totalReward: amountWithUsd,
+  unstakeCooldown: z.coerce.bigint(),
+});
+
+export const StakingPosition = z.object({
+  address: z.string(),
+  owner: z.string(),
+  staked: amountWithUsd,
+  unstaked: amountWithUsd,
+  claimedReward: amountWithUsd,
+  unclaimedReward: amountWithUsd,
+  vesting: z.object({
+    locked: amountWithUsd,
+    unlocked: amountWithUsd,
+    unlockRate: z.coerce.bigint(),
+    unlockPeriod: z.number(),
+    unlockCliff: z.number(),
+    lockedAt: z.nullable(z.date()),
+  }),
+  lastUnstakedAt: z.nullable(z.date()),
+  withdrawAvailableAt: z.nullable(z.date()),
+});
+
+export const StakingPositionHistoryAction = z.object({
+  position: z.string(),
+  action: StakingPositionHistoryActionTypeSchema,
+  txSignature: z.string(),
+  time: z.date(),
 });
 
 export const PoolPriceCandle = z.object({
