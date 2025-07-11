@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.1.37
+
+### Patch Changes
+
+- 88c36de: Staking integration
+
 ## 1.1.36
 
 ### Patch Changes
