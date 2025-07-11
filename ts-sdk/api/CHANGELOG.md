@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.1.36
+
+### Patch Changes
+
+- ca0cbd8: Add vault history endpoint
+
 ## 1.1.35
 
 ### Patch Changes
