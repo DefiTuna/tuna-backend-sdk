@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.1.39
+
+### Patch Changes
+
+- 91ac223: Add staking position notification type
+
 ## 1.1.38
 
 ### Patch Changes
