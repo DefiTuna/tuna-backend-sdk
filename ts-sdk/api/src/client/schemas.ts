@@ -308,7 +308,7 @@ export const StakingTreasury = z.object({
   apy: z.number(),
   totalStaked: amountWithUsd,
   totalReward: amountWithUsd,
-  unstakeCooldown: z.coerce.bigint(),
+  unstakeCooldownSeconds: z.number(),
 });
 
 export const StakingPosition = z.object({
@@ -322,8 +322,8 @@ export const StakingPosition = z.object({
     locked: amountWithUsd,
     unlocked: amountWithUsd,
     unlockRate: z.coerce.bigint(),
-    unlockPeriod: z.number(),
-    unlockCliff: z.number(),
+    unlockEverySeconds: z.number(),
+    unlockCliffSeconds: z.number(),
     lockedAt: z.nullable(z.date()),
   }),
   lastUnstakedAt: z.nullable(z.date()),
