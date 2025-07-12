@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.1.38
+
+### Patch Changes
+
+- 4d5fa80: Rename staking intervals fields
+
 ## 1.1.37
 
 ### Patch Changes
