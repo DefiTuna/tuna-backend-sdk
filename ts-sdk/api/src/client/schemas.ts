@@ -63,6 +63,7 @@ export const WalletSubscriptionTopic = {
   TUNA_POSITIONS: "tuna_positions",
   LENDING_POSITIONS: "lending_positions",
   FUSION_LIMIT_ORDERS: "fusion_limit_orders",
+  STAKING_POSITION: "staking_position",
 } as const;
 
 export const NotificationEntitySchema = z.enum([NotificationEntity.POOL_SWAP, ...Object.values(NotificationEntity)]);
@@ -374,3 +375,4 @@ export const OrderBookNotification = createNotificationSchema(OrderBook, OrderBo
 export const TunaPositionNotification = createNotificationSchema(TunaPosition);
 export const LendingPositionNotification = createNotificationSchema(LendingPosition);
 export const LimitOrderNotification = createNotificationSchema(LimitOrder);
+export const StakingPositionNotification = createNotificationSchema(StakingPosition);
