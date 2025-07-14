@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.1.40
+
+### Patch Changes
+
+- 970ca86: Fix staking date fields
+
 ## 1.1.39
 
 ### Patch Changes
