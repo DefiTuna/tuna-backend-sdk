@@ -325,17 +325,17 @@ export const StakingPosition = z.object({
     unlockRate: z.coerce.bigint(),
     unlockEverySeconds: z.number(),
     unlockCliffSeconds: z.number(),
-    lockedAt: z.nullable(z.date()),
+    lockedAt: z.nullable(z.coerce.date()),
   }),
-  lastUnstakedAt: z.nullable(z.date()),
-  withdrawAvailableAt: z.nullable(z.date()),
+  lastUnstakedAt: z.nullable(z.coerce.date()),
+  withdrawAvailableAt: z.nullable(z.coerce.date()),
 });
 
 export const StakingPositionHistoryAction = z.object({
   position: z.string(),
   action: StakingPositionHistoryActionTypeSchema,
   txSignature: z.string(),
-  time: z.date(),
+  time: z.coerce.date(),
 });
 
 export const PoolPriceCandle = z.object({
