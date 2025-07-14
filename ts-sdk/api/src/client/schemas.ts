@@ -25,6 +25,7 @@ export const NotificationEntity = {
   ORDER_BOOK: "order_book",
   TUNA_POSITION: "tuna_position",
   LENDING_POSITION: "lending_position",
+  STAKING_POSITION: "staking_position",
   FUSION_LIMIT_ORDER: "fusion_limit_order",
 } as const;
 export const NotificationAction = {
