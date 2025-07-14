@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.1.41
+
+### Patch Changes
+
+- c0e86d2: Add staking position into NotificationEntity
+
 ## 1.1.40
 
 ### Patch Changes
