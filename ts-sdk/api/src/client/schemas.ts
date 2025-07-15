@@ -163,6 +163,7 @@ export const Pool = z.object({
   tokenAVault: z.string(),
   tokenBVault: z.string(),
   tvlUsdc: z.coerce.number(),
+  priceChange24H: z.number(),
   tickSpacing: z.number(),
   feeRate: z.number(),
   protocolFeeRate: z.number(),
