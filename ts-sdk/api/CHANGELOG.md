@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.1.42
+
+### Patch Changes
+
+- 1b1066f: Add pool price change 24h
+
 ## 1.1.41
 
 ### Patch Changes
