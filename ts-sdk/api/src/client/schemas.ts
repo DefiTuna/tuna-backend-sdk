@@ -337,6 +337,7 @@ export const StakingPositionHistoryAction = z.object({
   position: z.string(),
   action: StakingPositionHistoryActionTypeSchema,
   txSignature: z.string(),
+  amount: z.coerce.bigint(),
   time: z.coerce.date(),
 });
 
