@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.1.43
+
+### Patch Changes
+
+- ce86577: Add staking history action amount
+
 ## 1.1.42
 
 ### Patch Changes
