@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.1.44
+
+### Patch Changes
+
+- 6e12b10: Add fees stats endpoint
+
 ## 1.1.43
 
 ### Patch Changes
