@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.1.45
+
+### Patch Changes
+
+- a810e86: Add compound rewards action to staking history
+
 ## 1.1.44
 
 ### Patch Changes
