@@ -36,6 +36,7 @@ export type StakingPosition = z.infer<typeof schemas.StakingPosition>;
 export type StakingTreasury = z.infer<typeof schemas.StakingTreasury>;
 export type StakingPositionHistoryAction = z.infer<typeof schemas.StakingPositionHistoryAction>;
 export type PoolPriceCandle = z.infer<typeof schemas.PoolPriceCandle>;
+export type FeesStatsGroup = z.infer<typeof schemas.FeesStatsGroup>;
 export type PoolPriceUpdate = z.infer<typeof schemas.PoolPriceUpdate>;
 
 /* Request payloads */
@@ -314,21 +315,14 @@ export class TunaApiClient {
     return await this.httpRequest(url.toString(), schemas.StakingPositionHistoryAction.array());
   }
 
-  /**
-   * @deprecated Use getUpdatesStream instead
-   */
-  async getPoolUpdatesStream(poolAddress: string, priceStep?: number, inverted?: boolean): Promise<EventSource> {
-    const url = this.buildURL(`stream`);
-    this.appendUrlSearchParams(url, { pool: poolAddress });
-    if (priceStep) {
-      this.appendUrlSearchParams(url, { price_step: priceStep.toString() });
-    }
-    if (inverted) {
-      this.appendUrlSearchParams(url, { inverted: inverted.toString() });
-    }
-    // Required for multiple SSE connections to receive messages
-    this.appendUrlSearchParams(url, { ts: Date.now().toString() });
-    return new EventSource(url.toString());
+  async getFeesStats(from: Date, to: Date, interval: string): Promise<FeesStatsGroup[]> {
+    const url = this.buildURL(`stats/fees`);
+    this.appendUrlSearchParams(url, {
+      from: from.toISOString(),
+      to: to.toISOString(),
+      interval,
+    });
+    return await this.httpRequest(url.toString(), schemas.FeesStatsGroup.array());
   }
 
   async getUpdatesStream(): Promise<EventSource> {
