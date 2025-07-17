@@ -54,6 +54,7 @@ export const StakingPositionHistoryActionType = {
   UNSTAKE: "unstake",
   WITHDRAW: "withdraw",
   CLAIM_REWARDS: "claim_rewards",
+  COMPOUND_REWARDS: "compound_rewards",
 } as const;
 export const PoolSubscriptionTopic = {
   ORDER_BOOK: "order_book",
