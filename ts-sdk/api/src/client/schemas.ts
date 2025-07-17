@@ -350,6 +350,38 @@ export const PoolPriceCandle = z.object({
   volume: z.number(),
 });
 
+export const FeesStatsGroup = z.object({
+  time: z.coerce.date(),
+  addLiquidityFees: z.number(),
+  limitOrderFees: z.number(),
+  yieldCompoundingFees: z.number(),
+  liquidationFees: z.number(),
+  totalLiquidationsNetworkFees: z.number(),
+  totalLimitOrdersNetworkFees: z.number(),
+  totalYieldCompoundingNetworkFees: z.number(),
+  failedNetworkFees: z.number(),
+  processedNetworkFees: z.number(),
+  totalCollectedFees: z.number(),
+  totalNetworkFees: z.number(),
+  jitoLiquidationFees: z.number(),
+  jitoLimitOrderFees: z.number(),
+  jitoYieldCompoundingFees: z.number(),
+  runningAddLiquidityFees: z.number(),
+  runningLimitOrderFees: z.number(),
+  runningYieldCompoundingFees: z.number(),
+  runningLiquidationFees: z.number(),
+  runningTotalLiquidationsNetworkFees: z.number(),
+  runningTotalLimitOrdersNetworkFees: z.number(),
+  runningTotalYieldCompoundingNetworkFees: z.number(),
+  runningFailedNetworkFees: z.number(),
+  runningProcessedNetworkFees: z.number(),
+  runningJitoLiquidationFees: z.number(),
+  runningJitoLimitOrderFees: z.number(),
+  runningJitoYieldCompoundingFees: z.number(),
+  runningTotalCollectedFees: z.number(),
+  runningTotalNetworkFees: z.number(),
+});
+
 export const UpdateStreamSubscriptionResult = z.object({
   status: z.string(),
 });
