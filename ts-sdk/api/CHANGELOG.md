@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.1.46
+
+### Patch Changes
+
+- 0ea1485: Add olp fee rate
+
 ## 1.1.45
 
 ### Patch Changes
