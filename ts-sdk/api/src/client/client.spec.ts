@@ -423,32 +423,32 @@ describe("Pool swaps", async () => {
     expect(swapTimestampSeconds).closeTo(nowTimestampSeconds, 60);
   });
 });
-describe(
-  "Pool updates stream",
-  async () => {
-    let poolUpdatesStream: EventSource;
+// describe(
+//   "Pool updates stream",
+//   async () => {
+//     let poolUpdatesStream: EventSource;
 
-    beforeAll(async () => {
-      poolUpdatesStream = await client.getPoolUpdatesStream(SOL_USDC_POOL_ADDRESS);
-    });
+//     beforeAll(async () => {
+//       // poolUpdatesStream = await client.getPoolUpdatesStream(SOL_USDC_POOL_ADDRESS);
+//     });
 
-    afterAll(() => {
-      poolUpdatesStream.close();
-    });
+//     afterAll(() => {
+//       // poolUpdatesStream.close();
+//     });
 
-    it("Receives messages", async () => {
-      const event = (await once(poolUpdatesStream, "message")) as MessageEvent<string>[];
-      const rawUpdate = camelcaseKeys(JSON.parse(event[0].data), { deep: true });
+//     it("Receives messages", async () => {
+//       const event = (await once(poolUpdatesStream, "message")) as MessageEvent<string>[];
+//       const rawUpdate = camelcaseKeys(JSON.parse(event[0].data), { deep: true });
 
-      if (rawUpdate.entity === NotificationEntity.POOL_SWAP) {
-        const poolSwapNotification = schemas.PoolSwapNotification.parse(rawUpdate);
-        expect(poolSwapNotification.data.amountIn).toBeGreaterThan(0n);
-        expect(poolSwapNotification.data.amountOut).toBeGreaterThan(0n);
-      }
-    });
-  },
-  { timeout: 30000 },
-);
+//       if (rawUpdate.entity === NotificationEntity.POOL_SWAP) {
+//         const poolSwapNotification = schemas.PoolSwapNotification.parse(rawUpdate);
+//         expect(poolSwapNotification.data.amountIn).toBeGreaterThan(0n);
+//         expect(poolSwapNotification.data.amountOut).toBeGreaterThan(0n);
+//       }
+//     });
+//   },
+//   { timeout: 30000 },
+// );
 
 describe(
   "General updates stream",

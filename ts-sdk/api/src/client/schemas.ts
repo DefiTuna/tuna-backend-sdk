@@ -167,6 +167,7 @@ export const Pool = z.object({
   priceChange24H: z.number(),
   tickSpacing: z.number(),
   feeRate: z.number(),
+  olpFeeRate: z.nullable(z.number()),
   protocolFeeRate: z.number(),
   liquidity: z.coerce.bigint(),
   sqrtPrice: z.coerce.bigint(),
