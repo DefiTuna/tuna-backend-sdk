@@ -384,6 +384,14 @@ export const FeesStatsGroup = z.object({
   runningTotalNetworkFees: z.number(),
 });
 
+export const StakingRevenueStatsGroup = z.object({
+  time: z.coerce.date(),
+  totalDepositsUsd: z.number(),
+  totalDepositsSol: z.coerce.bigint(),
+  runningTotalDepositsUsd: z.number(),
+  runningtotalDepositsSol: z.coerce.bigint(),
+});
+
 export const UpdateStreamSubscriptionResult = z.object({
   status: z.string(),
 });
