@@ -37,6 +37,7 @@ export type StakingTreasury = z.infer<typeof schemas.StakingTreasury>;
 export type StakingPositionHistoryAction = z.infer<typeof schemas.StakingPositionHistoryAction>;
 export type PoolPriceCandle = z.infer<typeof schemas.PoolPriceCandle>;
 export type FeesStatsGroup = z.infer<typeof schemas.FeesStatsGroup>;
+export type StakingRevenueStatsGroup = z.infer<typeof schemas.StakingRevenueStatsGroup>;
 export type PoolPriceUpdate = z.infer<typeof schemas.PoolPriceUpdate>;
 
 /* Request payloads */
@@ -323,6 +324,15 @@ export class TunaApiClient {
       interval,
     });
     return await this.httpRequest(url.toString(), schemas.FeesStatsGroup.array());
+  }
+
+  async getStakingRevenueStats(from: Date, to: Date): Promise<StakingRevenueStatsGroup[]> {
+    const url = this.buildURL(`stats/staking/revenue`);
+    this.appendUrlSearchParams(url, {
+      from: from.toISOString(),
+      to: to.toISOString(),
+    });
+    return await this.httpRequest(url.toString(), schemas.StakingRevenueStatsGroup.array());
   }
 
   async getUpdatesStream(): Promise<EventSource> {
