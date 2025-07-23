@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.1.47
+
+### Patch Changes
+
+- 8e51bc4: Add staking revenue stats endpoint
+
 ## 1.1.46
 
 ### Patch Changes
