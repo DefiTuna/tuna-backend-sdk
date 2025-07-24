@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.1.48
+
+### Patch Changes
+
+- 8e664ef: Fix staking revenue stats mistype
+
 ## 1.1.47
 
 ### Patch Changes
