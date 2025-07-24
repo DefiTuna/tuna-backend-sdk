@@ -389,7 +389,7 @@ export const StakingRevenueStatsGroup = z.object({
   totalDepositsUsd: z.number(),
   totalDepositsSol: z.coerce.bigint(),
   runningTotalDepositsUsd: z.number(),
-  runningtotalDepositsSol: z.coerce.bigint(),
+  runningTotalDepositsSol: z.coerce.bigint(),
 });
 
 export const UpdateStreamSubscriptionResult = z.object({
