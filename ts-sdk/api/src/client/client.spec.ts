@@ -423,6 +423,23 @@ describe("Pool swaps", async () => {
     expect(swapTimestampSeconds).closeTo(nowTimestampSeconds, 60);
   });
 });
+
+describe("Staking", async () => {
+  const treasury = await client.getStakingTreasury();
+  const position = await client.getUserStakingPosition(TEST_WALLET_ADDRESS);
+  const history = await client.getUserStakingPositionHistory(TEST_WALLET_ADDRESS);
+
+  it("Returns treasury", () => {
+    expect(treasury.totalStaked.amount).toBeGreaterThan(0n);
+  });
+  it("Returns position", () => {
+    expect(position.address).toBeTruthy();
+  });
+  it("Returns history", () => {
+    expect(history.length).toBe(0);
+  });
+});
+
 // describe(
 //   "Pool updates stream",
 //   async () => {
