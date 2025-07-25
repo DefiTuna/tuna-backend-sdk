@@ -314,6 +314,9 @@ export const StakingTreasury = z.object({
   totalStaked: amountWithUsd,
   totalReward: amountWithUsd,
   unstakeCooldownSeconds: z.number(),
+  isStakingEnabled: z.boolean(),
+  isUnstakingEnabled: z.boolean(),
+  isWithdrawEnabled: z.boolean(),
 });
 
 export const StakingPosition = z.object({
