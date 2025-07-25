@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.1.49
+
+### Patch Changes
+
+- 12472cb: Add treasury flags
+
 ## 1.1.48
 
 ### Patch Changes
