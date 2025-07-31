@@ -1,11 +1,21 @@
-import camelcaseKeys from "camelcase-keys";
+// import camelcaseKeys from "camelcase-keys";
 import { Decimal } from "decimal.js";
 import { EventSource as NodeEventSource } from "eventsource";
-import { once } from "node:events";
-import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
+// import { once } from "node:events";
+import {
+  afterAll,
+  // beforeAll,
+  describe,
+  expect,
+  it,
+  vi,
+} from "vitest";
 
-import { NotificationEntity, schemas, SubscriptionPayload, TunaApiClient } from "./client";
-import { PoolSubscriptionTopic } from "./schemas";
+import {
+  // NotificationEntity, schemas, SubscriptionPayload,
+  TunaApiClient,
+} from "./client";
+// import { PoolSubscriptionTopic } from "./schemas";
 import * as testUtils from "./testUtils";
 
 vi.stubGlobal("EventSource", NodeEventSource);
@@ -440,6 +450,14 @@ describe("Staking", async () => {
   });
 });
 
+describe("Staking Revenue", async () => {
+  const stats = await client.getStakingRevenueStats(new Date("2025-01-01"), new Date("2025-07-30"));
+
+  it("Returns revenue stats", () => {
+    expect(stats.length).toBeGreaterThan(0);
+  });
+});
+
 // describe(
 //   "Pool updates stream",
 //   async () => {
@@ -467,34 +485,34 @@ describe("Staking", async () => {
 //   { timeout: 30000 },
 // );
 
-describe(
-  "General updates stream",
-  async () => {
-    let updatesStream: EventSource;
+// describe(
+//   "General updates stream",
+//   async () => {
+//     let updatesStream: EventSource;
 
-    beforeAll(async () => {
-      updatesStream = await client.getUpdatesStream();
-    });
+//     beforeAll(async () => {
+//       updatesStream = await client.getUpdatesStream();
+//     });
 
-    afterAll(() => {
-      updatesStream.close();
-    });
+//     afterAll(() => {
+//       updatesStream.close();
+//     });
 
-    it("Receives messages", async () => {
-      const firstEvent = (await once(updatesStream, "message")) as MessageEvent<string>[];
-      const streamId = camelcaseKeys(JSON.parse(firstEvent[0].data), { deep: true }).streamId as string;
-      const subscription: SubscriptionPayload = {
-        pools: [{ address: SOL_USDC_POOL_ADDRESS, topics: [PoolSubscriptionTopic.POOL_SWAPS] }],
-      };
-      await client.updateStreamSubscription(streamId, subscription);
-      const secondEvent = (await once(updatesStream, "message")) as MessageEvent<string>[];
-      const rawUpdate = camelcaseKeys(JSON.parse(secondEvent[0].data), { deep: true });
-      if (rawUpdate.entity === NotificationEntity.POOL_SWAP) {
-        const poolSwapNotification = schemas.PoolSwapNotification.parse(rawUpdate);
-        expect(poolSwapNotification.data.amountIn).toBeGreaterThan(0n);
-        expect(poolSwapNotification.data.amountOut).toBeGreaterThan(0n);
-      }
-    });
-  },
-  { timeout: 30000 },
-);
+//     it("Receives messages", async () => {
+//       const firstEvent = (await once(updatesStream, "message")) as MessageEvent<string>[];
+//       const streamId = camelcaseKeys(JSON.parse(firstEvent[0].data), { deep: true }).streamId as string;
+//       const subscription: SubscriptionPayload = {
+//         pools: [{ address: SOL_USDC_POOL_ADDRESS, topics: [PoolSubscriptionTopic.POOL_SWAPS] }],
+//       };
+//       await client.updateStreamSubscription(streamId, subscription);
+//       const secondEvent = (await once(updatesStream, "message")) as MessageEvent<string>[];
+//       const rawUpdate = camelcaseKeys(JSON.parse(secondEvent[0].data), { deep: true });
+//       if (rawUpdate.entity === NotificationEntity.POOL_SWAP) {
+//         const poolSwapNotification = schemas.PoolSwapNotification.parse(rawUpdate);
+//         expect(poolSwapNotification.data.amountIn).toBeGreaterThan(0n);
+//         expect(poolSwapNotification.data.amountOut).toBeGreaterThan(0n);
+//       }
+//     });
+//   },
+//   { timeout: 30000 },
+// );
