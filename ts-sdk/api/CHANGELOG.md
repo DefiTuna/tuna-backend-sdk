@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.1.50
+
+### Patch Changes
+
+- 85b3918: Adjust staking revenue endpoint filters logic
+
 ## 1.1.49
 
 ### Patch Changes
