@@ -329,8 +329,8 @@ export class TunaApiClient {
   async getStakingRevenueStats(from: Date, to: Date): Promise<StakingRevenueStatsGroup[]> {
     const url = this.buildURL(`stats/staking/revenue`);
     this.appendUrlSearchParams(url, {
-      from: from.toISOString(),
-      to: to.toISOString(),
+      from: from.toISOString().split("T")[0],
+      to: to.toISOString().split("T")[0],
     });
     return await this.httpRequest(url.toString(), schemas.StakingRevenueStatsGroup.array());
   }
