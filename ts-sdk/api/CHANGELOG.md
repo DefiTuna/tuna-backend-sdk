@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.1.51
+
+### Patch Changes
+
+- fa5d5f1: Add vault & market fields
+
 ## 1.1.50
 
 ### Patch Changes
