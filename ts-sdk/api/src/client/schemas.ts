@@ -85,6 +85,9 @@ export const WalletSubscriptionTopicSchema = z.enum([
   WalletSubscriptionTopic.TUNA_POSITIONS,
   ...Object.values(WalletSubscriptionTopic),
 ]);
+export const PaginationMeta = z.object({
+  total: z.number(),
+});
 
 export const Mint = z.object({
   symbol: z.string(),
@@ -342,6 +345,18 @@ export const StakingPosition = z.object({
   withdrawAvailableAt: z.nullable(z.coerce.date()),
 });
 
+export const StakingLeaderboardPosition = z.object({
+  rank: z.number(),
+  address: z.string(),
+  owner: z.string(),
+  staked: amountWithUsd,
+});
+
+export const StakingLeaderboardPage = z.object({
+  data: StakingLeaderboardPosition.array(),
+  meta: PaginationMeta,
+});
+
 export const StakingPositionHistoryAction = z.object({
   position: z.string(),
   action: StakingPositionHistoryActionTypeSchema,
@@ -421,6 +436,7 @@ export const OrderBookNotificationMeta = z.object({
   priceStep: z.number(),
   inverted: z.boolean(),
 });
+
 export const PoolSwapNotification = createNotificationSchema(PoolSwap);
 export const PoolPriceUpdateNotification = createNotificationSchema(PoolPriceUpdate);
 export const OrderBookNotification = createNotificationSchema(OrderBook, OrderBookNotificationMeta);
