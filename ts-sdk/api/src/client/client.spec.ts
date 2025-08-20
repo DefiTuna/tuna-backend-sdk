@@ -450,6 +450,24 @@ describe("Staking", async () => {
   });
 });
 
+describe("Staking leaderboard", async () => {
+  const firstPage = await client.getStakingLeaderboard(1, 10);
+  const secondPage = await client.getStakingLeaderboard(2, 20);
+
+  it("Returns leaderboard", () => {
+    expect(firstPage.data.length).toBeGreaterThan(0n);
+    expect(firstPage.data.length).toBeGreaterThan(0n);
+  });
+  it("Returns ranks", () => {
+    expect(firstPage.data[0].rank).toBe(1);
+    expect(secondPage.data[0].rank).toBe(21);
+  });
+  it("Returns total", () => {
+    expect(firstPage.meta.total).toBeGreaterThan(0n);
+    expect(secondPage.meta.total).toBeGreaterThan(0n);
+  });
+});
+
 describe("Staking Revenue", async () => {
   const stats = await client.getStakingRevenueStats(new Date("2025-01-01"), new Date("2025-07-30"));
 

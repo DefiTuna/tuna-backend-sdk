@@ -16,6 +16,7 @@ export type LimitOrderStateType = z.infer<typeof schemas.LimitOrderStateSchema>;
 export type StakingPositionHistoryActionType = z.infer<typeof schemas.StakingPositionHistoryActionTypeSchema>;
 export type PoolSubscriptionTopicType = z.infer<typeof schemas.PoolSubscriptionTopicSchema>;
 export type WalletSubscriptionTopicType = z.infer<typeof schemas.WalletSubscriptionTopicSchema>;
+export type PaginationMeta = z.infer<typeof schemas.PaginationMeta>;
 
 /* Entity types */
 export type Mint = z.infer<typeof schemas.Mint>;
@@ -34,6 +35,8 @@ export type TunaPosition = z.infer<typeof schemas.TunaPosition>;
 export type LimitOrder = z.infer<typeof schemas.LimitOrder>;
 export type StakingPosition = z.infer<typeof schemas.StakingPosition>;
 export type StakingTreasury = z.infer<typeof schemas.StakingTreasury>;
+export type StakingLeaderboardPage = z.infer<typeof schemas.StakingLeaderboardPage>;
+export type StakingLeaderboardPosition = z.infer<typeof schemas.StakingLeaderboardPosition>;
 export type StakingPositionHistoryAction = z.infer<typeof schemas.StakingPositionHistoryAction>;
 export type PoolPriceCandle = z.infer<typeof schemas.PoolPriceCandle>;
 export type FeesStatsGroup = z.infer<typeof schemas.FeesStatsGroup>;
@@ -134,7 +137,7 @@ export class TunaApiClient {
   private async httpRequest<ResponseData>(
     url: string,
     schema: z.ZodSchema<ResponseData>,
-    options?: RequestInit,
+    options?: RequestInit & { parseRoot?: boolean },
     retries = this.httpRetries,
     backoff = 100 + Math.floor(Math.random() * 100), // Adding randomness to the initial backoff to avoid "thundering herd" scenario where a lot of clients that get kicked off all at the same time (say some script or something) and fail to connect all retry at exactly the same time too
   ): Promise<ResponseData> {
@@ -158,6 +161,10 @@ export class TunaApiClient {
       }
       const data = await response.json();
       const transformed = camelcaseKeys(data, { deep: true, exclude: ["24h", "7d", "30d"] });
+      if (options?.parseRoot) {
+        return schema.parse(transformed);
+      }
+
       return schema.parse(transformed.data);
     } catch (error) {
       if (retries > 0 && !(error instanceof Error && error.name === "AbortError")) {
@@ -271,6 +278,15 @@ export class TunaApiClient {
   async getStakingTreasury(): Promise<StakingTreasury> {
     const url = this.buildURL(`staking/treasury`);
     return await this.httpRequest(url.toString(), schemas.StakingTreasury);
+  }
+
+  async getStakingLeaderboard(page: number, pageSize: number): Promise<StakingLeaderboardPage> {
+    const url = this.buildURL(`staking/leaderboard`);
+    this.appendUrlSearchParams(url, {
+      page: page.toString(),
+      page_size: pageSize.toString(),
+    });
+    return await this.httpRequest(url.toString(), schemas.StakingLeaderboardPage, { parseRoot: true });
   }
 
   async getUserLendingPositions(userAddress: string): Promise<LendingPosition[]> {
