@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.1.53
+
+### Patch Changes
+
+- aa6065c: Add staking leaderboard search
+
 ## 1.1.52
 
 ### Patch Changes
