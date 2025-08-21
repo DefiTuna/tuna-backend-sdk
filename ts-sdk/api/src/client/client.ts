@@ -280,11 +280,12 @@ export class TunaApiClient {
     return await this.httpRequest(url.toString(), schemas.StakingTreasury);
   }
 
-  async getStakingLeaderboard(page: number, pageSize: number): Promise<StakingLeaderboardPage> {
+  async getStakingLeaderboard(page: number, pageSize: number, search?: string): Promise<StakingLeaderboardPage> {
     const url = this.buildURL(`staking/leaderboard`);
     this.appendUrlSearchParams(url, {
       page: page.toString(),
       page_size: pageSize.toString(),
+      ...(search ? { search } : {}),
     });
     return await this.httpRequest(url.toString(), schemas.StakingLeaderboardPage, { parseRoot: true });
   }
