@@ -441,6 +441,7 @@ describe("Staking", async () => {
 
   it("Returns treasury", () => {
     expect(treasury.totalStaked.amount).toBeGreaterThan(0n);
+    expect(treasury.uniqueStakers).toBeGreaterThan(1000n);
   });
   it("Returns position", () => {
     expect(position.address).toBeTruthy();
@@ -453,6 +454,7 @@ describe("Staking", async () => {
 describe("Staking leaderboard", async () => {
   const firstPage = await client.getStakingLeaderboard(1, 10);
   const secondPage = await client.getStakingLeaderboard(2, 20);
+  const searchPage = await client.getStakingLeaderboard(1, 20, "c31");
 
   it("Returns leaderboard", () => {
     expect(firstPage.data.length).toBeGreaterThan(0n);
@@ -465,6 +467,9 @@ describe("Staking leaderboard", async () => {
   it("Returns total", () => {
     expect(firstPage.meta.total).toBeGreaterThan(0n);
     expect(secondPage.meta.total).toBeGreaterThan(0n);
+  });
+  it("Searches", () => {
+    expect(searchPage.meta.total).toBeGreaterThan(0n);
   });
 });
 

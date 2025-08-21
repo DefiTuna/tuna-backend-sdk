@@ -318,6 +318,7 @@ export const StakingTreasury = z.object({
   stakedTokenMint: z.string(),
   rewardTokenMint: z.string(),
   apy: z.number(),
+  uniqueStakers: z.number(),
   totalStaked: amountWithUsd,
   totalReward: amountWithUsd,
   unstakeCooldownSeconds: z.number(),
