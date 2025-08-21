@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.1.54
+
+### Patch Changes
+
+- 21be58c: Add staking position rank
+
 ## 1.1.53
 
 ### Patch Changes
