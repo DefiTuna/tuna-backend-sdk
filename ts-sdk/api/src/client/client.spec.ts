@@ -445,9 +445,10 @@ describe("Staking", async () => {
   });
   it("Returns position", () => {
     expect(position.address).toBeTruthy();
+    expect(position.rank).toBeTruthy();
   });
   it("Returns history", () => {
-    expect(history.length).toBe(0);
+    expect(history.length).toBe(1);
   });
 });
 
