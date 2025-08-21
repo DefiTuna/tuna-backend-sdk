@@ -334,6 +334,7 @@ export const StakingPosition = z.object({
   unstaked: amountWithUsd,
   claimedReward: amountWithUsd,
   unclaimedReward: amountWithUsd,
+  rank: z.nullable(z.number()),
   vesting: z.object({
     locked: amountWithUsd,
     unlocked: amountWithUsd,
