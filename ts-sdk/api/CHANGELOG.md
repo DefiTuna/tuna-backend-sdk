@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.1.55
+
+### Patch Changes
+
+- ead10ed: Add new sqrt price fields
+
 ## 1.1.54
 
 ### Patch Changes
