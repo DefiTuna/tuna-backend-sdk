@@ -179,42 +179,42 @@ export class TunaApiClient {
   /* Endpoints */
   async getMints(): Promise<Mint[]> {
     const url = this.buildURL("mints");
-    return await this.httpRequest(url.toString(), schemas.Mint.array());
+    return await this.httpRequest(url, schemas.Mint.array());
   }
 
   async getMint(mintAddress: string): Promise<Mint> {
     const url = this.buildURL(`mints/${mintAddress}`);
-    return await this.httpRequest(url.toString(), schemas.Mint);
+    return await this.httpRequest(url, schemas.Mint);
   }
 
   async getMarkets(): Promise<Market[]> {
     const url = this.buildURL("markets");
-    return await this.httpRequest(url.toString(), schemas.Market.array());
+    return await this.httpRequest(url, schemas.Market.array());
   }
 
   async getMarket(marketAddress: string): Promise<Market> {
     const url = this.buildURL(`markets/${marketAddress}`);
-    return await this.httpRequest(url.toString(), schemas.Market);
+    return await this.httpRequest(url, schemas.Market);
   }
 
   async getOraclePrices(): Promise<TokenOraclePrice[]> {
     const url = this.buildURL("oracle-prices");
-    return await this.httpRequest(url.toString(), schemas.TokenOraclePrice.array());
+    return await this.httpRequest(url, schemas.TokenOraclePrice.array());
   }
 
   async getOraclePrice(mintAddress: string): Promise<TokenOraclePrice> {
     const url = this.buildURL(`oracle-prices/${mintAddress}`);
-    return await this.httpRequest(url.toString(), schemas.TokenOraclePrice);
+    return await this.httpRequest(url, schemas.TokenOraclePrice);
   }
 
   async getVaults(): Promise<Vault[]> {
     const url = this.buildURL("vaults");
-    return await this.httpRequest(url.toString(), schemas.Vault.array());
+    return await this.httpRequest(url, schemas.Vault.array());
   }
 
   async getVault(vaultAddress: string): Promise<Vault> {
     const url = this.buildURL(`vaults/${vaultAddress}`);
-    return await this.httpRequest(url.toString(), schemas.Vault);
+    return await this.httpRequest(url, schemas.Vault);
   }
 
   /**
@@ -223,161 +223,159 @@ export class TunaApiClient {
    *  Example usage: getVaultHistory('H3ifgix98vzi3yCPbmZDLTheeTRf2jykXx8FpY5L7Sfd', '2025-03-10', '2025-04-10')
    */
   async getVaultHistory(vaultAddress: string, from: Date, to: Date): Promise<VaultHistoricalStats[]> {
-    const url = this.buildURL(`vaults/${vaultAddress}/history`);
-    this.appendUrlSearchParams(url, { from: from.toISOString().slice(0, 10), to: to.toISOString().slice(0, 10) });
+    const url = this.appendUrlSearchParams(this.buildURL(`vaults/${vaultAddress}/history`), {
+      from: from.toISOString().slice(0, 10),
+      to: to.toISOString().slice(0, 10),
+    });
     // @ts-expect-error
-    return await this.httpRequest(url.toString(), schemas.VaultHistoricalStats.array());
+    return await this.httpRequest(url, schemas.VaultHistoricalStats.array());
   }
 
   async getPools(providerFilter?: ProviderFilter): Promise<Pool[]> {
-    const url = this.buildURL("pools");
-    if (providerFilter && providerFilter !== ProviderFilter.ALL) {
-      this.appendUrlSearchParams(url, { provider: providerFilter });
-    }
-
-    return await this.httpRequest(url.toString(), schemas.Pool.array());
+    const url = this.appendUrlSearchParams(this.buildURL("pools"), {
+      provider: providerFilter && providerFilter !== ProviderFilter.ALL ? providerFilter : undefined,
+    });
+    return await this.httpRequest(url, schemas.Pool.array());
   }
 
   async getPool(address: string): Promise<Pool> {
     const url = this.buildURL(`pools/${address}`);
-    return await this.httpRequest(url.toString(), schemas.Pool);
+    return await this.httpRequest(url, schemas.Pool);
   }
 
   async getPoolTicks(poolAddress: string): Promise<PoolTicks> {
     const url = this.buildURL(`pools/${poolAddress}/ticks`);
-    return await this.httpRequest(url.toString(), schemas.PoolTicks);
+    return await this.httpRequest(url, schemas.PoolTicks);
   }
 
   async getPoolSwaps(poolAddress: string): Promise<PoolSwap[]> {
     const url = this.buildURL(`pools/${poolAddress}/swaps`);
-    return await this.httpRequest(url.toString(), schemas.PoolSwap.array());
+    return await this.httpRequest(url, schemas.PoolSwap.array());
   }
 
   async getPoolOrderBook(poolAddress: string, priceStep: number, inverted: boolean): Promise<OrderBook> {
-    const url = this.buildURL(`pools/${poolAddress}/order-book`);
-    this.appendUrlSearchParams(url, { price_step: priceStep.toString() });
-    if (inverted) {
-      this.appendUrlSearchParams(url, { inverted: inverted.toString() });
-    }
-    return await this.httpRequest(url.toString(), schemas.OrderBook);
+    const url = this.appendUrlSearchParams(this.buildURL(`pools/${poolAddress}/order-book`), {
+      price_step: priceStep,
+      inverted: inverted || undefined,
+    });
+    return await this.httpRequest(url, schemas.OrderBook);
   }
 
   async getPoolPriceCandles(poolAddress: string, options: GetPoolPriceCandlesOptions): Promise<PoolPriceCandle[]> {
     const { from, to, interval, candles } = options;
-    const url = this.buildURL(`pools/${poolAddress}/candles`);
-
-    this.appendUrlSearchParams(url, {
+    const url = this.appendUrlSearchParams(this.buildURL(`pools/${poolAddress}/candles`), {
       from: from.toISOString(),
       to: to.toISOString(),
-      candles: candles.toString(),
+      candles,
       interval,
     });
-    return await this.httpRequest(url.toString(), schemas.PoolPriceCandle.array());
+    return await this.httpRequest(url, schemas.PoolPriceCandle.array());
   }
 
   async getStakingTreasury(): Promise<StakingTreasury> {
     const url = this.buildURL(`staking/treasury`);
-    return await this.httpRequest(url.toString(), schemas.StakingTreasury);
+    return await this.httpRequest(url, schemas.StakingTreasury);
   }
 
   async getStakingLeaderboard(page: number, pageSize: number, search?: string): Promise<StakingLeaderboardPage> {
-    const url = this.buildURL(`staking/leaderboard`);
-    this.appendUrlSearchParams(url, {
-      page: page.toString(),
-      page_size: pageSize.toString(),
-      ...(search ? { search } : {}),
+    const url = this.appendUrlSearchParams(this.buildURL(`staking/leaderboard`), {
+      page,
+      page_size: pageSize,
+      search: search || undefined,
     });
-    return await this.httpRequest(url.toString(), schemas.StakingLeaderboardPage, { parseRoot: true });
+    return await this.httpRequest(url, schemas.StakingLeaderboardPage, { parseRoot: true });
   }
 
   async getUserLendingPositions(userAddress: string): Promise<LendingPosition[]> {
     const url = this.buildURL(`users/${userAddress}/lending-positions`);
-    return await this.httpRequest(url.toString(), schemas.LendingPosition.array());
+    return await this.httpRequest(url, schemas.LendingPosition.array());
   }
 
   async getUserLendingPositionByAddress(userAddress: string, lendingPositionAddress: string): Promise<LendingPosition> {
     const url = this.buildURL(`users/${userAddress}/lending-positions/${lendingPositionAddress}`);
-    return await this.httpRequest(url.toString(), schemas.LendingPosition);
+    return await this.httpRequest(url, schemas.LendingPosition);
   }
 
   async getUserTunaPositions(userAddress: string): Promise<TunaPosition[]> {
     const url = this.buildURL(`users/${userAddress}/tuna-positions`);
-    return await this.httpRequest(url.toString(), schemas.TunaPosition.array());
+    return await this.httpRequest(url, schemas.TunaPosition.array());
   }
 
   async getUserTunaPositionByAddress(userAddress: string, tunaPositionAddress: string): Promise<TunaPosition> {
     const url = this.buildURL(`users/${userAddress}/tuna-positions/${tunaPositionAddress}`);
-    return await this.httpRequest(url.toString(), schemas.TunaPosition);
+    return await this.httpRequest(url, schemas.TunaPosition);
   }
 
   async getUserLimitOrders(userAddress: string, poolFilter?: string): Promise<LimitOrder[]> {
-    const url = this.buildURL(`users/${userAddress}/limit-orders`);
-    if (poolFilter) {
-      this.appendUrlSearchParams(url, { pool: poolFilter });
-    }
-    return await this.httpRequest(url.toString(), schemas.LimitOrder.array());
+    const url = this.appendUrlSearchParams(this.buildURL(`users/${userAddress}/limit-orders`), {
+      pool: poolFilter || undefined,
+    });
+
+    return await this.httpRequest(url, schemas.LimitOrder.array());
   }
 
   async getUserLimitOrderByAddress(userAddress: string, limitOrderAddress: string): Promise<LimitOrder> {
     const url = this.buildURL(`users/${userAddress}/limit-orders/${limitOrderAddress}`);
-    return await this.httpRequest(url.toString(), schemas.LimitOrder);
+    return await this.httpRequest(url, schemas.LimitOrder);
   }
 
   async getUserStakingPosition(userAddress: string): Promise<StakingPosition> {
     const url = this.buildURL(`users/${userAddress}/staking-position`);
-    return await this.httpRequest(url.toString(), schemas.StakingPosition);
+    return await this.httpRequest(url, schemas.StakingPosition);
   }
 
   async getUserStakingPositionHistory(userAddress: string): Promise<StakingPositionHistoryAction[]> {
     const url = this.buildURL(`users/${userAddress}/staking-position/history`);
-    return await this.httpRequest(url.toString(), schemas.StakingPositionHistoryAction.array());
+    return await this.httpRequest(url, schemas.StakingPositionHistoryAction.array());
   }
 
   async getFeesStats(from: Date, to: Date, interval: string): Promise<FeesStatsGroup[]> {
-    const url = this.buildURL(`stats/fees`);
-    this.appendUrlSearchParams(url, {
+    const url = this.appendUrlSearchParams(this.buildURL(`stats/fees`), {
       from: from.toISOString(),
       to: to.toISOString(),
       interval,
     });
-    return await this.httpRequest(url.toString(), schemas.FeesStatsGroup.array());
+    return await this.httpRequest(url, schemas.FeesStatsGroup.array());
   }
 
   async getStakingRevenueStats(from: Date, to: Date): Promise<StakingRevenueStatsGroup[]> {
-    const url = this.buildURL(`stats/staking/revenue`);
-    this.appendUrlSearchParams(url, {
+    const url = this.appendUrlSearchParams(this.buildURL(`stats/staking/revenue`), {
       from: from.toISOString().split("T")[0],
       to: to.toISOString().split("T")[0],
     });
-    return await this.httpRequest(url.toString(), schemas.StakingRevenueStatsGroup.array());
+    return await this.httpRequest(url, schemas.StakingRevenueStatsGroup.array());
   }
 
   async getUpdatesStream(): Promise<EventSource> {
     const url = this.buildURL(`streams/sse`);
-    return new EventSource(url.toString());
+    return new EventSource(url);
   }
 
   async updateStreamSubscription(streamId: string, subscription: SubscriptionPayload): Promise<unknown> {
     const url = this.buildURL(`streams/${streamId}/subscription`);
     const body = JSON.stringify(snakecaseKeys(subscription, { deep: true }));
-    return await this.httpRequest(url.toString(), schemas.UpdateStreamSubscriptionResult, { method: "PUT", body });
+    return await this.httpRequest(url, schemas.UpdateStreamSubscriptionResult, { method: "PUT", body });
   }
 
   /* Utility functions */
   private buildURL(endpoint: string) {
-    return new URL(
-      `./v1/${endpoint}`,
-      // We ensure the `baseURL` ends with a `/` so that URL doesn't resolve the
-      // path relative to the parent.
-      `${this.baseURL}${this.baseURL.endsWith("/") ? "" : "/"}`,
-    );
+    // We ensure the `baseURL` ends with a `/` so that URL doesn't resolve the
+    // path relative to the parent.
+    return `${this.baseURL}${this.baseURL.endsWith("/") ? "" : "/"}v1/${endpoint}`;
   }
 
-  private appendUrlSearchParams(url: URL, params: Record<string, string | boolean>) {
+  private appendUrlSearchParams(url: string, params: Record<string, string | number | boolean | undefined>) {
+    const urlSearchParams = new URLSearchParams();
     Object.entries(params).forEach(([key, value]) => {
       if (value !== undefined) {
-        url.searchParams.append(key, String(value));
+        urlSearchParams.append(key, String(value));
       }
     });
+
+    if (urlSearchParams.size > 0) {
+      return `${url}?${urlSearchParams.toString()}`;
+    }
+
+    return url;
   }
 }
