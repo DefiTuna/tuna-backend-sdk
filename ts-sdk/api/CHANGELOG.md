@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.1.56
+
+### Patch Changes
+
+- 310180f: Remove URL class usage
+
 ## 1.1.55
 
 ### Patch Changes
