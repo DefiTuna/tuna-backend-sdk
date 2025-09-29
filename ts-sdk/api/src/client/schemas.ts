@@ -42,6 +42,10 @@ export const TunaPositionState = {
   CLOSED_BY_LIMIT_ORDER: "closed_by_limit_order",
   CLOSED: "closed",
 } as const;
+export const TunaSpotPositionState = {
+  OPEN: "open",
+  CLOSED: "closed",
+} as const;
 export const LimitOrderState = {
   OPEN: "open",
   PARTIALLY_FILLED: "partially_filled",
@@ -63,6 +67,7 @@ export const PoolSubscriptionTopic = {
 } as const;
 export const WalletSubscriptionTopic = {
   TUNA_POSITIONS: "tuna_positions",
+  TUNA_SPOT_POSITIONS: "tuna_spot_positions",
   LENDING_POSITIONS: "lending_positions",
   FUSION_LIMIT_ORDERS: "fusion_limit_orders",
   STAKING_POSITION: "staking_position",
@@ -72,6 +77,10 @@ export const NotificationEntitySchema = z.enum([NotificationEntity.POOL_SWAP, ..
 export const NotificationActionSchema = z.enum([NotificationAction.CREATE, ...Object.values(NotificationAction)]);
 export const PoolProviderSchema = z.enum([PoolProvider.ORCA, ...Object.values(PoolProvider)]);
 export const TunaPositionStateSchema = z.enum([TunaPositionState.OPEN, ...Object.values(TunaPositionState)]);
+export const TunaSpotPositionStateSchema = z.enum([
+  TunaSpotPositionState.OPEN,
+  ...Object.values(TunaSpotPositionState),
+]);
 export const LimitOrderStateSchema = z.enum([LimitOrderState.OPEN, ...Object.values(LimitOrderState)]);
 export const StakingPositionHistoryActionTypeSchema = z.enum([
   StakingPositionHistoryActionType.STAKE,
@@ -274,6 +283,31 @@ export const TunaPosition = z.object({
   closedAt: z.nullable(z.coerce.date()),
 });
 
+export const TunaSpotPosition = z.object({
+  address: z.string(),
+  authority: z.string(),
+  version: z.number(),
+  state: TunaSpotPositionStateSchema,
+  entrySqrtPrice: z.coerce.bigint(),
+  lowerLimitOrderSqrtPrice: z.coerce.bigint(),
+  upperLimitOrderSqrtPrice: z.coerce.bigint(),
+  flags: z.number(),
+  pool: z.string(),
+  poolSqrtPrice: z.coerce.bigint(),
+  collateralToken: z.string(),
+  borrowToken: z.string(),
+  positionToken: z.string(),
+  collateral: amountWithUsd,
+  loanFunds: amountWithUsd,
+  currentLoan: amountWithUsd,
+  total: amountWithUsd,
+  pnlUsd: usdPnl,
+  openedAt: z.coerce.date(),
+  openedAtSlot: z.coerce.bigint(),
+  updatedAtSlot: z.coerce.bigint(),
+  closedAt: z.nullable(z.coerce.date()),
+});
+
 export const PoolSwap = z.object({
   id: z.string(),
   amountIn: z.coerce.bigint(),
@@ -455,6 +489,7 @@ export const PoolSwapNotification = createNotificationSchema(PoolSwap);
 export const PoolPriceUpdateNotification = createNotificationSchema(PoolPriceUpdate);
 export const OrderBookNotification = createNotificationSchema(OrderBook, OrderBookNotificationMeta);
 export const TunaPositionNotification = createNotificationSchema(TunaPosition);
+export const TunaSpotPositionNotification = createNotificationSchema(TunaSpotPosition);
 export const LendingPositionNotification = createNotificationSchema(LendingPosition);
 export const LimitOrderNotification = createNotificationSchema(LimitOrder);
 export const StakingPositionNotification = createNotificationSchema(StakingPosition);

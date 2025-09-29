@@ -1,3 +1,5 @@
 packages:
   - "ts-sdk/*"
 minimumReleaseAge: 28800
+minimumReleaseAgeExclude:
+  - "@crypticdot/eslint-config"

@@ -12,6 +12,7 @@ export { schemas };
 export { PoolProvider, TunaPositionState, NotificationAction, NotificationEntity };
 export type PoolProviderType = z.infer<typeof schemas.PoolProviderSchema>;
 export type TunaPositionStateType = z.infer<typeof schemas.TunaPositionStateSchema>;
+export type TunaSpotPositionStateType = z.infer<typeof schemas.TunaSpotPositionStateSchema>;
 export type LimitOrderStateType = z.infer<typeof schemas.LimitOrderStateSchema>;
 export type StakingPositionHistoryActionType = z.infer<typeof schemas.StakingPositionHistoryActionTypeSchema>;
 export type PoolSubscriptionTopicType = z.infer<typeof schemas.PoolSubscriptionTopicSchema>;
@@ -32,6 +33,7 @@ export type OrderBookEntry = z.infer<typeof schemas.OrderBookEntry>;
 export type OrderBook = z.infer<typeof schemas.OrderBook>;
 export type LendingPosition = z.infer<typeof schemas.LendingPosition>;
 export type TunaPosition = z.infer<typeof schemas.TunaPosition>;
+export type TunaSpotPosition = z.infer<typeof schemas.TunaSpotPosition>;
 export type LimitOrder = z.infer<typeof schemas.LimitOrder>;
 export type StakingPosition = z.infer<typeof schemas.StakingPosition>;
 export type StakingTreasury = z.infer<typeof schemas.StakingTreasury>;
@@ -304,6 +306,19 @@ export class TunaApiClient {
   async getUserTunaPositionByAddress(userAddress: string, tunaPositionAddress: string): Promise<TunaPosition> {
     const url = this.buildURL(`users/${userAddress}/tuna-positions/${tunaPositionAddress}`);
     return await this.httpRequest(url, schemas.TunaPosition);
+  }
+
+  async getUserTunaSpotPositions(userAddress: string): Promise<TunaSpotPosition[]> {
+    const url = this.buildURL(`users/${userAddress}/spot-positions`);
+    return await this.httpRequest(url, schemas.TunaSpotPosition.array());
+  }
+
+  async getUserTunaSpotPositionByAddress(
+    userAddress: string,
+    tunaSpotPositionAddress: string,
+  ): Promise<TunaSpotPosition> {
+    const url = this.buildURL(`users/${userAddress}/spot-positions/${tunaSpotPositionAddress}`);
+    return await this.httpRequest(url, schemas.TunaSpotPosition);
   }
 
   async getUserLimitOrders(userAddress: string, poolFilter?: string): Promise<LimitOrder[]> {
