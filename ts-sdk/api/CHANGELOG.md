@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.2.0
+
+### Minor Changes
+
+- f197784: Add tuna spot position endpoints
+
 ## 1.1.56
 
 ### Patch Changes
