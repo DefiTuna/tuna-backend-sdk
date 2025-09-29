@@ -420,6 +420,48 @@ describe("Tuna Positions", async () => {
   });
 });
 
+// describe("Spot Positions", async () => {
+//   const tunaPositions = await client.getUserTunaSpotPositions("ExLUrx8kLzrMoHjC7h9Z9Tj8GeaY43qadwDMm4QyoSiW");
+//   const rpcTunaPositions = await testUtils.getTunaSpotPositions("ExLUrx8kLzrMoHjC7h9Z9Tj8GeaY43qadwDMm4QyoSiW");
+
+//   it("Length matches RPC tuna positions", () => {
+//     expect(tunaPositions.length).toBe(rpcTunaPositions.length);
+//   });
+//   it("Match RPC tuna positions addresses", () => {
+//     expect(tunaPositions.map(position => position.address).sort()).toEqual(
+//       rpcTunaPositions.map(position => position.address).sort(),
+//     );
+//   });
+//   it("Match RPC tuna positions data", () => {
+//     expect(
+//       rpcTunaPositions
+//         .map(({ address, data }) => [
+//           address,
+//           data.authority,
+//           data.pool,
+//           data.collateralToken,
+//           data.positionToken,
+//           data.loanFunds,
+//         ])
+//         .sort(([a], [b]) => a.toString().localeCompare(b.toString())),
+//     ).toEqual(
+//       tunaPositions
+//         .map(position => [
+//           position.address,
+//           position.authority,
+//           position.pool,
+//           position.collateralToken,
+//           position.positionToken,
+//           position.loanFunds.amount,
+//         ])
+//         .sort(([a], [b]) => a.toString().localeCompare(b.toString())),
+//     );
+//   });
+//   it("Have USD values for tokens", () => {
+//     expect(tunaPositions.every(position => position.total.usd > 0)).toBe(true);
+//   });
+// });
+
 describe("Pool swaps", async () => {
   const poolSwaps = await client.getPoolSwaps(SOL_USDC_POOL_ADDRESS);
 

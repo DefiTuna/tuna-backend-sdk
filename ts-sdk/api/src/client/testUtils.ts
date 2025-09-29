@@ -94,7 +94,7 @@ export async function getTunaPositions(userAddress: string) {
             encoding: "base64",
           },
         },
-        { dataSize: BigInt(DefiTunaClient.getTunaPositionSize()) },
+        { dataSize: BigInt(DefiTunaClient.getTunaLpPositionSize()) },
       ],
       commitment: "processed",
       encoding: "base64",
@@ -102,7 +102,38 @@ export async function getTunaPositions(userAddress: string) {
     })
     .send();
 
-  const decoder = DefiTunaClient.getTunaPositionDecoder();
+  const decoder = DefiTunaClient.getTunaLpPositionDecoder();
+
+  const encodedAccounts = accounts.map(({ account: { data } }) => base64Encoder.encode(data[0]));
+  const decodedAccounts = encodedAccounts.map(x => decoder.decode(x));
+
+  return decodedAccounts.map((data, i) => ({
+    ...accounts[i].account,
+    address: accounts[i].pubkey,
+    data,
+  }));
+}
+
+export async function getTunaSpotPositions(userAddress: string) {
+  const accounts = await rpc
+    .getProgramAccounts(TUNA_PROGRAM_ID, {
+      filters: [
+        {
+          memcmp: {
+            offset: 11n, // Discriminator + version + bump
+            bytes: base64Decoder.decode(addressEncoder.encode(address(userAddress))),
+            encoding: "base64",
+          },
+        },
+        { dataSize: BigInt(DefiTunaClient.getTunaSpotPositionSize()) },
+      ],
+      commitment: "processed",
+      encoding: "base64",
+      withContext: false,
+    })
+    .send();
+
+  const decoder = DefiTunaClient.getTunaSpotPositionDecoder();
 
   const encodedAccounts = accounts.map(({ account: { data } }) => base64Encoder.encode(data[0]));
   const decodedAccounts = encodedAccounts.map(x => decoder.decode(x));
