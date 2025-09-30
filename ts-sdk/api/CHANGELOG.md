@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.2.1
+
+### Patch Changes
+
+- fd08f53: Add spot position notification entity
+
 ## 1.2.0
 
 ### Minor Changes
