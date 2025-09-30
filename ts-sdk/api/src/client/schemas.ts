@@ -24,6 +24,7 @@ export const NotificationEntity = {
   POOL_PRICE: "pool_price",
   ORDER_BOOK: "order_book",
   TUNA_POSITION: "tuna_position",
+  TUNA_SPOT_POSITION: "tuna_spot_position",
   LENDING_POSITION: "lending_position",
   STAKING_POSITION: "staking_position",
   FUSION_LIMIT_ORDER: "fusion_limit_order",
