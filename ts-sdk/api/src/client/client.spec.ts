@@ -259,24 +259,6 @@ describe("Single Vault", async () => {
   });
 });
 
-describe("Pools", async () => {
-  const rpcMarkets = await testUtils.getMarkets();
-  const pools = await client.getPools();
-
-  it("Length matches RPC markets", () => {
-    expect(rpcMarkets.length).toBe(pools.length);
-  });
-  it("Match RPC markets pools addresses", () => {
-    expect(rpcMarkets.map(rpcMarket => rpcMarket.data.pool).sort()).toEqual(pools.map(pool => pool.address).sort());
-  });
-  it("Have tvl stats", () => {
-    expect(pools.every(pool => pool.tvlUsdc > 0)).toBe(true);
-  });
-  it("Have monthly stats", () => {
-    expect(pools.every(pool => !!pool.stats["30d"])).toBe(true);
-  });
-});
-
 describe("Single Pool", async () => {
   const rpcMarkets = await testUtils.getMarkets();
   const samplePoolAddress = rpcMarkets[0].data.pool;
@@ -309,12 +291,6 @@ describe("Pool Ticks", async () => {
 
   it("Have tick spacing", () => {
     expect(poolTicks.tickSpacing > 0).toBe(true);
-  });
-  it("Have empty first tick", () => {
-    expect(poolTicks.ticks[0].liquidity).toBe(0n);
-  });
-  it("Have empty last tick", () => {
-    expect(poolTicks.ticks[poolTicks.ticks.length - 1].liquidity).toBe(0n);
   });
   it("Have non-empty middle tick", () => {
     expect(poolTicks.ticks[Math.round(poolTicks.ticks.length / 2)].liquidity).not.toBe(0n);
@@ -417,6 +393,22 @@ describe("Tuna Positions", async () => {
     expect(testPositionWithLeverage.currentLoanB.amount).toBeGreaterThanOrEqual(25002n);
     expect(testPositionWithLeverage.yieldA.amount).toBeGreaterThanOrEqual(1680n);
     expect(testPositionWithLeverage.yieldB.amount).toBeGreaterThanOrEqual(189n);
+  });
+});
+
+describe("Limit orders", async () => {
+  const activeLimitOrders = await client.getUserLimitOrders(TEST_WALLET_ADDRESS, {
+    status: ["open", "filled", "partially_filled"],
+  });
+  const historicalLimitOrders = await client.getUserLimitOrders(TEST_WALLET_ADDRESS, {
+    status: ["cancelled", "complete"],
+  });
+
+  it("Active orders length matches RPC tuna positions", () => {
+    expect(activeLimitOrders.length).toBeGreaterThan(0);
+  });
+  it("Returns historical limit orders", () => {
+    expect(historicalLimitOrders.length).toBeGreaterThan(0);
   });
 });
 

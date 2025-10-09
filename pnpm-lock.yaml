@@ -36,6 +36,9 @@ importers:
       '@crypticdot/eslint-config':
         specifier: ^1.0.2
         version: 1.0.2(eslint@8.57.1)(prettier@3.5.3)(turbo@2.5.4)(typescript@5.8.3)
+      '@crypticdot/fusionamm-client':
+        specifier: ^1.0.62
+        version: 1.0.62(@solana/kit@2.1.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.8.3)(ws@8.18.2))
       '@crypticdot/prettier-config':
         specifier: ^1.0.0
         version: 1.0.0(prettier@3.5.3)

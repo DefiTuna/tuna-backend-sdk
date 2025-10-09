@@ -59,6 +59,20 @@ export type SubscriptionPayload = {
   };
 };
 
+/* Filters */
+
+export type GetUserLimitOrdersOptions = {
+  pool?: string[];
+  status?: LimitOrderStateType[];
+  openedAt?: {
+    from?: Date;
+    to?: Date;
+  };
+  cursor?: string;
+  limit?: number;
+  desc?: boolean;
+};
+
 /* Client configuration */
 export type DurationInMs = number;
 
@@ -96,6 +110,8 @@ export type TunaApiClientConfig = {
    */
   headers?: HeadersInit;
 };
+
+type QueryParams = Record<string, string | number | boolean | undefined>;
 
 /* API Client */
 export class TunaApiClient {
@@ -321,10 +337,34 @@ export class TunaApiClient {
     return await this.httpRequest(url, schemas.TunaSpotPosition);
   }
 
-  async getUserLimitOrders(userAddress: string, poolFilter?: string): Promise<LimitOrder[]> {
-    const url = this.appendUrlSearchParams(this.buildURL(`users/${userAddress}/limit-orders`), {
-      pool: poolFilter || undefined,
-    });
+  async getUserLimitOrders(userAddress: string, options?: GetUserLimitOrdersOptions): Promise<LimitOrder[]> {
+    let query: QueryParams = {};
+
+    if (options) {
+      if (options.pool?.length) {
+        query.pool = options.pool.join(",");
+      }
+      if (options.status?.length) {
+        query.status = options.status.join(",");
+      }
+      if (options.openedAt?.from) {
+        query.opened_at_from = options.openedAt.from.toISOString();
+      }
+      if (options.openedAt?.to) {
+        query.opened_at_from = options.openedAt.to.toISOString();
+      }
+      if (options.limit) {
+        query.limit = options.limit;
+      }
+      if (options.cursor) {
+        query.cursor = options.cursor;
+      }
+      if (options.desc !== undefined) {
+        query.desc = options.desc;
+      }
+    }
+
+    const url = this.appendUrlSearchParams(this.buildURL(`users/${userAddress}/limit-orders`), query);
 
     return await this.httpRequest(url, schemas.LimitOrder.array());
   }
@@ -379,7 +419,7 @@ export class TunaApiClient {
     return `${this.baseURL}${this.baseURL.endsWith("/") ? "" : "/"}v1/${endpoint}`;
   }
 
-  private appendUrlSearchParams(url: string, params: Record<string, string | number | boolean | undefined>) {
+  private appendUrlSearchParams(url: string, params: QueryParams) {
     const urlSearchParams = new URLSearchParams();
     Object.entries(params).forEach(([key, value]) => {
       if (value !== undefined) {
