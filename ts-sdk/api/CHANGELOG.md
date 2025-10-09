@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.3.0
+
+### Minor Changes
+
+- bcb4aed: Support limit orders filters & pagination
+
 ## 1.2.1
 
 ### Patch Changes
