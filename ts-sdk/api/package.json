@@ -29,6 +29,7 @@
     "@crypticdot/eslint-config": "^1.0.2",
     "@crypticdot/prettier-config": "^1.0.0",
     "@crypticdot/typescript-config": "^1.0.0",
+    "@crypticdot/fusionamm-client": "^1.0.62",
     "@solana/kit": "^2.1.0",
     "@types/node": "^22.13.14",
     "decimal.js": "^10.5.0",
