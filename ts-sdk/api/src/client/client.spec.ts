@@ -412,6 +412,14 @@ describe("Limit orders", async () => {
   });
 });
 
+describe("Trade history", async () => {
+  const tradeHistoryEntries = await client.getUserTradeHistory(TEST_WALLET_ADDRESS);
+
+  it("Has items", () => {
+    expect(tradeHistoryEntries.length).toBeGreaterThan(0);
+  });
+});
+
 // describe("Spot Positions", async () => {
 //   const tunaPositions = await client.getUserTunaSpotPositions(TEST_WALLET_ADDRESS);
 //   const rpcTunaPositions = await testUtils.getTunaSpotPositions(TEST_WALLET_ADDRESS);

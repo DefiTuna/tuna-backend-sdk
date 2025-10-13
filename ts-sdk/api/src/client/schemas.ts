@@ -28,6 +28,7 @@ export const NotificationEntity = {
   LENDING_POSITION: "lending_position",
   STAKING_POSITION: "staking_position",
   FUSION_LIMIT_ORDER: "fusion_limit_order",
+  TRADE_HISTORY_ENTRY: "trade_history_entry",
 } as const;
 export const NotificationAction = {
   CREATE: "create",
@@ -53,6 +54,20 @@ export const LimitOrderState = {
   FILLED: "filled",
   COMPLETE: "complete",
   CANCELLED: "cancelled",
+} as const;
+export const TradeHistoryAction = {
+  SWAP: "swap",
+  LIMIT_ORDER_FILL: "limit_order_fill",
+  POSITION_INCREASE: "position_increase",
+  POSITION_DECREASE: "position_decrease",
+} as const;
+export const TradeHistoryUIDirection = {
+  BUY: "buy",
+  SELL: "sell",
+  OPEN_LONG: "open_long",
+  CLOSE_LONG: "close_long",
+  OPEN_SHORT: "open_short",
+  CLOSE_SHORT: "close_short",
 } as const;
 export const StakingPositionHistoryActionType = {
   STAKE: "stake",
@@ -83,6 +98,11 @@ export const TunaSpotPositionStateSchema = z.enum([
   ...Object.values(TunaSpotPositionState),
 ]);
 export const LimitOrderStateSchema = z.enum([LimitOrderState.OPEN, ...Object.values(LimitOrderState)]);
+export const TradeHistoryActionSchema = z.enum([TradeHistoryAction.SWAP, ...Object.values(TradeHistoryAction)]);
+export const TradeHistoryUIDirectionSchema = z.enum([
+  TradeHistoryUIDirection.BUY,
+  ...Object.values(TradeHistoryUIDirection),
+]);
 export const StakingPositionHistoryActionTypeSchema = z.enum([
   StakingPositionHistoryActionType.STAKE,
   ...Object.values(StakingPositionHistoryActionType),
@@ -360,6 +380,31 @@ export const LimitOrder = z.object({
   closedAt: z.nullable(z.coerce.date()),
 });
 
+export const TradeHistoryEntry = z.object({
+  // Internal entry ID
+  id: z.string(),
+  pool: z.string(),
+  authority: z.string(),
+  aToB: z.boolean(),
+  // Trade action which created entry
+  action: TradeHistoryActionSchema,
+  // Trade direction formatted for ui display
+  uiDirection: TradeHistoryUIDirectionSchema,
+  // Trade price formatted for ui display
+  uiPrice: z.number(),
+  baseTokenAmount: z.coerce.bigint(),
+  baseTokenAmountUsd: z.number(),
+  quoteTokenAmount: z.coerce.bigint(),
+  quoteTokenAmountUsd: z.number(),
+  feeAmount: z.coerce.bigint(),
+  feeAmountUsd: z.number(),
+  pnlUsd: z.nullable(z.number()),
+  txSignature: z.nullable(z.string()),
+  positionAddress: z.nullable(z.string()),
+  slot: z.coerce.bigint(),
+  ts: z.coerce.date(),
+});
+
 export const StakingTreasury = z.object({
   address: z.string(),
   stakedTokenMint: z.string(),
@@ -493,4 +538,5 @@ export const TunaPositionNotification = createNotificationSchema(TunaPosition);
 export const TunaSpotPositionNotification = createNotificationSchema(TunaSpotPosition);
 export const LendingPositionNotification = createNotificationSchema(LendingPosition);
 export const LimitOrderNotification = createNotificationSchema(LimitOrder);
+export const TradeHistoryEntryNotification = createNotificationSchema(TradeHistoryEntry);
 export const StakingPositionNotification = createNotificationSchema(StakingPosition);
