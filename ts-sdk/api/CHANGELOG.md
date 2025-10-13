@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.3.1
+
+### Patch Changes
+
+- bf77bf4: Add trade history endpoint
+
 ## 1.3.0
 
 ### Minor Changes
