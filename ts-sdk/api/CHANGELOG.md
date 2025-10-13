@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.3.2
+
+### Patch Changes
+
+- 0f1be5b: Adjust trade history dto
+
 ## 1.3.1
 
 ### Patch Changes
