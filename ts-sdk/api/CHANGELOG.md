@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.3.3
+
+### Patch Changes
+
+- 8d0de5f: Add trade history subscription topic
+
 ## 1.3.2
 
 ### Patch Changes
