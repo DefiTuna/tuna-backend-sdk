@@ -87,6 +87,7 @@ export const WalletSubscriptionTopic = {
   LENDING_POSITIONS: "lending_positions",
   FUSION_LIMIT_ORDERS: "fusion_limit_orders",
   STAKING_POSITION: "staking_position",
+  TRADE_HISTORY: "trade_history",
 } as const;
 
 export const NotificationEntitySchema = z.enum([NotificationEntity.POOL_SWAP, ...Object.values(NotificationEntity)]);
