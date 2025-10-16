@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.3.6
+
+### Patch Changes
+
+- f8bbe8d: Add spot position leverage field
+
 ## 1.3.5
 
 ### Patch Changes
