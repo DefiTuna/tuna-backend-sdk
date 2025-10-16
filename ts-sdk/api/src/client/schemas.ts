@@ -60,6 +60,9 @@ export const TradeHistoryAction = {
   LIMIT_ORDER_FILL: "limit_order_fill",
   POSITION_INCREASE: "position_increase",
   POSITION_DECREASE: "position_decrease",
+  TAKE_PROFIT: "take_profit",
+  STOP_LOSS: "stop_loss",
+  LIQUIDATION: "liquidation",
 } as const;
 export const TradeHistoryUIDirection = {
   BUY: "buy",
