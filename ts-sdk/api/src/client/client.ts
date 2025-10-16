@@ -394,7 +394,7 @@ export class TunaApiClient {
         query.pool = options.pool.join(",");
       }
       if (options.action?.length) {
-        query.status = options.action.join(",");
+        query.action = options.action.join(",");
       }
       if (options.uiDirection?.length) {
         query.ui_direction = options.uiDirection.join(",");
