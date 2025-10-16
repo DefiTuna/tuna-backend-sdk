@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.3.4
+
+### Patch Changes
+
+- dd04430: Expand trade history action enum
+
 ## 1.3.3
 
 ### Patch Changes
