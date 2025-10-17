@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.3.8
+
+### Patch Changes
+
+- 4959406: Adjust trade history pnl struct
+
 ## 1.3.7
 
 ### Patch Changes
