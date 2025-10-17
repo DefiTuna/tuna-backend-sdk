@@ -400,7 +400,12 @@ export const TradeHistoryEntry = z.object({
   baseToken: amountWithUsd,
   quoteToken: amountWithUsd,
   fee: amountWithUsd,
-  pnl: z.nullable(usdPnl),
+  pnl: z.nullable(
+    z.object({
+      usd: z.number(),
+      bps: z.number(),
+    }),
+  ),
   txSignature: z.nullable(z.string()),
   positionAddress: z.nullable(z.string()),
   slot: z.coerce.bigint(),
