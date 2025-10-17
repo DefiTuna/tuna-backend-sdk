@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.3.7
+
+### Patch Changes
+
+- ca90030: Add pnl bps to trade history entry
+
 ## 1.3.6
 
 ### Patch Changes
