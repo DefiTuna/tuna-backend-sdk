@@ -264,22 +264,9 @@ export const TunaPosition = z.object({
   liquidity: z.coerce.bigint(),
   tickLowerIndex: z.number(),
   tickUpperIndex: z.number(),
-  /**
-   * @deprecated Use entrySqrtPrice
-   */
-  tickEntryIndex: z.number(),
-  /**
-   * @deprecated Use lowerLimitOrderSqrtPrice
-   */
-  tickStopLossIndex: z.number(),
-  /**
-   * @deprecated Use upperLimitOrderSqrtPrice
-   */
-  tickTakeProfitIndex: z.number(),
   entrySqrtPrice: z.coerce.bigint(),
   lowerLimitOrderSqrtPrice: z.coerce.bigint(),
   upperLimitOrderSqrtPrice: z.coerce.bigint(),
-  swapToTokenOnLimitOrder: z.number(),
   flags: z.number(),
   pool: z.string(),
   poolSqrtPrice: z.coerce.bigint(),
