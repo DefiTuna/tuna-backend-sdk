@@ -29,6 +29,7 @@ export const NotificationEntity = {
   STAKING_POSITION: "staking_position",
   FUSION_LIMIT_ORDER: "fusion_limit_order",
   TRADE_HISTORY_ENTRY: "trade_history_entry",
+  ORDER_HISTORY_ENTRY: "order_history_entry",
 } as const;
 export const NotificationAction = {
   CREATE: "create",
@@ -72,6 +73,27 @@ export const TradeHistoryUIDirection = {
   OPEN_SHORT: "open_short",
   CLOSE_SHORT: "close_short",
 } as const;
+export const OrderHistoryOrderType = {
+  MARKET: "market",
+  LIMIT: "limit",
+  TAKE_PROFIT_MARKET: "take_profit_market",
+  STOP_LOSS_MARKET: "stop_loss_market",
+  LIQUIDATION_MARKET: "liquidation_market",
+} as const;
+export const OrderHistoryStatus = {
+  OPEN: "open",
+  PARTIALLY_FILLED: "partially_filled",
+  FILLED: "filled",
+  CANCELLED: "cancelled",
+  CLAIMED: "claimed",
+  REJECTED: "rejected",
+} as const;
+export const OrderHistoryUIDirection = {
+  BUY: "buy",
+  SELL: "sell",
+  LONG: "long",
+  SHORT: "short",
+} as const;
 export const StakingPositionHistoryActionType = {
   STAKE: "stake",
   UNSTAKE: "unstake",
@@ -91,6 +113,7 @@ export const WalletSubscriptionTopic = {
   FUSION_LIMIT_ORDERS: "fusion_limit_orders",
   STAKING_POSITION: "staking_position",
   TRADE_HISTORY: "trade_history",
+  ORDER_HISTORY: "order_history",
 } as const;
 
 export const NotificationEntitySchema = z.enum([NotificationEntity.POOL_SWAP, ...Object.values(NotificationEntity)]);
@@ -106,6 +129,15 @@ export const TradeHistoryActionSchema = z.enum([TradeHistoryAction.SWAP, ...Obje
 export const TradeHistoryUIDirectionSchema = z.enum([
   TradeHistoryUIDirection.BUY,
   ...Object.values(TradeHistoryUIDirection),
+]);
+export const OrderHistoryOrderTypeSchema = z.enum([
+  OrderHistoryOrderType.MARKET,
+  ...Object.values(OrderHistoryOrderType),
+]);
+export const OrderHistoryStatusSchema = z.enum([OrderHistoryStatus.OPEN, ...Object.values(OrderHistoryStatus)]);
+export const OrderHistoryUIDirectionSchema = z.enum([
+  OrderHistoryUIDirection.BUY,
+  ...Object.values(OrderHistoryUIDirection),
 ]);
 export const StakingPositionHistoryActionTypeSchema = z.enum([
   StakingPositionHistoryActionType.STAKE,
@@ -145,6 +177,8 @@ export const Market = z.object({
   liquidationThreshold: z.number(),
   oraclePriceDeviationThreshold: z.number(),
   limitOrderExecutionFee: z.number(),
+  maxSpotPositionSizeA: amountWithUsd,
+  maxSpotPositionSizeB: amountWithUsd,
   borrowedFundsA: amountWithUsd,
   borrowedFundsB: amountWithUsd,
   availableBorrowA: amountWithUsd,
@@ -152,6 +186,7 @@ export const Market = z.object({
   borrowLimitA: amountWithUsd,
   borrowLimitB: amountWithUsd,
   disabled: z.boolean(),
+  createdAt: z.coerce.date(),
 });
 
 export const TokenOraclePrice = z.object({
@@ -399,6 +434,30 @@ export const TradeHistoryEntry = z.object({
   ts: z.coerce.date(),
 });
 
+export const OrderHistoryEntry = z.object({
+  // Internal entry ID
+  id: z.string(),
+  pool: z.string(),
+  authority: z.string(),
+  orderType: OrderHistoryOrderTypeSchema,
+  isReduceOnly: z.nullable(z.boolean()),
+  uiTakeProfitPrice: z.nullable(z.number()),
+  uiStopLossPrice: z.nullable(z.number()),
+  aToB: z.boolean(),
+  uiDirection: OrderHistoryUIDirectionSchema,
+  uiPrice: z.nullable(z.number()),
+  uiExecutionPrice: z.nullable(z.number()),
+  status: OrderHistoryStatusSchema,
+  baseToken: amountWithUsd,
+  quoteToken: amountWithUsd,
+  baseTokenConsumedAmount: z.nullable(z.coerce.bigint()),
+  quoteTokenFilledAmount: z.nullable(z.coerce.bigint()),
+  txSignature: z.nullable(z.string()),
+  positionAddress: z.nullable(z.string()),
+  slot: z.coerce.bigint(),
+  ts: z.coerce.date(),
+});
+
 export const StakingTreasury = z.object({
   address: z.string(),
   stakedTokenMint: z.string(),
@@ -533,4 +592,5 @@ export const TunaSpotPositionNotification = createNotificationSchema(TunaSpotPos
 export const LendingPositionNotification = createNotificationSchema(LendingPosition);
 export const LimitOrderNotification = createNotificationSchema(LimitOrder);
 export const TradeHistoryEntryNotification = createNotificationSchema(TradeHistoryEntry);
+export const OrderHistoryEntryNotification = createNotificationSchema(OrderHistoryEntry);
 export const StakingPositionNotification = createNotificationSchema(StakingPosition);

@@ -16,6 +16,9 @@ export type TunaSpotPositionStateType = z.infer<typeof schemas.TunaSpotPositionS
 export type LimitOrderStateType = z.infer<typeof schemas.LimitOrderStateSchema>;
 export type TradeHistoryActionType = z.infer<typeof schemas.TradeHistoryActionSchema>;
 export type TradeHistoryUIDirectionType = z.infer<typeof schemas.TradeHistoryUIDirectionSchema>;
+export type OrderHistoryOrderTypeType = z.infer<typeof schemas.OrderHistoryOrderTypeSchema>;
+export type OrderHistoryStatusType = z.infer<typeof schemas.OrderHistoryStatusSchema>;
+export type OrderHistoryUIDirectionType = z.infer<typeof schemas.OrderHistoryUIDirectionSchema>;
 export type StakingPositionHistoryActionType = z.infer<typeof schemas.StakingPositionHistoryActionTypeSchema>;
 export type PoolSubscriptionTopicType = z.infer<typeof schemas.PoolSubscriptionTopicSchema>;
 export type WalletSubscriptionTopicType = z.infer<typeof schemas.WalletSubscriptionTopicSchema>;
@@ -38,6 +41,7 @@ export type TunaPosition = z.infer<typeof schemas.TunaPosition>;
 export type TunaSpotPosition = z.infer<typeof schemas.TunaSpotPosition>;
 export type LimitOrder = z.infer<typeof schemas.LimitOrder>;
 export type TradeHistoryEntry = z.infer<typeof schemas.TradeHistoryEntry>;
+export type OrderHistoryEntry = z.infer<typeof schemas.OrderHistoryEntry>;
 export type StakingPosition = z.infer<typeof schemas.StakingPosition>;
 export type StakingTreasury = z.infer<typeof schemas.StakingTreasury>;
 export type StakingLeaderboardPage = z.infer<typeof schemas.StakingLeaderboardPage>;
@@ -80,6 +84,14 @@ export type GetUserTradeHistoryOptions = {
   pool?: string[];
   action?: TradeHistoryActionType[];
   uiDirection?: TradeHistoryUIDirectionType[];
+  cursor?: string;
+  limit?: number;
+  desc?: boolean;
+};
+
+export type GetUserOrderHistoryOptions = {
+  pool?: string[];
+  orderType?: OrderHistoryOrderTypeType[];
   cursor?: string;
   limit?: number;
   desc?: boolean;
@@ -413,6 +425,32 @@ export class TunaApiClient {
     const url = this.appendUrlSearchParams(this.buildURL(`users/${userAddress}/trade-history`), query);
 
     return await this.httpRequest(url, schemas.TradeHistoryEntry.array());
+  }
+
+  async getUserOrderHistory(userAddress: string, options?: GetUserOrderHistoryOptions): Promise<OrderHistoryEntry[]> {
+    let query: QueryParams = {};
+
+    if (options) {
+      if (options.pool?.length) {
+        query.pool = options.pool.join(",");
+      }
+      if (options.orderType?.length) {
+        query.order_type = options.orderType.join(",");
+      }
+      if (options.limit) {
+        query.limit = options.limit;
+      }
+      if (options.cursor) {
+        query.cursor = options.cursor;
+      }
+      if (options.desc !== undefined) {
+        query.desc = options.desc;
+      }
+    }
+
+    const url = this.appendUrlSearchParams(this.buildURL(`users/${userAddress}/order-history`), query);
+
+    return await this.httpRequest(url, schemas.OrderHistoryEntry.array());
   }
 
   async getUserStakingPosition(userAddress: string): Promise<StakingPosition> {
