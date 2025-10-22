@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.3.9
+
+### Patch Changes
+
+- afbf2fb: Remove deprecated fields
+
 ## 1.3.8
 
 ### Patch Changes
