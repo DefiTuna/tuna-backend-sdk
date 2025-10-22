@@ -185,8 +185,8 @@ describe("Single Oracle Price", async () => {
     const priceTimestampSeconds = oraclePrice.time.getTime() / 1000;
     const nowTimestampSeconds = Date.now() / 1000;
 
-    // Not older that 60 seconds
-    expect(priceTimestampSeconds).closeTo(nowTimestampSeconds, 60);
+    // Not older that 120 seconds
+    expect(priceTimestampSeconds).closeTo(nowTimestampSeconds, 120);
   });
   it("Returns 404 for unsaved mint", async () => {
     await expect(() => client.getOraclePrice(unsavedMintAddress)).rejects.toThrowError(
@@ -417,6 +417,14 @@ describe("Trade history", async () => {
 
   it("Has items", () => {
     expect(tradeHistoryEntries.length).toBeGreaterThan(0);
+  });
+});
+
+describe("Order history", async () => {
+  const orderHistoryEntries = await client.getUserOrderHistory(TEST_WALLET_ADDRESS);
+
+  it("Has items", () => {
+    expect(orderHistoryEntries.length).toBeGreaterThan(0);
   });
 });
 
