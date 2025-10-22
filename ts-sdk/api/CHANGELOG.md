@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.4.0
+
+### Minor Changes
+
+- fd9d004: Order history & New market fields
+
 ## 1.3.9
 
 ### Patch Changes
