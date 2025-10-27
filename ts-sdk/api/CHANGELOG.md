@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.4.2
+
+### Patch Changes
+
+- 3ce2df2: Remove limit order prices from order history
+
 ## 1.4.1
 
 ### Patch Changes
