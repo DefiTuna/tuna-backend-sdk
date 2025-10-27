@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.4.3
+
+### Patch Changes
+
+- 4d31d16: Add order history UI direction filter
+
 ## 1.4.2
 
 ### Patch Changes
