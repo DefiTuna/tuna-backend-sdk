@@ -441,8 +441,6 @@ export const OrderHistoryEntry = z.object({
   authority: z.string(),
   orderType: OrderHistoryOrderTypeSchema,
   isReduceOnly: z.nullable(z.boolean()),
-  uiTakeProfitPrice: z.nullable(z.number()),
-  uiStopLossPrice: z.nullable(z.number()),
   aToB: z.boolean(),
   uiDirection: OrderHistoryUIDirectionSchema,
   uiPrice: z.nullable(z.number()),
