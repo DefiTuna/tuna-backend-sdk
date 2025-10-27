@@ -92,6 +92,7 @@ export type GetUserTradeHistoryOptions = {
 export type GetUserOrderHistoryOptions = {
   pool?: string[];
   orderType?: OrderHistoryOrderTypeType[];
+  uiDiretion?: OrderHistoryUIDirectionType[];
   cursor?: string;
   limit?: number;
   desc?: boolean;
@@ -436,6 +437,9 @@ export class TunaApiClient {
       }
       if (options.orderType?.length) {
         query.order_type = options.orderType.join(",");
+      }
+      if (options.uiDiretion?.length) {
+        query.ui_direction = options.uiDiretion.join(",");
       }
       if (options.limit) {
         query.limit = options.limit;
