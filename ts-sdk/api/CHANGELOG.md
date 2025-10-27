@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.4.1
+
+### Patch Changes
+
+- 1d86e62: Add USD values to consumed & filled amounts for order history
+
 ## 1.4.0
 
 ### Minor Changes
