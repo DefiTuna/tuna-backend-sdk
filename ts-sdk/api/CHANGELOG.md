@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.5.0
+
+### Minor Changes
+
+- bdd7a6b: Add quotes endpoints
+
 ## 1.4.3
 
 ### Patch Changes
