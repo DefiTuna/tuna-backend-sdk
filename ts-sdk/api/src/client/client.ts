@@ -50,6 +50,11 @@ export type StakingPositionHistoryAction = z.infer<typeof schemas.StakingPositio
 export type PoolPriceCandle = z.infer<typeof schemas.PoolPriceCandle>;
 export type FeesStatsGroup = z.infer<typeof schemas.FeesStatsGroup>;
 export type StakingRevenueStatsGroup = z.infer<typeof schemas.StakingRevenueStatsGroup>;
+export type IncreaseSpotPositionQuote = z.infer<typeof schemas.IncreaseSpotPositionQuote>;
+export type DecreaseSpotPositionQuote = z.infer<typeof schemas.DecreaseSpotPositionQuote>;
+export type SwapByInputQuote = z.infer<typeof schemas.SwapByInputQuote>;
+export type SwapByOutputQuote = z.infer<typeof schemas.SwapByOutputQuote>;
+export type TradableAmount = z.infer<typeof schemas.TradableAmount>;
 export type PoolPriceUpdate = z.infer<typeof schemas.PoolPriceUpdate>;
 
 /* Request payloads */
@@ -482,6 +487,131 @@ export class TunaApiClient {
       to: to.toISOString().split("T")[0],
     });
     return await this.httpRequest(url, schemas.StakingRevenueStatsGroup.array());
+  }
+
+  async getSwapQuoteByInput(
+    pool: string,
+    amountIn: bigint,
+    aToB: boolean,
+    slippageToleranceBps?: number,
+  ): Promise<SwapByInputQuote> {
+    let query: QueryParams = {
+      pool,
+      amount_in: amountIn.toString(),
+      a_to_b: aToB,
+    };
+
+    if (slippageToleranceBps) {
+      query.slippage_tolerance = slippageToleranceBps;
+    }
+
+    const url = this.appendUrlSearchParams(this.buildURL(`quotes/swap-by-input`), query);
+    return await this.httpRequest(url, schemas.SwapByInputQuote);
+  }
+
+  async getSwapQuoteByOutput(
+    pool: string,
+    amountOut: bigint,
+    aToB: boolean,
+    slippageToleranceBps?: number,
+  ): Promise<SwapByInputQuote> {
+    let query: QueryParams = {
+      pool,
+      amount_out: amountOut.toString(),
+      a_to_b: aToB,
+    };
+
+    if (slippageToleranceBps) {
+      query.slippage_tolerance = slippageToleranceBps;
+    }
+
+    const url = this.appendUrlSearchParams(this.buildURL(`quotes/swap-by-output`), query);
+    return await this.httpRequest(url, schemas.SwapByInputQuote);
+  }
+
+  async getIncreaseSpotPositionQuote(
+    market: string,
+    increaseAmount: bigint,
+    collateralToken: number,
+    positionToken: number,
+    leverage: number,
+    positionAmount?: number,
+    positionDebt?: number,
+    slippageTolerance?: number,
+  ): Promise<IncreaseSpotPositionQuote> {
+    let query: QueryParams = {
+      market,
+      increase_amount: increaseAmount.toString(),
+      collateral_token: collateralToken,
+      position_token: positionToken,
+      leverage,
+    };
+    if (slippageTolerance) {
+      query.slippage_tolerance = slippageTolerance;
+    }
+    if (positionAmount) {
+      query.position_amount = positionAmount.toString();
+    }
+    if (positionDebt) {
+      query.position_debt = positionDebt.toString();
+    }
+
+    const url = this.appendUrlSearchParams(this.buildURL(`quotes/increase-spot-position`), query);
+    return await this.httpRequest(url, schemas.IncreaseSpotPositionQuote);
+  }
+
+  async getDecreaseSpotPositionQuote(
+    market: string,
+    decreaseAmount: bigint,
+    collateralToken: number,
+    positionToken: number,
+    leverage: number,
+    reduceOnly: boolean,
+    positionAmount: bigint,
+    positionDebt: bigint,
+    slippageTolerance?: number,
+  ): Promise<DecreaseSpotPositionQuote> {
+    let query: QueryParams = {
+      market,
+      decrease_amount: decreaseAmount.toString(),
+      collateral_token: collateralToken,
+      position_token: positionToken,
+      leverage,
+      reduce_only: reduceOnly,
+      position_amount: positionAmount.toString(),
+      position_debt: positionDebt.toString(),
+    };
+    if (slippageTolerance) {
+      query.slippage_tolerance = slippageTolerance;
+    }
+
+    const url = this.appendUrlSearchParams(this.buildURL(`quotes/decrease-spot-position`), query);
+    return await this.httpRequest(url, schemas.DecreaseSpotPositionQuote);
+  }
+
+  async getTradableAmount(
+    market: string,
+    collateralToken: number,
+    positionToken: number,
+    newPositionToken: number,
+    availableBalance: bigint,
+    leverage: number,
+    reduceOnly: boolean,
+    positionAmount: bigint,
+    positionDebt: bigint,
+  ): Promise<TradableAmount> {
+    const url = this.appendUrlSearchParams(this.buildURL(`quotes/tradable-amount`), {
+      market,
+      collateral_token: collateralToken,
+      position_token: positionToken,
+      new_position_token: newPositionToken,
+      available_balance: availableBalance.toString(),
+      leverage,
+      reduce_only: reduceOnly,
+      position_amount: positionAmount.toString(),
+      position_debt: positionDebt.toString(),
+    });
+    return await this.httpRequest(url, schemas.TradableAmount);
   }
 
   async getUpdatesStream(): Promise<EventSource> {

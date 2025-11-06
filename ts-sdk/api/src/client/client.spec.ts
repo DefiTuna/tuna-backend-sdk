@@ -428,6 +428,10 @@ describe("Order history", async () => {
   });
 });
 
+describe("Quotes", async () => {
+  // ToDo: Add quotes tests
+});
+
 // describe("Spot Positions", async () => {
 //   const tunaPositions = await client.getUserTunaSpotPositions(TEST_WALLET_ADDRESS);
 //   const rpcTunaPositions = await testUtils.getTunaSpotPositions(TEST_WALLET_ADDRESS);
