@@ -559,6 +559,76 @@ export const StakingRevenueStatsGroup = z.object({
   runningTotalDepositsSol: z.coerce.bigint(),
 });
 
+export const IncreaseSpotPositionQuote = z.object({
+  /** Required collateral amount */
+  collateralAmount: z.coerce.bigint(),
+  /** Required amount to borrow */
+  borrowAmount: z.coerce.bigint(),
+  /** Estimated position size in the position token. */
+  estimatedAmount: z.coerce.bigint(),
+  /** Swap input amount. */
+  swapInputAmount: z.coerce.bigint(),
+  /** Minimum swap output amount according to the provided slippage. */
+  minSwapOutputAmount: z.coerce.bigint(),
+  /** Protocol fee in token A */
+  protocolFeeA: z.coerce.bigint(),
+  /** Protocol fee in token B */
+  protocolFeeB: z.coerce.bigint(),
+  /** Price impact in percents */
+  priceImpact: z.number(),
+  /** Liquidation price */
+  uiLiquidationPrice: z.nullable(z.number()),
+});
+
+export const DecreaseSpotPositionQuote = z.object({
+  /** Position decrease percentage */
+  decreasePercent: z.coerce.bigint(),
+  /** Collateral token of the new position */
+  collateralToken: z.number(),
+  /** Token of the new position */
+  positionToken: z.number(),
+  /** Required additional collateral amount */
+  collateralAmount: z.coerce.bigint(),
+  /** Required amount to borrow */
+  borrowAmount: z.coerce.bigint(),
+  /** The maximum acceptable swap input amount for position decrease according to the provided slippage
+   * (if collateral_token == position_token) OR the minimum swap output amount (if collateral_token != position_token).
+   */
+  decreaseAcceptableSwapAmount: z.coerce.bigint(),
+  /** The minimum swap output amount for position increase according to the provided slippage. */
+  increaseMinSwapOutputAmount: z.coerce.bigint(),
+  /** Estimated total amount of the new position */
+  estimatedAmount: z.coerce.bigint(),
+  /** Protocol fee in token A */
+  protocolFeeA: z.coerce.bigint(),
+  /** Protocol fee in token B */
+  protocolFeeB: z.coerce.bigint(),
+  /** Price impact in percents */
+  priceImpact: z.number(),
+  /** Liquidation price */
+  uiLiquidationPrice: z.nullable(z.number()),
+});
+
+export const SwapByInputQuote = z.object({
+  estimatedAmountOut: z.coerce.bigint(),
+  minAmountOut: z.coerce.bigint(),
+  feeAmount: z.coerce.bigint(),
+  feeUsd: z.number(),
+  /** Price impact in percents */
+  priceImpact: z.number(),
+});
+
+export const SwapByOutputQuote = z.object({
+  estimatedAmountIn: z.coerce.bigint(),
+  maxAmountIn: z.coerce.bigint(),
+  feeAmount: z.coerce.bigint(),
+  feeUsd: z.number(),
+  /** Price impact in percents */
+  priceImpact: z.number(),
+});
+
+export const TradableAmount = amountWithUsd;
+
 export const UpdateStreamSubscriptionResult = z.object({
   status: z.string(),
 });
