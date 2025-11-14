@@ -17,6 +17,7 @@ import {
   // NotificationEntity, schemas, SubscriptionPayload,
   TunaApiClient,
 } from "./client";
+import * as schemas from "./schemas";
 // import { PoolSubscriptionTopic } from "./schemas";
 import * as testUtils from "./testUtils";
 
@@ -750,3 +751,162 @@ describe("Staking Revenue", async () => {
 //   },
 //   { timeout: 30000 },
 // );
+
+describe("LP positions history", async () => {
+  const tunaPositions = await client.getUserLpPositions(TEST_WALLET_ADDRESS);
+  it("Length matches 2", () => {
+    expect(tunaPositions.length).toBe(2);
+  });
+
+  const positionWithoutLeverage = tunaPositions.find(
+    v => v.positionAddress === "6SaKKYAAddvbMoqpoUyrDTkTv9qxifVpTcip539LFNjs",
+  );
+  const positionWithLeverage = tunaPositions.find(
+    v => v.positionAddress === "AiNPCv5iqPxXCfmfn7ySGQ6mBRKMN3pM8wXNmm6VPbEq",
+  );
+  it("Test positions found", () => {
+    expect(positionWithoutLeverage).toBeDefined();
+    expect(positionWithLeverage).toBeDefined();
+  });
+
+  it("Test position 1 variables", () => {
+    expect(positionWithoutLeverage?.authority).toBe(TEST_WALLET_ADDRESS);
+    expect(positionWithoutLeverage?.pool).toBe(SOL_USDC_ORCA_POOL_ADDRESS);
+    expect(positionWithoutLeverage?.state).toBe(schemas.TunaPositionState.OPEN);
+    expect(positionWithoutLeverage?.lowerPrice).toBe(146.03575260254757);
+    expect(positionWithoutLeverage?.upperPrice).toBe(149.58282796912408);
+    expect(positionWithoutLeverage?.lowerLimitOrder).toBeNull();
+    expect(positionWithoutLeverage?.upperLimitOrder).toBeNull();
+    expect(positionWithoutLeverage?.marketMaker).toBe(schemas.PoolProvider.ORCA);
+    expect(positionWithoutLeverage?.openedAt).toStrictEqual(new Date("2025-03-07T19:30:55Z"));
+    expect(positionWithoutLeverage?.closedAt).toBeNull();
+    expect(positionWithoutLeverage?.totalValueUsd).toBeGreaterThan(0);
+    expect(positionWithoutLeverage?.totalDepositUsd).toBeGreaterThan(0);
+    expect(positionWithoutLeverage?.totalWithdrawnUsd).toBe(0);
+    expect(positionWithoutLeverage?.leverage).toBe(1);
+    expect(positionWithoutLeverage?.initialLeverage).toBe(1);
+    expect(positionWithoutLeverage?.feesSumUsd).toBeGreaterThan(0);
+    expect(positionWithoutLeverage?.closedPnlSumUsd).toBe(0);
+    expect(positionWithoutLeverage?.entryPrice).toBeCloseTo(0.006760562464516597, 4);
+    expect(positionWithoutLeverage?.exitPrice).toBeNull();
+  });
+
+  it("Test position 2 variables", () => {
+    expect(positionWithLeverage?.authority).toBe(TEST_WALLET_ADDRESS);
+    expect(positionWithLeverage?.pool).toBe(SOL_USDC_ORCA_POOL_ADDRESS);
+    expect(positionWithLeverage?.state).toBe(schemas.TunaPositionState.OPEN);
+    expect(positionWithLeverage?.lowerPrice).toBe(139.97356627043357);
+    expect(positionWithLeverage?.upperPrice).toBe(209.98441502144414);
+    expect(positionWithLeverage?.lowerLimitOrder).toBeNull();
+    expect(positionWithLeverage?.upperLimitOrder).toBeNull();
+    expect(positionWithLeverage?.marketMaker).toBe(schemas.PoolProvider.ORCA);
+    expect(positionWithLeverage?.openedAt).toStrictEqual(new Date("2025-03-07T19:32:20Z"));
+    expect(positionWithLeverage?.closedAt).toBeNull();
+    expect(positionWithLeverage?.totalValueUsd).toBeGreaterThan(0);
+    expect(positionWithLeverage?.totalDepositUsd).toBeGreaterThan(0);
+    expect(positionWithLeverage?.totalWithdrawnUsd).toBe(0);
+    expect(positionWithLeverage?.leverage).toBeGreaterThan(1);
+    expect(positionWithLeverage?.initialLeverage).toBeGreaterThan(1);
+    expect(positionWithLeverage?.feesSumUsd).toBeGreaterThan(0);
+    expect(positionWithLeverage?.closedPnlSumUsd).toBe(0);
+    expect(positionWithLeverage?.entryPrice).toBeCloseTo(0.006754327193235526, 4);
+    expect(positionWithLeverage?.exitPrice).toBeNull();
+  });
+});
+
+describe("LP positions history query options", async () => {
+  it("Filter options", async () => {
+    const opened = await client.getUserLpPositions(TEST_WALLET_ADDRESS, { filter: "opened" });
+    const closed = await client.getUserLpPositions(TEST_WALLET_ADDRESS, { filter: "closed" });
+    expect(opened.length).toBe(2);
+    expect(closed.length).toBe(0);
+  });
+
+  it("AfterPosition options", async () => {
+    const positions = await client.getUserLpPositions(TEST_WALLET_ADDRESS, {
+      afterPosition: "AiNPCv5iqPxXCfmfn7ySGQ6mBRKMN3pM8wXNmm6VPbEq",
+    });
+    expect(positions.length).toBe(1);
+  });
+
+  it("OpenedAt options", async () => {
+    const positions = await client.getUserLpPositions(TEST_WALLET_ADDRESS, {
+      openedAt: { from: new Date("2025-03-07T19:32:20Z"), to: new Date("2025-03-07T19:32:20Z") },
+    });
+    expect(positions.length).toBe(1);
+  });
+
+  it("ClosedAt options", async () => {
+    const positions = await client.getUserLpPositions(TEST_WALLET_ADDRESS, {
+      closedAt: { from: new Date("2025-03-07T19:32:20Z"), to: new Date("2025-03-07T19:32:20Z") },
+    });
+    expect(positions.length).toBe(0);
+  });
+});
+
+describe("LP position actions", async () => {
+  const actions = await client.getUserLpPositionActions(
+    TEST_WALLET_ADDRESS,
+    "6SaKKYAAddvbMoqpoUyrDTkTv9qxifVpTcip539LFNjs",
+  );
+
+  it("Actions length", () => {
+    expect(actions.length).toBe(2);
+  });
+
+  const increaseLiquidity = actions[0];
+  const openPosition = actions[1];
+
+  it("OpenPosition parameters", () => {
+    expect(openPosition.action).toBe(schemas.LpPositionsActionType.OPEN_POSITION);
+    expect(openPosition.txSignature).toBe(
+      "2qgLvLArPc3qKod4MHbeE2ri2PAA9nrCV3ubqvGhVQ6TfxQNFhCn5tLiheLbk4UiPqzr2XTfCKQve3mdT3adQheG",
+    );
+    expect(openPosition.txTimestamp).toStrictEqual(new Date("2025-03-07T19:30:55Z"));
+    const parameters = openPosition.data.parameters;
+    expect(parameters).toBeDefined();
+    expect(parameters?.lowerPrice).toBe(146.03575260254755);
+    expect(parameters?.upperPrice).toBe(149.58282796912408);
+    expect(parameters?.lowerLimitOrder).toBeNull();
+    expect(parameters?.upperLimitOrder).toBeNull();
+    expect(parameters?.lowerLimitOrderSwap).toBe(schemas.LpPositionLimitOrderSwap.SWAP_TO_TOKEN_B);
+    expect(parameters?.upperLimitOrderSwap).toBe(schemas.LpPositionLimitOrderSwap.SWAP_TO_TOKEN_A);
+    expect(parameters?.autoCompound).toBe(schemas.LpPositionAutoCompound.NO_AUTO_COMPOUND);
+    expect(parameters?.rebalance).toBe(schemas.LpPositionRebalance.NO_REBALANCE);
+    expect(parameters?.rebalanceThresholdTicks).toBe(0);
+  });
+
+  it("IncreaseLiquidity parameters", () => {
+    expect(increaseLiquidity.action).toBe(schemas.LpPositionsActionType.INCREASE_LIQUIDITY);
+    expect(increaseLiquidity.txSignature).toBe(
+      "2qgLvLArPc3qKod4MHbeE2ri2PAA9nrCV3ubqvGhVQ6TfxQNFhCn5tLiheLbk4UiPqzr2XTfCKQve3mdT3adQheG",
+    );
+    expect(increaseLiquidity.txTimestamp).toStrictEqual(new Date("2025-03-07T19:30:55Z"));
+    const toPosition = increaseLiquidity.data.toPosition;
+    expect(toPosition).toBeDefined();
+    expect(toPosition?.leverage).toBe(1);
+    expect(toPosition?.loanFundsA).toBe(0);
+    expect(toPosition?.loanFundsB).toBe(0);
+    expect(toPosition?.loanFundsUsd).toBe(0);
+    expect(toPosition?.totalValueA).toBeGreaterThan(0);
+    expect(toPosition?.totalValueB).toBeGreaterThan(0);
+    expect(toPosition?.totalValueUsd).toBeGreaterThan(0);
+    const fromOwner = increaseLiquidity.data.fromOwner;
+    expect(fromOwner).toBeDefined();
+    expect(fromOwner?.amountA).toBeGreaterThan(0);
+    expect(fromOwner?.amountB).toBe(0);
+    expect(fromOwner?.amountUsd).toBeGreaterThan(0);
+    const fromLending = increaseLiquidity.data.fromLending;
+    expect(fromLending).toBeDefined();
+    expect(fromLending?.amountA).toBe(0);
+    expect(fromLending?.amountB).toBe(0);
+    expect(fromLending?.amountUsd).toBe(0);
+    const protocolFees = increaseLiquidity.data.protocolFees;
+    expect(protocolFees).toBeDefined();
+    expect(protocolFees?.amountA).toBeGreaterThan(0);
+    expect(protocolFees?.amountB).toBe(0);
+    expect(protocolFees?.amountUsd).toBeGreaterThan(0);
+    const prices = increaseLiquidity.data.prices;
+    expect(prices).toBeDefined();
+  });
+});
