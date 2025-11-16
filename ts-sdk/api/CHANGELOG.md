@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.5.1
+
+### Patch Changes
+
+- 1074276: Quotes endpoints fixes
+
 ## 1.5.0
 
 ### Minor Changes
