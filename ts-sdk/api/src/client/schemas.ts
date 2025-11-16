@@ -348,6 +348,7 @@ export const TunaSpotPosition = z.object({
   loanFunds: amountWithUsd,
   currentLoan: amountWithUsd,
   total: amountWithUsd,
+  uiLiquidationPrice: z.nullable(z.number()),
   pnlUsd: usdPnl,
   leverage: z.number(),
   openedAt: z.coerce.date(),
