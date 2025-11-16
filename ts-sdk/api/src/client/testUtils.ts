@@ -1,3 +1,4 @@
+import Decimal from "decimal.js";
 import * as DefiTunaClient from "@crypticdot/defituna-client";
 import { address, createSolanaRpc, getAddressEncoder, getBase64Decoder, getBase64Encoder } from "@solana/kit";
 
@@ -143,4 +144,26 @@ export async function getTunaSpotPositions(userAddress: string) {
     address: accounts[i].pubkey,
     data,
   }));
+}
+
+function bigintToDecimal(value: bigint, decimals = 0) {
+  if (decimals != 0) {
+    const scale = 10 ** decimals;
+    return new Decimal(value.toString()).div(scale);
+  } else {
+    return new Decimal(value.toString());
+  }
+}
+
+export function bigintToNumber(value: bigint, decimals = 0) {
+  return bigintToDecimal(value, decimals).toNumber();
+}
+
+function decimalToBigint(value: Decimal.Value, decimals = 0) {
+  const scale = 10 ** decimals;
+  return BigInt(new Decimal(value).mul(scale).toFixed(0));
+}
+
+export function numberToBigint(value: number, decimals = 0) {
+  return decimalToBigint(value, decimals);
 }

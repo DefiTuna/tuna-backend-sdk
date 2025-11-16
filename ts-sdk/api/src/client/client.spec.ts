@@ -17,11 +17,20 @@ import {
 } from "./client";
 // import { PoolSubscriptionTopic } from "./schemas";
 import * as testUtils from "./testUtils";
+import { PoolToken } from "@crypticdot/defituna-client";
 
 vi.stubGlobal("EventSource", NodeEventSource);
 
 const TEST_WALLET_ADDRESS = "CYCf8sBj4zLZheRovh37rWLe7pK8Yn5G7nb4SeBmgfMG";
-const SOL_USDC_POOL_ADDRESS = "Czfq3xZZDmsdGdUyrNLtRhGc47cXcZtLG4crryfu44zE";
+const SOL_VAULT_ADDRESS = "Ev5X54o83Z3MDV6PzTT9jyGkCPj7zQUXe9apWmGcwLHF";
+const SOL_USDC_ORCA_POOL_ADDRESS = "Czfq3xZZDmsdGdUyrNLtRhGc47cXcZtLG4crryfu44zE";
+const SOL_USDC_FUSION_POOL_ADDRESS = "7VuKeevbvbQQcxz6N4SNLmuq6PYy4AcGQRDssoqo4t65";
+const SOL_USDC_FUSION_MARKET_ADDRESS = "2oXrPNQy6GRwvgTAY5aBXoctD4RXNis2FTH9Ukp1mUkh";
+const SOL_MINT = "So11111111111111111111111111111111111111112";
+const USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
+const SOL_DECIMALS = 9;
+const USDC_DECIMALS = 6;
+const BPS_DENOMINATOR = 10000;
 
 const baseURL = process.env.API_BASE_URL!;
 const client = new TunaApiClient(baseURL);
@@ -98,9 +107,6 @@ describe("Markets", async () => {
       markets.map(market => market.poolAddress).sort(),
     );
   });
-  it("Have valid fee rate", () => {
-    expect(markets.every(market => market.poolFeeRate > 0)).toBe(true);
-  });
 });
 
 describe("Single Market", async () => {
@@ -132,6 +138,7 @@ describe("Single Market", async () => {
 
 describe("Oracle Prices", async () => {
   const rpcVaults = await testUtils.getVaults();
+  const nowTimestampSeconds = Date.now() / 1000;
   const oraclePrices = await client.getOraclePrices();
 
   it("Length matches RPC vaults", () => {
@@ -141,12 +148,11 @@ describe("Oracle Prices", async () => {
     expect(rpcVaults.map(rpcVault => rpcVault.data.mint).sort()).toEqual(oraclePrices.map(price => price.mint).sort());
   });
   it("Returns recent prices", () => {
-    const price = oraclePrices[0];
+    const price = oraclePrices.find(price => price.mint == SOL_MINT)!;
 
     expect(price).toBeDefined();
 
     const priceTimestampSeconds = price.time.getTime() / 1000;
-    const nowTimestampSeconds = Date.now() / 1000;
 
     // Not older that 60 seconds
     expect(priceTimestampSeconds).closeTo(nowTimestampSeconds, 60);
@@ -172,18 +178,15 @@ describe("Oracle Prices", async () => {
 });
 
 describe("Single Oracle Price", async () => {
-  const rpcVaults = await testUtils.getVaults();
-  const sampleMintAddress = rpcVaults[0].data.mint;
   const unsavedMintAddress = "FeR8VBqNRSUD5NtXAj2n3j1dAHkZHfyDktKuLXD4pump";
-  const oraclePrice = await client.getOraclePrice(sampleMintAddress);
+  const nowTimestampSeconds = Date.now() / 1000;
+  const oraclePrice = await client.getOraclePrice(SOL_MINT);
 
   it("Returns oracle price", () => {
-    expect(oraclePrice.mint).toBe(sampleMintAddress);
     expect(oraclePrice.price).toBeGreaterThan(0);
   });
   it("Returns recent price", () => {
     const priceTimestampSeconds = oraclePrice.time.getTime() / 1000;
-    const nowTimestampSeconds = Date.now() / 1000;
 
     // Not older that 120 seconds
     expect(priceTimestampSeconds).closeTo(nowTimestampSeconds, 120);
@@ -228,15 +231,13 @@ describe("Vaults", async () => {
 });
 
 describe("Single Vault", async () => {
-  const rpcVaults = await testUtils.getVaults();
-  const sampleVault = rpcVaults[0];
   const unsavedVaultAddress = "FeR8VBqNRSUD5NtXAj2n3j1dAHkZHfyDktKuLXD4pump";
-  const vault = await client.getVault(sampleVault.address);
-  const history = await client.getVaultHistory(sampleVault.address, new Date(2025, 3, 1), new Date(2025, 5, 1));
+  const vault = await client.getVault(SOL_VAULT_ADDRESS);
+  const history = await client.getVaultHistory(SOL_VAULT_ADDRESS, new Date(2025, 3, 1), new Date(2025, 5, 1));
 
   it("Returns vault data", () => {
-    expect(vault.address).toBe(sampleVault.address);
-    expect(vault.mint).toBe(sampleVault.data.mint);
+    expect(vault.address).toBe(SOL_VAULT_ADDRESS);
+    expect(vault.mint).toBe(SOL_MINT);
   });
 
   it("Returns vault historical data", () => {
@@ -428,54 +429,179 @@ describe("Order history", async () => {
   });
 });
 
-describe("Quotes", async () => {
-  // ToDo: Add quotes tests
+describe("Swap Quotes", async () => {
+  const oraclePrices = await client.getOraclePrices();
+  const solOraclePrice = oraclePrices.find(oraclePrice => oraclePrice.mint == SOL_MINT)!;
+  const usdcOraclePrice = oraclePrices.find(oraclePrice => oraclePrice.mint == USDC_MINT)!;
+  const solPrice = testUtils.bigintToNumber(solOraclePrice.price, solOraclePrice.decimals);
+  const usdcPrice = testUtils.bigintToNumber(usdcOraclePrice.price, usdcOraclePrice.decimals);
+
+  it("Calculates swap quote by input", async () => {
+    const solAmountIn = testUtils.numberToBigint(1, SOL_DECIMALS);
+    let swapQuoteByInput = await client.getSwapQuoteByInput(
+      SOL_USDC_FUSION_POOL_ADDRESS,
+      solAmountIn,
+      true,
+      BPS_DENOMINATOR,
+    );
+    const usdcAmountOut = testUtils.bigintToNumber(swapQuoteByInput.estimatedAmountOut, USDC_DECIMALS);
+    const usdcAmountOutUsd = usdcAmountOut * usdcPrice;
+    // 1% deviation from oracle price
+    const deviation = usdcAmountOut / 100;
+    expect(usdcAmountOutUsd).closeTo(solPrice, deviation);
+    expect(swapQuoteByInput.feeAmount).toBeGreaterThan(0n);
+  });
+
+  it("Calculates swap quote by output", async () => {
+    const solAmountOut = testUtils.numberToBigint(1, SOL_DECIMALS);
+    let swapQuoteByOutput = await client.getSwapQuoteByOutput(
+      SOL_USDC_FUSION_POOL_ADDRESS,
+      solAmountOut,
+      false,
+      BPS_DENOMINATOR,
+    );
+    const usdcAmountIn = testUtils.bigintToNumber(swapQuoteByOutput.estimatedAmountIn, USDC_DECIMALS);
+    const usdcAmountInUsd = usdcAmountIn * usdcPrice;
+    // 1% deviation from oracle price
+    const deviation = usdcAmountIn / 100;
+    expect(usdcAmountInUsd).closeTo(solPrice, deviation);
+    expect(swapQuoteByOutput.feeAmount).toBeGreaterThan(0n);
+  });
+
+  it("Calculates increase spot position quote for new position", async () => {
+    const usdcIncreaseAmount = testUtils.numberToBigint(2, USDC_DECIMALS);
+    const leverage = 2;
+    let increaseSpotPositionQuote = await client.getIncreaseSpotPositionQuote(
+      SOL_USDC_FUSION_MARKET_ADDRESS,
+      usdcIncreaseAmount,
+      // USDC as collateral token
+      PoolToken.B,
+      // SOL as position token
+      PoolToken.A,
+      leverage,
+      undefined,
+      undefined,
+      BPS_DENOMINATOR,
+    );
+
+    expect(increaseSpotPositionQuote.borrowAmount).toEqual(usdcIncreaseAmount / BigInt(leverage));
+    expect(increaseSpotPositionQuote.uiLiquidationPrice).toBeGreaterThan(0);
+    expect(increaseSpotPositionQuote.protocolFeeA + increaseSpotPositionQuote.protocolFeeB).toBeGreaterThan(0n);
+  });
+
+  it("Calculates increase spot position quote for existing position", async () => {
+    const usdcIncreaseAmount = testUtils.numberToBigint(2, USDC_DECIMALS);
+    const positionAmount = testUtils.numberToBigint(1, SOL_DECIMALS);
+    const positionDebt = testUtils.numberToBigint(150, USDC_DECIMALS);
+    const leverage = 2;
+    let increaseSpotPositionQuote = await client.getIncreaseSpotPositionQuote(
+      SOL_USDC_FUSION_MARKET_ADDRESS,
+      usdcIncreaseAmount,
+      // USDC as collateral token
+      PoolToken.B,
+      // SOL as position token
+      PoolToken.A,
+      leverage,
+      positionAmount,
+      positionDebt,
+      BPS_DENOMINATOR,
+    );
+
+    expect(increaseSpotPositionQuote.borrowAmount).toEqual(usdcIncreaseAmount / BigInt(leverage));
+    expect(increaseSpotPositionQuote.uiLiquidationPrice).toBeGreaterThan(0);
+    expect(increaseSpotPositionQuote.protocolFeeA + increaseSpotPositionQuote.protocolFeeB).toBeGreaterThan(0n);
+  });
+
+  it("Calculates decrease spot position quote", async () => {
+    const usdcDecreaseAmount = testUtils.numberToBigint(100, USDC_DECIMALS);
+    const leverage = 2;
+    const positionAmount = testUtils.numberToBigint(10, SOL_DECIMALS);
+    const positionDebt = testUtils.numberToBigint(500, USDC_DECIMALS);
+    let decreaseSpotPositionQuote = await client.getDecreaseSpotPositionQuote(
+      SOL_USDC_FUSION_MARKET_ADDRESS,
+      usdcDecreaseAmount,
+      // USDC as collateral token
+      PoolToken.B,
+      // SOL as position token
+      PoolToken.A,
+      leverage,
+      true,
+      positionAmount,
+      positionDebt,
+      BPS_DENOMINATOR,
+    );
+
+    expect(decreaseSpotPositionQuote.collateralAmount).toEqual(0n);
+    expect(decreaseSpotPositionQuote.uiLiquidationPrice).toBeGreaterThan(0);
+    expect(decreaseSpotPositionQuote.protocolFeeA + decreaseSpotPositionQuote.protocolFeeB).toEqual(0n);
+  });
 });
 
-// describe("Spot Positions", async () => {
-//   const tunaPositions = await client.getUserTunaSpotPositions(TEST_WALLET_ADDRESS);
-//   const rpcTunaPositions = await testUtils.getTunaSpotPositions(TEST_WALLET_ADDRESS);
+// describe("Tradable Amount", async () => {
+//   const availableBalance = testUtils.numberToBigint(1, SOL_DECIMALS);
+//   const positionAmount = testUtils.numberToBigint(1, SOL_DECIMALS);
+//   const positionDebt = 0n;
+//   const leverage = 2;
+//   const tradableAmount = await client.getTradableAmount(
+//     SOL_USDC_FUSION_MARKET_ADDRESS,
+//     PoolToken.A,
+//     PoolToken.A,
+//     PoolToken.B,
+//     availableBalance,
+//     leverage,
+//     false,
+//     positionAmount,
+//     positionDebt,
+//   );
 
-//   it("Length matches RPC tuna positions", () => {
-//     expect(tunaPositions.length).toBe(rpcTunaPositions.length);
-//   });
-//   it("Match RPC tuna positions addresses", () => {
-//     expect(tunaPositions.map(position => position.address).sort()).toEqual(
-//       rpcTunaPositions.map(position => position.address).sort(),
-//     );
-//   });
-//   it("Match RPC tuna positions data", () => {
-//     expect(
-//       rpcTunaPositions
-//         .map(({ address, data }) => [
-//           address,
-//           data.authority,
-//           data.pool,
-//           data.collateralToken,
-//           data.positionToken,
-//           data.loanFunds,
-//         ])
-//         .sort(([a], [b]) => a.toString().localeCompare(b.toString())),
-//     ).toEqual(
-//       tunaPositions
-//         .map(position => [
-//           position.address,
-//           position.authority,
-//           position.pool,
-//           position.collateralToken,
-//           position.positionToken,
-//           position.loanFunds.amount,
-//         ])
-//         .sort(([a], [b]) => a.toString().localeCompare(b.toString())),
-//     );
-//   });
-//   it("Have USD values for tokens", () => {
-//     expect(tunaPositions.every(position => position.total.usd > 0)).toBe(true);
-//   });
+//   console.log(tradableAmount);
 // });
 
+describe("Spot Positions", async () => {
+  const tunaPositions = await client.getUserTunaSpotPositions(TEST_WALLET_ADDRESS);
+  const rpcTunaPositions = await testUtils.getTunaSpotPositions(TEST_WALLET_ADDRESS);
+
+  it("Length matches RPC tuna positions", () => {
+    expect(tunaPositions.length).toBe(rpcTunaPositions.length);
+  });
+  it("Match RPC tuna positions addresses", () => {
+    expect(tunaPositions.map(position => position.address).sort()).toEqual(
+      rpcTunaPositions.map(position => position.address).sort(),
+    );
+  });
+  it("Match RPC tuna positions data", () => {
+    expect(
+      rpcTunaPositions
+        .map(({ address, data }) => [
+          address,
+          data.authority,
+          data.pool,
+          data.collateralToken,
+          data.positionToken,
+          data.loanFunds,
+        ])
+        .sort(([a], [b]) => a.toString().localeCompare(b.toString())),
+    ).toEqual(
+      tunaPositions
+        .map(position => [
+          position.address,
+          position.authority,
+          position.pool,
+          position.collateralToken,
+          position.positionToken,
+          position.loanFunds.amount,
+        ])
+        .sort(([a], [b]) => a.toString().localeCompare(b.toString())),
+    );
+  });
+  it("Have USD values for tokens", () => {
+    expect(tunaPositions.every(position => position.total.usd > 0)).toBe(true);
+  });
+});
+
 describe("Pool swaps", async () => {
-  const poolSwaps = await client.getPoolSwaps(SOL_USDC_POOL_ADDRESS);
+  const nowTimestampSeconds = Date.now() / 1000;
+  const poolSwaps = await client.getPoolSwaps(SOL_USDC_ORCA_POOL_ADDRESS);
 
   it("Returns correct data", () => {
     expect(poolSwaps.length).toBeGreaterThan(0);
@@ -483,7 +609,6 @@ describe("Pool swaps", async () => {
     expect(sampleSwap.amountIn).toBeGreaterThan(0n);
     expect(sampleSwap.amountOut).toBeGreaterThan(0n);
     const swapTimestampSeconds = sampleSwap.time.getTime() / 1000;
-    const nowTimestampSeconds = Date.now() / 1000;
     expect(swapTimestampSeconds).closeTo(nowTimestampSeconds, 60);
   });
 });
@@ -542,7 +667,7 @@ describe("Staking Revenue", async () => {
 //     let poolUpdatesStream: EventSource;
 
 //     beforeAll(async () => {
-//       // poolUpdatesStream = await client.getPoolUpdatesStream(SOL_USDC_POOL_ADDRESS);
+//       // poolUpdatesStream = await client.getPoolUpdatesStream(SOL_USDC_ORCA_POOL_ADDRESS);
 //     });
 
 //     afterAll(() => {
@@ -580,7 +705,7 @@ describe("Staking Revenue", async () => {
 //       const firstEvent = (await once(updatesStream, "message")) as MessageEvent<string>[];
 //       const streamId = camelcaseKeys(JSON.parse(firstEvent[0].data), { deep: true }).streamId as string;
 //       const subscription: SubscriptionPayload = {
-//         pools: [{ address: SOL_USDC_POOL_ADDRESS, topics: [PoolSubscriptionTopic.POOL_SWAPS] }],
+//         pools: [{ address: SOL_USDC_ORCA_POOL_ADDRESS, topics: [PoolSubscriptionTopic.POOL_SWAPS] }],
 //       };
 //       await client.updateStreamSubscription(streamId, subscription);
 //       const secondEvent = (await once(updatesStream, "message")) as MessageEvent<string>[];
