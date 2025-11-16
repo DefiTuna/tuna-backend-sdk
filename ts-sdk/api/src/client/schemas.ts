@@ -582,7 +582,7 @@ export const IncreaseSpotPositionQuote = z.object({
 
 export const DecreaseSpotPositionQuote = z.object({
   /** Position decrease percentage */
-  decreasePercent: z.coerce.bigint(),
+  decreasePercent: z.number(),
   /** Collateral token of the new position */
   collateralToken: z.number(),
   /** Token of the new position */

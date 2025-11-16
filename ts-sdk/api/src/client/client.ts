@@ -514,7 +514,7 @@ export class TunaApiClient {
     amountOut: bigint,
     aToB: boolean,
     slippageToleranceBps?: number,
-  ): Promise<SwapByInputQuote> {
+  ): Promise<SwapByOutputQuote> {
     let query: QueryParams = {
       pool,
       amount_out: amountOut.toString(),
@@ -526,7 +526,7 @@ export class TunaApiClient {
     }
 
     const url = this.appendUrlSearchParams(this.buildURL(`quotes/swap-by-output`), query);
-    return await this.httpRequest(url, schemas.SwapByInputQuote);
+    return await this.httpRequest(url, schemas.SwapByOutputQuote);
   }
 
   async getIncreaseSpotPositionQuote(
@@ -535,8 +535,8 @@ export class TunaApiClient {
     collateralToken: number,
     positionToken: number,
     leverage: number,
-    positionAmount?: number,
-    positionDebt?: number,
+    positionAmount?: bigint,
+    positionDebt?: bigint,
     slippageTolerance?: number,
   ): Promise<IncreaseSpotPositionQuote> {
     let query: QueryParams = {
