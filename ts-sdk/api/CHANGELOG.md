@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.5.2
+
+### Patch Changes
+
+- 8512b7a: Add ui liquidation price to tuna spot positions
+
 ## 1.5.1
 
 ### Patch Changes
