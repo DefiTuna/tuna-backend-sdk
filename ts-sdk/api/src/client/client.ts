@@ -593,23 +593,19 @@ export class TunaApiClient {
     market: string,
     collateralToken: number,
     positionToken: number,
-    newPositionToken: number,
     availableBalance: bigint,
     leverage: number,
-    reduceOnly: boolean,
     positionAmount: bigint,
-    positionDebt: bigint,
+    increase: boolean,
   ): Promise<TradableAmount> {
     const url = this.appendUrlSearchParams(this.buildURL(`quotes/tradable-amount`), {
       market,
       collateral_token: collateralToken,
       position_token: positionToken,
-      new_position_token: newPositionToken,
       available_balance: availableBalance.toString(),
       leverage,
-      reduce_only: reduceOnly,
       position_amount: positionAmount.toString(),
-      position_debt: positionDebt.toString(),
+      increase,
     });
     return await this.httpRequest(url, schemas.TradableAmount);
   }
