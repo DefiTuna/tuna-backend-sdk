@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.5.3
+
+### Patch Changes
+
+- ccf107d: Update quote and tradable amount endpoints
+
 ## 1.5.2
 
 ### Patch Changes
