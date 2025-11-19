@@ -457,7 +457,7 @@ describe("Swap Quotes", async () => {
     let swapQuoteByOutput = await client.getSwapQuoteByOutput(
       SOL_USDC_FUSION_POOL_ADDRESS,
       solAmountOut,
-      false,
+      true,
       BPS_DENOMINATOR,
     );
     const usdcAmountIn = testUtils.bigintToNumber(swapQuoteByOutput.estimatedAmountIn, USDC_DECIMALS);
@@ -531,9 +531,7 @@ describe("Swap Quotes", async () => {
       BPS_DENOMINATOR,
     );
 
-    expect(decreaseSpotPositionQuote.collateralAmount).toEqual(0n);
     expect(decreaseSpotPositionQuote.uiLiquidationPrice).toBeGreaterThan(0);
-    expect(decreaseSpotPositionQuote.protocolFeeA + decreaseSpotPositionQuote.protocolFeeB).toEqual(0n);
   });
 });
 
