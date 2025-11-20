@@ -38,6 +38,8 @@ export type OrderBookEntry = z.infer<typeof schemas.OrderBookEntry>;
 export type OrderBook = z.infer<typeof schemas.OrderBook>;
 export type LendingPosition = z.infer<typeof schemas.LendingPosition>;
 export type TunaPosition = z.infer<typeof schemas.TunaPosition>;
+export type TunaLpPosition = z.infer<typeof schemas.TunaLpPosition>;
+export type TunaLpPositionAction = z.infer<typeof schemas.TunaLpPositionAction>;
 export type TunaSpotPosition = z.infer<typeof schemas.TunaSpotPosition>;
 export type LimitOrder = z.infer<typeof schemas.LimitOrder>;
 export type TradeHistoryEntry = z.infer<typeof schemas.TradeHistoryEntry>;
@@ -102,6 +104,19 @@ export type GetUserOrderHistoryOptions = {
   limit?: number;
   desc?: boolean;
 };
+
+export type GetLpPositionsOptions = {
+  filter?: "all" | "opened" | "closed";
+  afterPosition?: string;
+  openedAt?: {
+    from?: Date;
+    to?: Date;
+  };
+  closedAt?: {
+    from?: Date;
+    to?: Date;
+  };
+}
 
 /* Client configuration */
 export type DurationInMs = number;
@@ -352,6 +367,41 @@ export class TunaApiClient {
   async getUserTunaPositionByAddress(userAddress: string, tunaPositionAddress: string): Promise<TunaPosition> {
     const url = this.buildURL(`users/${userAddress}/tuna-positions/${tunaPositionAddress}`);
     return await this.httpRequest(url, schemas.TunaPosition);
+  }
+
+  async getUserLpPositions(userAddress: string, options?: GetLpPositionsOptions): Promise<TunaLpPosition[]> {
+    let query: QueryParams = {};
+    if (options) {
+      if (options.filter) {
+        query.filter = options.filter;
+      }
+      if (options.afterPosition) {
+        query.after_position = options.afterPosition;
+      }
+      if (options.openedAt) {
+        if (options.openedAt.from) {
+          query.opened_at_min = options.openedAt.from.toISOString();
+        }
+        if (options.openedAt.to) {
+          query.opened_at_max = options.openedAt.to.toISOString();
+        }
+      }
+      if (options.closedAt) {
+        if (options.closedAt.from) {
+          query.closed_at_min = options.closedAt.from.toISOString();
+        }
+        if (options.closedAt.to) {
+          query.closed_at_max = options.closedAt.to.toISOString();
+        }
+      }
+    }
+    const url = this.appendUrlSearchParams(this.buildURL(`users/${userAddress}/lp-positions`), query);
+    return await this.httpRequest(url, schemas.TunaLpPosition.array());
+  }
+
+  async getUserLpPositionActions(userAddress: string, positionAddress: string): Promise<TunaLpPositionAction[]> {
+    const url = this.buildURL(`users/${userAddress}/lp-positions/${positionAddress}/actions`);
+    return await this.httpRequest(url, schemas.TunaLpPositionAction.array());
   }
 
   async getUserTunaSpotPositions(userAddress: string): Promise<TunaSpotPosition[]> {
