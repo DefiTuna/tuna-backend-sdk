@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.6.0
+
+### Minor Changes
+
+- 5ad901e: Add limit orders quotes endpoints and allow AbortSignal in quote requests
+
 ## 1.5.3
 
 ### Patch Changes
