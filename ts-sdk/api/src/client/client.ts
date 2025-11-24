@@ -50,10 +50,12 @@ export type StakingPositionHistoryAction = z.infer<typeof schemas.StakingPositio
 export type PoolPriceCandle = z.infer<typeof schemas.PoolPriceCandle>;
 export type FeesStatsGroup = z.infer<typeof schemas.FeesStatsGroup>;
 export type StakingRevenueStatsGroup = z.infer<typeof schemas.StakingRevenueStatsGroup>;
+export type LimitOrderQuoteByInput = z.infer<typeof schemas.LimitOrderQuoteByInput>;
+export type LimitOrderQuoteByOutput = z.infer<typeof schemas.LimitOrderQuoteByOutput>;
+export type SwapQuoteByInput = z.infer<typeof schemas.SwapQuoteByInput>;
+export type SwapQuoteByOutput = z.infer<typeof schemas.SwapQuoteByOutput>;
 export type IncreaseSpotPositionQuote = z.infer<typeof schemas.IncreaseSpotPositionQuote>;
 export type DecreaseSpotPositionQuote = z.infer<typeof schemas.DecreaseSpotPositionQuote>;
-export type SwapByInputQuote = z.infer<typeof schemas.SwapByInputQuote>;
-export type SwapByOutputQuote = z.infer<typeof schemas.SwapByOutputQuote>;
 export type TradableAmount = z.infer<typeof schemas.TradableAmount>;
 export type PoolPriceUpdate = z.infer<typeof schemas.PoolPriceUpdate>;
 
@@ -69,6 +71,68 @@ export type SubscriptionPayload = {
     address: string;
     topics: WalletSubscriptionTopicType[];
   };
+};
+
+/* Args */
+
+export type GetLimitOrderQuoteByInputArgs = {
+  pool: string;
+  amountIn: bigint;
+  aToB: boolean;
+  tickIndex: number;
+};
+
+export type GetLimitOrderQuoteByOutputArgs = {
+  pool: string;
+  amountOut: bigint;
+  aToB: boolean;
+  tickIndex: number;
+};
+
+export type GetSwapQuoteByInputArgs = {
+  pool: string;
+  amountIn: bigint;
+  aToB: boolean;
+  slippageToleranceBps?: number;
+};
+
+export type GetSwapQuoteByOutputArgs = {
+  pool: string;
+  amountOut: bigint;
+  aToB: boolean;
+  slippageToleranceBps?: number;
+};
+
+export type GetIncreaseSpotPositionQuoteArgs = {
+  market: string;
+  increaseAmount: bigint;
+  collateralToken: number;
+  positionToken: number;
+  leverage: number;
+  positionAmount?: bigint;
+  positionDebt?: bigint;
+  slippageTolerance?: number;
+};
+
+export type GetDecreaseSpotPositionQuoteArgs = {
+  market: string;
+  decreaseAmount: bigint;
+  collateralToken: number;
+  positionToken: number;
+  leverage: number;
+  positionAmount: bigint;
+  positionDebt: bigint;
+  slippageTolerance?: number;
+};
+
+export type GetTradableAmountArgs = {
+  market: string;
+  collateralToken: number;
+  positionToken: number;
+  availableBalance: bigint;
+  leverage: number;
+  positionAmount: bigint;
+  increase: boolean;
 };
 
 /* Filters */
@@ -489,12 +553,49 @@ export class TunaApiClient {
     return await this.httpRequest(url, schemas.StakingRevenueStatsGroup.array());
   }
 
+  async getLimitOrderQuoteByInput(
+    args: GetLimitOrderQuoteByInputArgs,
+    config?: {
+      abortSignal?: AbortSignal;
+    },
+  ): Promise<LimitOrderQuoteByInput> {
+    const { pool, amountIn, aToB, tickIndex } = args;
+    let query: QueryParams = {
+      pool,
+      amount_in: amountIn.toString(),
+      a_to_b: aToB,
+      tick_index: tickIndex,
+    };
+
+    const url = this.appendUrlSearchParams(this.buildURL(`quotes/limit-order-by-input`), query);
+    return await this.httpRequest(url, schemas.LimitOrderQuoteByInput, {
+      signal: config?.abortSignal,
+    });
+  }
+
+  async getLimitOrderQuoteByOutput(
+    args: GetLimitOrderQuoteByOutputArgs,
+    config?: { abortSignal?: AbortSignal },
+  ): Promise<LimitOrderQuoteByOutput> {
+    const { pool, amountOut, aToB, tickIndex } = args;
+    let query: QueryParams = {
+      pool,
+      amount_out: amountOut.toString(),
+      a_to_b: aToB,
+      tick_index: tickIndex,
+    };
+
+    const url = this.appendUrlSearchParams(this.buildURL(`quotes/limit-order-by-output`), query);
+    return await this.httpRequest(url, schemas.LimitOrderQuoteByOutput, {
+      signal: config?.abortSignal,
+    });
+  }
+
   async getSwapQuoteByInput(
-    pool: string,
-    amountIn: bigint,
-    aToB: boolean,
-    slippageToleranceBps?: number,
-  ): Promise<SwapByInputQuote> {
+    args: GetSwapQuoteByInputArgs,
+    config?: { abortSignal?: AbortSignal },
+  ): Promise<SwapQuoteByInput> {
+    const { pool, amountIn, aToB, slippageToleranceBps } = args;
     let query: QueryParams = {
       pool,
       amount_in: amountIn.toString(),
@@ -506,15 +607,18 @@ export class TunaApiClient {
     }
 
     const url = this.appendUrlSearchParams(this.buildURL(`quotes/swap-by-input`), query);
-    return await this.httpRequest(url, schemas.SwapByInputQuote);
+    return await this.httpRequest(url, schemas.SwapQuoteByInput, {
+      signal: config?.abortSignal,
+    });
   }
 
   async getSwapQuoteByOutput(
-    pool: string,
-    amountOut: bigint,
-    aToB: boolean,
-    slippageToleranceBps?: number,
-  ): Promise<SwapByOutputQuote> {
+    args: GetSwapQuoteByOutputArgs,
+    config?: {
+      abortSignal?: AbortSignal;
+    },
+  ): Promise<SwapQuoteByOutput> {
+    const { pool, amountOut, aToB, slippageToleranceBps } = args;
     let query: QueryParams = {
       pool,
       amount_out: amountOut.toString(),
@@ -526,19 +630,28 @@ export class TunaApiClient {
     }
 
     const url = this.appendUrlSearchParams(this.buildURL(`quotes/swap-by-output`), query);
-    return await this.httpRequest(url, schemas.SwapByOutputQuote);
+    return await this.httpRequest(url, schemas.SwapQuoteByOutput, {
+      signal: config?.abortSignal,
+    });
   }
 
   async getIncreaseSpotPositionQuote(
-    market: string,
-    increaseAmount: bigint,
-    collateralToken: number,
-    positionToken: number,
-    leverage: number,
-    positionAmount?: bigint,
-    positionDebt?: bigint,
-    slippageTolerance?: number,
+    args: GetIncreaseSpotPositionQuoteArgs,
+    config?: {
+      abortSignal?: AbortSignal;
+    },
   ): Promise<IncreaseSpotPositionQuote> {
+    const {
+      market,
+      increaseAmount,
+      collateralToken,
+      positionToken,
+      leverage,
+      positionAmount,
+      positionDebt,
+      slippageTolerance,
+    } = args;
+
     let query: QueryParams = {
       market,
       increase_amount: increaseAmount.toString(),
@@ -557,27 +670,34 @@ export class TunaApiClient {
     }
 
     const url = this.appendUrlSearchParams(this.buildURL(`quotes/increase-spot-position`), query);
-    return await this.httpRequest(url, schemas.IncreaseSpotPositionQuote);
+    return await this.httpRequest(url, schemas.IncreaseSpotPositionQuote, {
+      signal: config?.abortSignal,
+    });
   }
 
   async getDecreaseSpotPositionQuote(
-    market: string,
-    decreaseAmount: bigint,
-    collateralToken: number,
-    positionToken: number,
-    leverage: number,
-    reduceOnly: boolean,
-    positionAmount: bigint,
-    positionDebt: bigint,
-    slippageTolerance?: number,
+    args: GetDecreaseSpotPositionQuoteArgs,
+    config?: {
+      abortSignal?: AbortSignal;
+    },
   ): Promise<DecreaseSpotPositionQuote> {
+    const {
+      market,
+      decreaseAmount,
+      collateralToken,
+      positionToken,
+      leverage,
+      positionAmount,
+      positionDebt,
+      slippageTolerance,
+    } = args;
+
     let query: QueryParams = {
       market,
       decrease_amount: decreaseAmount.toString(),
       collateral_token: collateralToken,
       position_token: positionToken,
       leverage,
-      reduce_only: reduceOnly,
       position_amount: positionAmount.toString(),
       position_debt: positionDebt.toString(),
     };
@@ -586,18 +706,18 @@ export class TunaApiClient {
     }
 
     const url = this.appendUrlSearchParams(this.buildURL(`quotes/decrease-spot-position`), query);
-    return await this.httpRequest(url, schemas.DecreaseSpotPositionQuote);
+    return await this.httpRequest(url, schemas.DecreaseSpotPositionQuote, {
+      signal: config?.abortSignal,
+    });
   }
 
   async getTradableAmount(
-    market: string,
-    collateralToken: number,
-    positionToken: number,
-    availableBalance: bigint,
-    leverage: number,
-    positionAmount: bigint,
-    increase: boolean,
+    args: GetTradableAmountArgs,
+    config?: {
+      abortSignal?: AbortSignal;
+    },
   ): Promise<TradableAmount> {
+    const { market, collateralToken, positionToken, availableBalance, leverage, positionAmount, increase } = args;
     const url = this.appendUrlSearchParams(this.buildURL(`quotes/tradable-amount`), {
       market,
       collateral_token: collateralToken,
@@ -607,7 +727,9 @@ export class TunaApiClient {
       position_amount: positionAmount.toString(),
       increase,
     });
-    return await this.httpRequest(url, schemas.TradableAmount);
+    return await this.httpRequest(url, schemas.TradableAmount, {
+      signal: config?.abortSignal,
+    });
   }
 
   async getUpdatesStream(): Promise<EventSource> {
@@ -628,7 +750,7 @@ export class TunaApiClient {
     return `${this.baseURL}${this.baseURL.endsWith("/") ? "" : "/"}v1/${endpoint}`;
   }
 
-  private appendUrlSearchParams(url: string, params: QueryParams) {
+  private appendUrlSearchParams(url: string, params: QueryParams): string {
     const urlSearchParams = new URLSearchParams();
     Object.entries(params).forEach(([key, value]) => {
       if (value !== undefined) {

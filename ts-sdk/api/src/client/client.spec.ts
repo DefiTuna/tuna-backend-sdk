@@ -18,6 +18,7 @@ import {
 // import { PoolSubscriptionTopic } from "./schemas";
 import * as testUtils from "./testUtils";
 import { PoolToken } from "@crypticdot/defituna-client";
+import { priceToTickIndex } from "@crypticdot/fusionamm-core";
 
 vi.stubGlobal("EventSource", NodeEventSource);
 
@@ -429,6 +430,34 @@ describe("Order history", async () => {
   });
 });
 
+describe("Limit Order Quotes", async () => {
+  it("Calculates limit order quote by input", async () => {
+    const solAmountIn = testUtils.numberToBigint(1, SOL_DECIMALS);
+    let tickIndex = priceToTickIndex(200, 0, 0);
+    // Selling 1 SOL at ~200 USDC / SOL price
+    let limitOrderQuoteByInput = await client.getLimitOrderQuoteByInput({
+      pool: SOL_USDC_FUSION_POOL_ADDRESS,
+      amountIn: solAmountIn,
+      aToB: true,
+      tickIndex,
+    });
+    expect(limitOrderQuoteByInput.amountOut).toEqual(200053968277n);
+  });
+
+  it("Calculates limit order quote by output", async () => {
+    const usdcAmountOut = 200053968277n;
+    let tickIndex = priceToTickIndex(200, 0, 0);
+    // Selling 1 SOL at ~200 USDC / SOL price
+    let limitOrderQuoteByOutput = await client.getLimitOrderQuoteByOutput({
+      pool: SOL_USDC_FUSION_POOL_ADDRESS,
+      amountOut: usdcAmountOut,
+      aToB: true,
+      tickIndex,
+    });
+    expect(limitOrderQuoteByOutput.amountIn).toEqual(1000000000n);
+  });
+});
+
 describe("Swap Quotes", async () => {
   const oraclePrices = await client.getOraclePrices();
   const solOraclePrice = oraclePrices.find(oraclePrice => oraclePrice.mint == SOL_MINT)!;
@@ -438,12 +467,12 @@ describe("Swap Quotes", async () => {
 
   it("Calculates swap quote by input", async () => {
     const solAmountIn = testUtils.numberToBigint(1, SOL_DECIMALS);
-    let swapQuoteByInput = await client.getSwapQuoteByInput(
-      SOL_USDC_FUSION_POOL_ADDRESS,
-      solAmountIn,
-      true,
-      BPS_DENOMINATOR,
-    );
+    let swapQuoteByInput = await client.getSwapQuoteByInput({
+      pool: SOL_USDC_FUSION_POOL_ADDRESS,
+      amountIn: solAmountIn,
+      aToB: true,
+      slippageToleranceBps: BPS_DENOMINATOR,
+    });
     const usdcAmountOut = testUtils.bigintToNumber(swapQuoteByInput.estimatedAmountOut, USDC_DECIMALS);
     const usdcAmountOutUsd = usdcAmountOut * usdcPrice;
     // 1% deviation from oracle price
@@ -454,12 +483,12 @@ describe("Swap Quotes", async () => {
 
   it("Calculates swap quote by output", async () => {
     const solAmountOut = testUtils.numberToBigint(1, SOL_DECIMALS);
-    let swapQuoteByOutput = await client.getSwapQuoteByOutput(
-      SOL_USDC_FUSION_POOL_ADDRESS,
-      solAmountOut,
-      true,
-      BPS_DENOMINATOR,
-    );
+    let swapQuoteByOutput = await client.getSwapQuoteByOutput({
+      pool: SOL_USDC_FUSION_POOL_ADDRESS,
+      amountOut: solAmountOut,
+      aToB: true,
+      slippageToleranceBps: BPS_DENOMINATOR,
+    });
     const usdcAmountIn = testUtils.bigintToNumber(swapQuoteByOutput.estimatedAmountIn, USDC_DECIMALS);
     const usdcAmountInUsd = usdcAmountIn * usdcPrice;
     // 1% deviation from oracle price
@@ -471,18 +500,14 @@ describe("Swap Quotes", async () => {
   it("Calculates increase spot position quote for new position", async () => {
     const usdcIncreaseAmount = testUtils.numberToBigint(2, USDC_DECIMALS);
     const leverage = 2;
-    let increaseSpotPositionQuote = await client.getIncreaseSpotPositionQuote(
-      SOL_USDC_FUSION_MARKET_ADDRESS,
-      usdcIncreaseAmount,
-      // USDC as collateral token
-      PoolToken.B,
-      // SOL as position token
-      PoolToken.A,
+    let increaseSpotPositionQuote = await client.getIncreaseSpotPositionQuote({
+      market: SOL_USDC_FUSION_MARKET_ADDRESS,
+      increaseAmount: usdcIncreaseAmount,
+      collateralToken: PoolToken.B,
+      positionToken: PoolToken.A,
       leverage,
-      undefined,
-      undefined,
-      BPS_DENOMINATOR,
-    );
+      slippageTolerance: BPS_DENOMINATOR,
+    });
 
     expect(increaseSpotPositionQuote.borrowAmount).toEqual(usdcIncreaseAmount / BigInt(leverage));
     expect(increaseSpotPositionQuote.uiLiquidationPrice).toBeGreaterThan(0);
@@ -494,19 +519,16 @@ describe("Swap Quotes", async () => {
     const positionAmount = testUtils.numberToBigint(1, SOL_DECIMALS);
     const positionDebt = testUtils.numberToBigint(150, USDC_DECIMALS);
     const leverage = 2;
-    let increaseSpotPositionQuote = await client.getIncreaseSpotPositionQuote(
-      SOL_USDC_FUSION_MARKET_ADDRESS,
-      usdcIncreaseAmount,
-      // USDC as collateral token
-      PoolToken.B,
-      // SOL as position token
-      PoolToken.A,
+    let increaseSpotPositionQuote = await client.getIncreaseSpotPositionQuote({
+      market: SOL_USDC_FUSION_MARKET_ADDRESS,
+      increaseAmount: usdcIncreaseAmount,
+      collateralToken: PoolToken.B,
+      positionToken: PoolToken.A,
       leverage,
       positionAmount,
       positionDebt,
-      BPS_DENOMINATOR,
-    );
-
+      slippageTolerance: BPS_DENOMINATOR,
+    });
     expect(increaseSpotPositionQuote.borrowAmount).toEqual(usdcIncreaseAmount / BigInt(leverage));
     expect(increaseSpotPositionQuote.uiLiquidationPrice).toBeGreaterThan(0);
     expect(increaseSpotPositionQuote.protocolFeeA + increaseSpotPositionQuote.protocolFeeB).toBeGreaterThan(0n);
@@ -517,20 +539,16 @@ describe("Swap Quotes", async () => {
     const leverage = 2;
     const positionAmount = testUtils.numberToBigint(10, SOL_DECIMALS);
     const positionDebt = testUtils.numberToBigint(500, USDC_DECIMALS);
-    let decreaseSpotPositionQuote = await client.getDecreaseSpotPositionQuote(
-      SOL_USDC_FUSION_MARKET_ADDRESS,
-      usdcDecreaseAmount,
-      // USDC as collateral token
-      PoolToken.B,
-      // SOL as position token
-      PoolToken.A,
+    let decreaseSpotPositionQuote = await client.getDecreaseSpotPositionQuote({
+      market: SOL_USDC_FUSION_MARKET_ADDRESS,
+      decreaseAmount: usdcDecreaseAmount,
+      collateralToken: PoolToken.B,
+      positionToken: PoolToken.A,
       leverage,
-      true,
       positionAmount,
       positionDebt,
-      BPS_DENOMINATOR,
-    );
-
+      slippageTolerance: BPS_DENOMINATOR,
+    });
     expect(decreaseSpotPositionQuote.uiLiquidationPrice).toBeGreaterThan(0);
   });
 });

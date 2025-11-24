@@ -588,13 +588,15 @@ export const DecreaseSpotPositionQuote = z.object({
    * (if collateral_token == position_token) OR the minimum swap output amount (if collateral_token != position_token).
    */
   requiredSwapAmount: z.coerce.bigint(),
+  /**  Estimated total amount of the adjusted position */
+  estimatedAmount: z.coerce.bigint(),
   /** Price impact in percents */
   priceImpact: z.number(),
   /** Liquidation price */
   uiLiquidationPrice: z.nullable(z.number()),
 });
 
-export const SwapByInputQuote = z.object({
+export const SwapQuoteByInput = z.object({
   estimatedAmountOut: z.coerce.bigint(),
   minAmountOut: z.coerce.bigint(),
   feeAmount: z.coerce.bigint(),
@@ -603,13 +605,21 @@ export const SwapByInputQuote = z.object({
   priceImpact: z.number(),
 });
 
-export const SwapByOutputQuote = z.object({
+export const SwapQuoteByOutput = z.object({
   estimatedAmountIn: z.coerce.bigint(),
   maxAmountIn: z.coerce.bigint(),
   feeAmount: z.coerce.bigint(),
   feeUsd: z.number(),
   /** Price impact in percents */
   priceImpact: z.number(),
+});
+
+export const LimitOrderQuoteByInput = z.object({
+  amountOut: z.coerce.bigint(),
+});
+
+export const LimitOrderQuoteByOutput = z.object({
+  amountIn: z.coerce.bigint(),
 });
 
 export const TradableAmount = amountWithUsd;
