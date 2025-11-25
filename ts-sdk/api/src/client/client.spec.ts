@@ -17,7 +17,7 @@ import {
 } from "./client";
 // import { PoolSubscriptionTopic } from "./schemas";
 import * as testUtils from "./testUtils";
-import { PoolToken } from "@crypticdot/defituna-client";
+import { HUNDRED_PERCENT, PoolToken } from "@crypticdot/defituna-client";
 import { priceToTickIndex } from "@crypticdot/fusionamm-core";
 
 vi.stubGlobal("EventSource", NodeEventSource);
@@ -458,7 +458,7 @@ describe("Limit Order Quotes", async () => {
   });
 });
 
-describe("Swap Quotes", async () => {
+describe("Quotes", async () => {
   const oraclePrices = await client.getOraclePrices();
   const solOraclePrice = oraclePrices.find(oraclePrice => oraclePrice.mint == SOL_MINT)!;
   const usdcOraclePrice = oraclePrices.find(oraclePrice => oraclePrice.mint == USDC_MINT)!;
@@ -550,6 +550,21 @@ describe("Swap Quotes", async () => {
       slippageTolerance: BPS_DENOMINATOR,
     });
     expect(decreaseSpotPositionQuote.uiLiquidationPrice).toBeGreaterThan(0);
+  });
+
+  it("Calculates close spot position quote", async () => {
+    const positionAmount = testUtils.numberToBigint(10, SOL_DECIMALS);
+    const positionDebt = testUtils.numberToBigint(500, USDC_DECIMALS);
+    let decreaseSpotPositionQuote = await client.getCloseSpotPositionQuote({
+      market: SOL_USDC_FUSION_MARKET_ADDRESS,
+      decreasePercent: HUNDRED_PERCENT,
+      collateralToken: PoolToken.B,
+      positionToken: PoolToken.A,
+      positionAmount,
+      positionDebt,
+      slippageTolerance: BPS_DENOMINATOR,
+    });
+    expect(decreaseSpotPositionQuote.decreasePercent).toBe(1);
   });
 });
 

@@ -582,7 +582,7 @@ export const IncreaseSpotPositionQuote = z.object({
 });
 
 export const DecreaseSpotPositionQuote = z.object({
-  /** Position decrease percentage */
+  /** Confirmed position decrease percentage (100% = 1.0) */
   decreasePercent: z.number(),
   /** The maximum acceptable swap input amount for position decrease according to the provided slippage
    * (if collateral_token == position_token) OR the minimum swap output amount (if collateral_token != position_token).
@@ -590,10 +590,25 @@ export const DecreaseSpotPositionQuote = z.object({
   requiredSwapAmount: z.coerce.bigint(),
   /**  Estimated total amount of the adjusted position */
   estimatedAmount: z.coerce.bigint(),
+  /** Estimated amount of the withdrawn collateral */
+  estimatedWithdrawnCollateral: z.coerce.bigint(),
   /** Price impact in percents */
   priceImpact: z.number(),
   /** Liquidation price */
   uiLiquidationPrice: z.nullable(z.number()),
+});
+
+export const CloseSpotPositionQuote = z.object({
+  /** Position decrease percentage */
+  decreasePercent: z.number(),
+  /** The maximum acceptable swap input amount for position decrease according to the provided slippage
+   * (if collateral_token == position_token) OR the minimum swap output amount (if collateral_token != position_token).
+   */
+  requiredSwapAmount: z.coerce.bigint(),
+  /** Estimated amount of the withdrawn collateral */
+  estimatedWithdrawnCollateral: z.coerce.bigint(),
+  /** Price impact in percents */
+  priceImpact: z.number(),
 });
 
 export const SwapQuoteByInput = z.object({
