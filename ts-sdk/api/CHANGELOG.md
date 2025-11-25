@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.7.0
+
+### Minor Changes
+
+- eff2c40: Add close spot position quote endpoint
+
 ## 1.6.0
 
 ### Minor Changes
