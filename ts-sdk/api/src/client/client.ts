@@ -56,6 +56,7 @@ export type SwapQuoteByInput = z.infer<typeof schemas.SwapQuoteByInput>;
 export type SwapQuoteByOutput = z.infer<typeof schemas.SwapQuoteByOutput>;
 export type IncreaseSpotPositionQuote = z.infer<typeof schemas.IncreaseSpotPositionQuote>;
 export type DecreaseSpotPositionQuote = z.infer<typeof schemas.DecreaseSpotPositionQuote>;
+export type CloseSpotPositionQuote = z.infer<typeof schemas.CloseSpotPositionQuote>;
 export type TradableAmount = z.infer<typeof schemas.TradableAmount>;
 export type PoolPriceUpdate = z.infer<typeof schemas.PoolPriceUpdate>;
 
@@ -120,6 +121,16 @@ export type GetDecreaseSpotPositionQuoteArgs = {
   collateralToken: number;
   positionToken: number;
   leverage: number;
+  positionAmount: bigint;
+  positionDebt: bigint;
+  slippageTolerance?: number;
+};
+
+export type GetCloseSpotPositionQuoteArgs = {
+  market: string;
+  decreasePercent: number;
+  collateralToken: number;
+  positionToken: number;
   positionAmount: bigint;
   positionDebt: bigint;
   slippageTolerance?: number;
@@ -707,6 +718,33 @@ export class TunaApiClient {
 
     const url = this.appendUrlSearchParams(this.buildURL(`quotes/decrease-spot-position`), query);
     return await this.httpRequest(url, schemas.DecreaseSpotPositionQuote, {
+      signal: config?.abortSignal,
+    });
+  }
+
+  async getCloseSpotPositionQuote(
+    args: GetCloseSpotPositionQuoteArgs,
+    config?: {
+      abortSignal?: AbortSignal;
+    },
+  ): Promise<CloseSpotPositionQuote> {
+    const { market, decreasePercent, collateralToken, positionToken, positionAmount, positionDebt, slippageTolerance } =
+      args;
+
+    let query: QueryParams = {
+      market,
+      decrease_percent: decreasePercent,
+      collateral_token: collateralToken,
+      position_token: positionToken,
+      position_amount: positionAmount.toString(),
+      position_debt: positionDebt.toString(),
+    };
+    if (slippageTolerance) {
+      query.slippage_tolerance = slippageTolerance;
+    }
+
+    const url = this.appendUrlSearchParams(this.buildURL(`quotes/close-spot-position`), query);
+    return await this.httpRequest(url, schemas.CloseSpotPositionQuote, {
       signal: config?.abortSignal,
     });
   }
