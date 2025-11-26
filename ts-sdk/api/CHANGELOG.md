@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.8.4
+
+### Patch Changes
+
+- 7bfa48f: Fix state snapshot schema
+
 ## 1.8.3
 
 ### Patch Changes
