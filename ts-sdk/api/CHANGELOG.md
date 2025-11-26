@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.8.3
+
+### Patch Changes
+
+- de09c15: Export additional types
+
 ## 1.8.2
 
 ### Patch Changes
