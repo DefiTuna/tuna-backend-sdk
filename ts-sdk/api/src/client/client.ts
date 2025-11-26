@@ -7,8 +7,8 @@ import {
   NotificationAction,
   NotificationEntity,
   PoolProvider,
-  TunaPositionState,
   PoolSubscriptionTopic,
+  TunaPositionState,
   WalletSubscriptionTopic,
 } from "./schemas";
 
@@ -459,7 +459,7 @@ export class TunaApiClient {
   }
 
   async getUserLimitOrders(userAddress: string, options?: GetUserLimitOrdersOptions): Promise<LimitOrder[]> {
-    let query: QueryParams = {};
+    const query: QueryParams = {};
 
     if (options) {
       if (options.pool?.length) {
@@ -496,7 +496,7 @@ export class TunaApiClient {
   }
 
   async getUserTradeHistory(userAddress: string, options?: GetUserTradeHistoryOptions): Promise<TradeHistoryEntry[]> {
-    let query: QueryParams = {};
+    const query: QueryParams = {};
 
     if (options) {
       if (options.pool?.length) {
@@ -525,7 +525,7 @@ export class TunaApiClient {
   }
 
   async getUserOrderHistory(userAddress: string, options?: GetUserOrderHistoryOptions): Promise<OrderHistoryEntry[]> {
-    let query: QueryParams = {};
+    const query: QueryParams = {};
 
     if (options) {
       if (options.pool?.length) {
@@ -587,7 +587,7 @@ export class TunaApiClient {
     },
   ): Promise<LimitOrderQuoteByInput> {
     const { pool, amountIn, aToB, tickIndex } = args;
-    let query: QueryParams = {
+    const query: QueryParams = {
       pool,
       amount_in: amountIn.toString(),
       a_to_b: aToB,
@@ -605,7 +605,7 @@ export class TunaApiClient {
     config?: { abortSignal?: AbortSignal },
   ): Promise<LimitOrderQuoteByOutput> {
     const { pool, amountOut, aToB, tickIndex } = args;
-    let query: QueryParams = {
+    const query: QueryParams = {
       pool,
       amount_out: amountOut.toString(),
       a_to_b: aToB,
@@ -623,7 +623,7 @@ export class TunaApiClient {
     config?: { abortSignal?: AbortSignal },
   ): Promise<SwapQuoteByInput> {
     const { pool, amountIn, aToB, slippageToleranceBps } = args;
-    let query: QueryParams = {
+    const query: QueryParams = {
       pool,
       amount_in: amountIn.toString(),
       a_to_b: aToB,
@@ -646,7 +646,7 @@ export class TunaApiClient {
     },
   ): Promise<SwapQuoteByOutput> {
     const { pool, amountOut, aToB, slippageToleranceBps } = args;
-    let query: QueryParams = {
+    const query: QueryParams = {
       pool,
       amount_out: amountOut.toString(),
       a_to_b: aToB,
@@ -679,7 +679,7 @@ export class TunaApiClient {
       slippageTolerance,
     } = args;
 
-    let query: QueryParams = {
+    const query: QueryParams = {
       market,
       increase_amount: increaseAmount.toString(),
       collateral_token: collateralToken,
@@ -719,7 +719,7 @@ export class TunaApiClient {
       slippageTolerance,
     } = args;
 
-    let query: QueryParams = {
+    const query: QueryParams = {
       market,
       decrease_amount: decreaseAmount.toString(),
       collateral_token: collateralToken,
@@ -747,7 +747,7 @@ export class TunaApiClient {
     const { market, decreasePercent, collateralToken, positionToken, positionAmount, positionDebt, slippageTolerance } =
       args;
 
-    let query: QueryParams = {
+    const query: QueryParams = {
       market,
       decrease_percent: decreasePercent,
       collateral_token: collateralToken,

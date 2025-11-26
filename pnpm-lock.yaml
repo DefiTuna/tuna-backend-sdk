@@ -34,8 +34,8 @@ importers:
         specifier: ^3.0.2
         version: 3.0.2(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.8.3)(ws@8.18.2)
       '@crypticdot/eslint-config':
-        specifier: ^1.0.2
-        version: 1.0.2(eslint@8.57.1)(prettier@3.5.3)(turbo@2.5.4)(typescript@5.8.3)
+        specifier: ^1.0.3
+        version: 1.0.3(eslint@8.57.1)(prettier@3.5.3)(turbo@2.5.4)(typescript@5.8.3)
       '@crypticdot/fusionamm-client':
         specifier: ^1.0.62
         version: 1.0.62(@solana/kit@2.1.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.8.3)(ws@8.18.2))
@@ -146,8 +146,8 @@ packages:
   '@crypticdot/defituna-client@3.0.2':
     resolution: {integrity: sha512-Kr//Nxgjni1yXGSrQ37wefY3uAOYh6DHHvBdWM+bv+g1N/liztd2iXU+iCidno94j4xZjIyVTGsh36QJ5aLHkw==}
 
-  '@crypticdot/eslint-config@1.0.2':
-    resolution: {integrity: sha512-gNhJlU4oa7V3MVNw/aJ35HImKqcQdNsupwyWE7rZNJC9IeuFdgiDqwNcRwPPaLZ9OLq93yQUfgwer0GH50DADA==}
+  '@crypticdot/eslint-config@1.0.3':
+    resolution: {integrity: sha512-TL8BymJzmB78ROhPIjxWT4TNLCn3GCuORdDGxFfRqc9qO+M8O2yeP2NwodX5A+HdFurq28FbmHr4SnIY5nV+0A==}
 
   '@crypticdot/fusionamm-client@1.0.62':
     resolution: {integrity: sha512-sjLXfNgBSlsmH0J7FeisiTCLvU6m8XiBD5Zfs2jUh+Y4MtGJdiZpsLVHAoUXo+SI+L84df5V6YNNjQf0KZqjdQ==}
@@ -3308,7 +3308,7 @@ snapshots:
       - typescript
       - ws
 
-  '@crypticdot/eslint-config@1.0.2(eslint@8.57.1)(prettier@3.5.3)(turbo@2.5.4)(typescript@5.8.3)':
+  '@crypticdot/eslint-config@1.0.3(eslint@8.57.1)(prettier@3.5.3)(turbo@2.5.4)(typescript@5.8.3)':
     dependencies:
       '@rushstack/eslint-patch': 1.11.0
       '@typescript-eslint/eslint-plugin': 8.34.0(@typescript-eslint/parser@8.34.0(eslint@8.57.1)(typescript@5.8.3))(eslint@8.57.1)(typescript@5.8.3)

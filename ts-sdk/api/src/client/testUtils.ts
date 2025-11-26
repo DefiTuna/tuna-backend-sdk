@@ -1,6 +1,6 @@
-import Decimal from "decimal.js";
 import * as DefiTunaClient from "@crypticdot/defituna-client";
 import { address, createSolanaRpc, getAddressEncoder, getBase64Decoder, getBase64Encoder } from "@solana/kit";
+import Decimal from "decimal.js";
 
 const TUNA_PROGRAM_ID = DefiTunaClient.TUNA_PROGRAM_ADDRESS;
 

@@ -1,4 +1,6 @@
 // import camelcaseKeys from "camelcase-keys";
+import { HUNDRED_PERCENT, PoolToken } from "@crypticdot/defituna-client";
+import { priceToTickIndex } from "@crypticdot/fusionamm-core";
 import { Decimal } from "decimal.js";
 import { EventSource as NodeEventSource } from "eventsource";
 // import { once } from "node:events";
@@ -17,8 +19,6 @@ import {
 } from "./client";
 // import { PoolSubscriptionTopic } from "./schemas";
 import * as testUtils from "./testUtils";
-import { HUNDRED_PERCENT, PoolToken } from "@crypticdot/defituna-client";
-import { priceToTickIndex } from "@crypticdot/fusionamm-core";
 
 vi.stubGlobal("EventSource", NodeEventSource);
 
@@ -433,9 +433,9 @@ describe("Order history", async () => {
 describe("Limit Order Quotes", async () => {
   it("Calculates limit order quote by input", async () => {
     const solAmountIn = testUtils.numberToBigint(1, SOL_DECIMALS);
-    let tickIndex = priceToTickIndex(200, 0, 0);
+    const tickIndex = priceToTickIndex(200, 0, 0);
     // Selling 1 SOL at ~200 USDC / SOL price
-    let limitOrderQuoteByInput = await client.getLimitOrderQuoteByInput({
+    const limitOrderQuoteByInput = await client.getLimitOrderQuoteByInput({
       pool: SOL_USDC_FUSION_POOL_ADDRESS,
       amountIn: solAmountIn,
       aToB: true,
@@ -446,9 +446,9 @@ describe("Limit Order Quotes", async () => {
 
   it("Calculates limit order quote by output", async () => {
     const usdcAmountOut = 200053968277n;
-    let tickIndex = priceToTickIndex(200, 0, 0);
+    const tickIndex = priceToTickIndex(200, 0, 0);
     // Selling 1 SOL at ~200 USDC / SOL price
-    let limitOrderQuoteByOutput = await client.getLimitOrderQuoteByOutput({
+    const limitOrderQuoteByOutput = await client.getLimitOrderQuoteByOutput({
       pool: SOL_USDC_FUSION_POOL_ADDRESS,
       amountOut: usdcAmountOut,
       aToB: true,
@@ -467,7 +467,7 @@ describe("Quotes", async () => {
 
   it("Calculates swap quote by input", async () => {
     const solAmountIn = testUtils.numberToBigint(1, SOL_DECIMALS);
-    let swapQuoteByInput = await client.getSwapQuoteByInput({
+    const swapQuoteByInput = await client.getSwapQuoteByInput({
       pool: SOL_USDC_FUSION_POOL_ADDRESS,
       amountIn: solAmountIn,
       aToB: true,
@@ -483,7 +483,7 @@ describe("Quotes", async () => {
 
   it("Calculates swap quote by output", async () => {
     const solAmountOut = testUtils.numberToBigint(1, SOL_DECIMALS);
-    let swapQuoteByOutput = await client.getSwapQuoteByOutput({
+    const swapQuoteByOutput = await client.getSwapQuoteByOutput({
       pool: SOL_USDC_FUSION_POOL_ADDRESS,
       amountOut: solAmountOut,
       aToB: true,
@@ -500,7 +500,7 @@ describe("Quotes", async () => {
   it("Calculates increase spot position quote for new position", async () => {
     const usdcIncreaseAmount = testUtils.numberToBigint(2, USDC_DECIMALS);
     const leverage = 2;
-    let increaseSpotPositionQuote = await client.getIncreaseSpotPositionQuote({
+    const increaseSpotPositionQuote = await client.getIncreaseSpotPositionQuote({
       market: SOL_USDC_FUSION_MARKET_ADDRESS,
       increaseAmount: usdcIncreaseAmount,
       collateralToken: PoolToken.B,
@@ -519,7 +519,7 @@ describe("Quotes", async () => {
     const positionAmount = testUtils.numberToBigint(1, SOL_DECIMALS);
     const positionDebt = testUtils.numberToBigint(150, USDC_DECIMALS);
     const leverage = 2;
-    let increaseSpotPositionQuote = await client.getIncreaseSpotPositionQuote({
+    const increaseSpotPositionQuote = await client.getIncreaseSpotPositionQuote({
       market: SOL_USDC_FUSION_MARKET_ADDRESS,
       increaseAmount: usdcIncreaseAmount,
       collateralToken: PoolToken.B,
@@ -539,7 +539,7 @@ describe("Quotes", async () => {
     const leverage = 2;
     const positionAmount = testUtils.numberToBigint(10, SOL_DECIMALS);
     const positionDebt = testUtils.numberToBigint(500, USDC_DECIMALS);
-    let decreaseSpotPositionQuote = await client.getDecreaseSpotPositionQuote({
+    const decreaseSpotPositionQuote = await client.getDecreaseSpotPositionQuote({
       market: SOL_USDC_FUSION_MARKET_ADDRESS,
       decreaseAmount: usdcDecreaseAmount,
       collateralToken: PoolToken.B,
@@ -555,7 +555,7 @@ describe("Quotes", async () => {
   it("Calculates close spot position quote", async () => {
     const positionAmount = testUtils.numberToBigint(10, SOL_DECIMALS);
     const positionDebt = testUtils.numberToBigint(500, USDC_DECIMALS);
-    let decreaseSpotPositionQuote = await client.getCloseSpotPositionQuote({
+    const decreaseSpotPositionQuote = await client.getCloseSpotPositionQuote({
       market: SOL_USDC_FUSION_MARKET_ADDRESS,
       decreasePercent: HUNDRED_PERCENT,
       collateralToken: PoolToken.B,
