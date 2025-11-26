@@ -633,7 +633,7 @@ export const SwapQuoteByOutput = z.object({
 export const StateSnapshot = z.object({
   slot: z.coerce.bigint(),
   blockTime: z.coerce.date(),
-  poolPrices: z.optional(z.map(z.string(), PoolPriceUpdate)),
+  poolPrices: z.optional(z.record(z.string(), PoolPriceUpdate)),
   tunaSpotPositions: z.optional(z.array(TunaSpotPosition)),
   tunaLpPositions: z.optional(z.array(TunaPosition)),
   fusionLimitOrders: z.optional(z.array(LimitOrder)),
