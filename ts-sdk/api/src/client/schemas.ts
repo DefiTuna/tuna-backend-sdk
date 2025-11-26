@@ -629,6 +629,21 @@ export const SwapQuoteByOutput = z.object({
   priceImpact: z.number(),
 });
 
+export const ShortPoolPriceUpdate = z.object({
+  price: z.number(),
+  uiPrice: z.number(),
+  sqrtPrice: z.coerce.bigint(),
+});
+
+export const StateSnapshot = z.object({
+  slot: z.coerce.bigint(),
+  blockTime: z.coerce.date(),
+  poolPrices: z.optional(z.map(z.string(), ShortPoolPriceUpdate)),
+  tunaSpotPositions: z.optional(z.array(TunaSpotPosition)),
+  tunaLpPositions: z.optional(z.array(TunaPosition)),
+  fusionLimitOrders: z.optional(z.array(LimitOrder)),
+});
+
 export const LimitOrderQuoteByInput = z.object({
   amountOut: z.coerce.bigint(),
 });
@@ -672,3 +687,4 @@ export const LimitOrderNotification = createNotificationSchema(LimitOrder);
 export const TradeHistoryEntryNotification = createNotificationSchema(TradeHistoryEntry);
 export const OrderHistoryEntryNotification = createNotificationSchema(OrderHistoryEntry);
 export const StakingPositionNotification = createNotificationSchema(StakingPosition);
+export const StateSnapshotNotification = createNotificationSchema(StateSnapshot);
