@@ -630,16 +630,10 @@ export const SwapQuoteByOutput = z.object({
   priceImpact: z.number(),
 });
 
-export const ShortPoolPriceUpdate = z.object({
-  price: z.number(),
-  uiPrice: z.number(),
-  sqrtPrice: z.coerce.bigint(),
-});
-
 export const StateSnapshot = z.object({
   slot: z.coerce.bigint(),
   blockTime: z.coerce.date(),
-  poolPrices: z.optional(z.map(z.string(), ShortPoolPriceUpdate)),
+  poolPrices: z.optional(z.map(z.string(), PoolPriceUpdate)),
   tunaSpotPositions: z.optional(z.array(TunaSpotPosition)),
   tunaLpPositions: z.optional(z.array(TunaPosition)),
   fusionLimitOrders: z.optional(z.array(LimitOrder)),
