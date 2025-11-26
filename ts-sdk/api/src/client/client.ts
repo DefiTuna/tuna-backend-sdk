@@ -3,13 +3,28 @@ import snakecaseKeys from "snakecase-keys";
 import { z } from "zod";
 
 import * as schemas from "./schemas";
-import { NotificationAction, NotificationEntity, PoolProvider, TunaPositionState } from "./schemas";
+import {
+  NotificationAction,
+  NotificationEntity,
+  PoolProvider,
+  TunaPositionState,
+  PoolSubscriptionTopic,
+  WalletSubscriptionTopic,
+} from "./schemas";
 
 /* Export schemas for raw data handling */
 export { schemas };
 
 /* Enums */
-export { PoolProvider, TunaPositionState, NotificationAction, NotificationEntity };
+export {
+  PoolProvider,
+  TunaPositionState,
+  NotificationAction,
+  NotificationEntity,
+  PoolSubscriptionTopic,
+  WalletSubscriptionTopic,
+};
+export type NotificationEntityType = z.infer<typeof schemas.NotificationEntitySchema>;
 export type PoolProviderType = z.infer<typeof schemas.PoolProviderSchema>;
 export type TunaPositionStateType = z.infer<typeof schemas.TunaPositionStateSchema>;
 export type TunaSpotPositionStateType = z.infer<typeof schemas.TunaSpotPositionStateSchema>;
@@ -36,6 +51,7 @@ export type PoolTicks = z.infer<typeof schemas.PoolTicks>;
 export type PoolSwap = z.infer<typeof schemas.PoolSwap>;
 export type OrderBookEntry = z.infer<typeof schemas.OrderBookEntry>;
 export type OrderBook = z.infer<typeof schemas.OrderBook>;
+export type OrderBookNotificationMeta = z.infer<typeof schemas.OrderBookNotificationMeta>;
 export type LendingPosition = z.infer<typeof schemas.LendingPosition>;
 export type TunaPosition = z.infer<typeof schemas.TunaPosition>;
 export type TunaSpotPosition = z.infer<typeof schemas.TunaSpotPosition>;
