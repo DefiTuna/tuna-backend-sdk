@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.8.2
+
+### Patch Changes
+
+- 1f3e123: Migrate StateSnapshot to PoolPriceUpdate
+
 ## 1.8.1
 
 ### Patch Changes
