@@ -30,6 +30,7 @@ export const NotificationEntity = {
   FUSION_LIMIT_ORDER: "fusion_limit_order",
   TRADE_HISTORY_ENTRY: "trade_history_entry",
   ORDER_HISTORY_ENTRY: "order_history_entry",
+  STATE_SNAPSHOT: "state_snapshot",
 } as const;
 export const NotificationAction = {
   CREATE: "create",
