@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.8.0
+
+### Minor Changes
+
+- f9e84c4: Add snapshot update notification entity
+
 ## 1.7.0
 
 ### Minor Changes
