@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.9.0
+
+### Minor Changes
+
+- c730964: Update zod and fix notification authority type
+
 ## 1.8.4
 
 ### Patch Changes
