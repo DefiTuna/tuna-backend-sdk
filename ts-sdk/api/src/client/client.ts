@@ -367,7 +367,6 @@ export class TunaApiClient {
       from: from.toISOString().slice(0, 10),
       to: to.toISOString().slice(0, 10),
     });
-    // @ts-expect-error
     return await this.httpRequest(url, schemas.VaultHistoricalStats.array());
   }
 

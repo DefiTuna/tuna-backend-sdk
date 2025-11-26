@@ -662,7 +662,7 @@ const createNotificationSchema = <DataType extends z.ZodTypeAny, MetaType extend
     action: NotificationActionSchema,
     data: dataSchema,
     id: z.string(),
-    authority: z.nullable(z.string()),
+    authority: z.nullish(z.string()),
     ...(metaSchema ? { meta: metaSchema } : { meta: z.undefined().nullable() }),
   });
 
