@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.10.0
+
+### Minor Changes
+
+- ce882a0: LP history API endpoints
+
 ## 1.9.0
 
 ### Minor Changes
