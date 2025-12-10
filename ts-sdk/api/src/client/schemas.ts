@@ -1,22 +1,13 @@
 import { z } from "zod";
 
+import { AmountWithUsdSchema, PoolProviderSchema, TokensPnlSchema, UsdPnlSchema } from "./schemas/basic";
+import { TunaPositionStateSchema } from "./schemas/lp_positions.ts";
+
+export * from "./schemas/basic";
+export * from "./schemas/lp_positions";
+
 const amountWithoutUsd = z.object({
   amount: z.coerce.bigint(),
-});
-
-const amountWithUsd = z.object({
-  amount: z.coerce.bigint(),
-  usd: z.number(),
-});
-
-const tokensPnl = z.object({
-  amount: z.coerce.bigint(),
-  bps: z.number(),
-});
-
-const usdPnl = z.object({
-  amount: z.number(),
-  bps: z.number(),
 });
 
 export const NotificationEntity = {
@@ -36,16 +27,7 @@ export const NotificationAction = {
   CREATE: "create",
   UPDATE: "update",
 } as const;
-export const PoolProvider = {
-  ORCA: "orca",
-  FUSION: "fusion",
-} as const;
-export const TunaPositionState = {
-  OPEN: "open",
-  LIQUIDATED: "liquidated",
-  CLOSED_BY_LIMIT_ORDER: "closed_by_limit_order",
-  CLOSED: "closed",
-} as const;
+
 export const TunaSpotPositionState = {
   OPEN: "open",
   CLOSED: "closed",
@@ -149,8 +131,7 @@ export const LpPositionsActionType = {
 
 export const NotificationEntitySchema = z.enum([NotificationEntity.POOL_SWAP, ...Object.values(NotificationEntity)]);
 export const NotificationActionSchema = z.enum([NotificationAction.CREATE, ...Object.values(NotificationAction)]);
-export const PoolProviderSchema = z.enum([PoolProvider.ORCA, ...Object.values(PoolProvider)]);
-export const TunaPositionStateSchema = z.enum([TunaPositionState.OPEN, ...Object.values(TunaPositionState)]);
+
 export const TunaSpotPositionStateSchema = z.enum([
   TunaSpotPositionState.OPEN,
   ...Object.values(TunaSpotPositionState),
@@ -212,14 +193,14 @@ export const Market = z.object({
   liquidationThreshold: z.number(),
   oraclePriceDeviationThreshold: z.number(),
   limitOrderExecutionFee: z.number(),
-  maxSpotPositionSizeA: amountWithUsd,
-  maxSpotPositionSizeB: amountWithUsd,
-  borrowedFundsA: amountWithUsd,
-  borrowedFundsB: amountWithUsd,
-  availableBorrowA: amountWithUsd,
-  availableBorrowB: amountWithUsd,
-  borrowLimitA: amountWithUsd,
-  borrowLimitB: amountWithUsd,
+  maxSpotPositionSizeA: AmountWithUsdSchema,
+  maxSpotPositionSizeB: AmountWithUsdSchema,
+  borrowedFundsA: AmountWithUsdSchema,
+  borrowedFundsB: AmountWithUsdSchema,
+  availableBorrowA: AmountWithUsdSchema,
+  availableBorrowB: AmountWithUsdSchema,
+  borrowLimitA: AmountWithUsdSchema,
+  borrowLimitB: AmountWithUsdSchema,
   disabled: z.boolean(),
   createdAt: z.coerce.date(),
 });
@@ -234,9 +215,9 @@ export const TokenOraclePrice = z.object({
 export const Vault = z.object({
   address: z.string(),
   mint: z.string(),
-  depositedFunds: amountWithUsd,
-  borrowedFunds: amountWithUsd,
-  supplyLimit: amountWithUsd,
+  depositedFunds: AmountWithUsdSchema,
+  borrowedFunds: AmountWithUsdSchema,
+  supplyLimit: AmountWithUsdSchema,
   borrowedShares: z.coerce.bigint(),
   depositedShares: z.coerce.bigint(),
   supplyApy: z.number(),
@@ -261,8 +242,8 @@ export const VaultHistoricalStats = z.object({
 
     return z.NEVER;
   }, z.date()),
-  supply: amountWithUsd,
-  borrow: amountWithUsd,
+  supply: AmountWithUsdSchema,
+  borrow: AmountWithUsdSchema,
   supplyApy: z.number(),
   borrowApr: z.number(),
 });
@@ -321,8 +302,8 @@ export const LendingPosition = z.object({
   mint: z.string(),
   vault: z.string(),
   shares: z.coerce.bigint(),
-  funds: amountWithUsd,
-  earned: amountWithUsd,
+  funds: AmountWithUsdSchema,
+  earned: AmountWithUsdSchema,
 });
 
 export const TunaPosition = z.object({
@@ -345,21 +326,21 @@ export const TunaPosition = z.object({
   depositedCollateralUsd: z.object({
     amount: z.number(),
   }),
-  loanFundsA: amountWithUsd,
-  loanFundsB: amountWithUsd,
-  currentLoanA: amountWithUsd,
-  currentLoanB: amountWithUsd,
-  leftoversA: amountWithUsd,
-  leftoversB: amountWithUsd,
-  yieldA: amountWithUsd,
-  yieldB: amountWithUsd,
-  compoundedYieldA: amountWithUsd,
-  compoundedYieldB: amountWithUsd,
-  totalA: amountWithUsd,
-  totalB: amountWithUsd,
-  pnlA: tokensPnl,
-  pnlB: tokensPnl,
-  pnlUsd: usdPnl,
+  loanFundsA: AmountWithUsdSchema,
+  loanFundsB: AmountWithUsdSchema,
+  currentLoanA: AmountWithUsdSchema,
+  currentLoanB: AmountWithUsdSchema,
+  leftoversA: AmountWithUsdSchema,
+  leftoversB: AmountWithUsdSchema,
+  yieldA: AmountWithUsdSchema,
+  yieldB: AmountWithUsdSchema,
+  compoundedYieldA: AmountWithUsdSchema,
+  compoundedYieldB: AmountWithUsdSchema,
+  totalA: AmountWithUsdSchema,
+  totalB: AmountWithUsdSchema,
+  pnlA: TokensPnlSchema,
+  pnlB: TokensPnlSchema,
+  pnlUsd: UsdPnlSchema,
   openedAt: z.coerce.date(),
   updatedAtSlot: z.coerce.bigint(),
   closedAt: z.nullable(z.coerce.date()),
@@ -540,12 +521,12 @@ export const TunaSpotPosition = z.object({
   collateralToken: z.string(),
   borrowToken: z.string(),
   positionToken: z.string(),
-  collateral: amountWithUsd,
-  loanFunds: amountWithUsd,
-  currentLoan: amountWithUsd,
-  total: amountWithUsd,
+  collateral: AmountWithUsdSchema,
+  loanFunds: AmountWithUsdSchema,
+  currentLoan: AmountWithUsdSchema,
+  total: AmountWithUsdSchema,
   uiLiquidationPrice: z.nullable(z.number()),
-  pnlUsd: usdPnl,
+  pnlUsd: UsdPnlSchema,
   leverage: z.number(),
   openedAt: z.coerce.date(),
   openedAtSlot: z.coerce.bigint(),
@@ -598,8 +579,8 @@ export const LimitOrder = z.object({
   fillRatio: z.number(),
   openTxSignature: z.string(),
   closeTxSignature: z.nullable(z.string()),
-  amountIn: amountWithUsd,
-  amountOut: amountWithUsd,
+  amountIn: AmountWithUsdSchema,
+  amountOut: AmountWithUsdSchema,
   openedAt: z.coerce.date(),
   closedAt: z.nullable(z.coerce.date()),
 });
@@ -616,9 +597,9 @@ export const TradeHistoryEntry = z.object({
   uiDirection: TradeHistoryUIDirectionSchema,
   // Trade price formatted for ui display
   uiPrice: z.number(),
-  baseToken: amountWithUsd,
-  quoteToken: amountWithUsd,
-  fee: amountWithUsd,
+  baseToken: AmountWithUsdSchema,
+  quoteToken: AmountWithUsdSchema,
+  fee: AmountWithUsdSchema,
   pnl: z.nullable(
     z.object({
       usd: z.number(),
@@ -643,10 +624,10 @@ export const OrderHistoryEntry = z.object({
   uiPrice: z.nullable(z.number()),
   uiExecutionPrice: z.nullable(z.number()),
   status: OrderHistoryStatusSchema,
-  baseToken: amountWithUsd,
-  quoteToken: amountWithUsd,
-  baseTokenConsumedAmount: z.nullable(amountWithUsd),
-  quoteTokenFilledAmount: z.nullable(amountWithUsd),
+  baseToken: AmountWithUsdSchema,
+  quoteToken: AmountWithUsdSchema,
+  baseTokenConsumedAmount: z.nullable(AmountWithUsdSchema),
+  quoteTokenFilledAmount: z.nullable(AmountWithUsdSchema),
   txSignature: z.nullable(z.string()),
   positionAddress: z.nullable(z.string()),
   slot: z.coerce.bigint(),
@@ -659,8 +640,8 @@ export const StakingTreasury = z.object({
   rewardTokenMint: z.string(),
   apy: z.number(),
   uniqueStakers: z.number(),
-  totalStaked: amountWithUsd,
-  totalReward: amountWithUsd,
+  totalStaked: AmountWithUsdSchema,
+  totalReward: AmountWithUsdSchema,
   unstakeCooldownSeconds: z.number(),
   isStakingEnabled: z.boolean(),
   isUnstakingEnabled: z.boolean(),
@@ -670,14 +651,14 @@ export const StakingTreasury = z.object({
 export const StakingPosition = z.object({
   address: z.string(),
   owner: z.string(),
-  staked: amountWithUsd,
-  unstaked: amountWithUsd,
-  claimedReward: amountWithUsd,
-  unclaimedReward: amountWithUsd,
+  staked: AmountWithUsdSchema,
+  unstaked: AmountWithUsdSchema,
+  claimedReward: AmountWithUsdSchema,
+  unclaimedReward: AmountWithUsdSchema,
   rank: z.nullable(z.number()),
   vesting: z.object({
-    locked: amountWithUsd,
-    unlocked: amountWithUsd,
+    locked: AmountWithUsdSchema,
+    unlocked: AmountWithUsdSchema,
     unlockRate: z.coerce.bigint(),
     unlockEverySeconds: z.number(),
     unlockCliffSeconds: z.number(),
@@ -691,7 +672,7 @@ export const StakingLeaderboardPosition = z.object({
   rank: z.number(),
   address: z.string(),
   owner: z.string(),
-  staked: amountWithUsd,
+  staked: AmountWithUsdSchema,
 });
 
 export const StakingLeaderboardPage = z.object({
@@ -842,7 +823,7 @@ export const LimitOrderQuoteByOutput = z.object({
   amountIn: z.coerce.bigint(),
 });
 
-export const TradableAmount = amountWithUsd;
+export const TradableAmount = AmountWithUsdSchema;
 
 export const UpdateStreamSubscriptionResult = z.object({
   status: z.string(),

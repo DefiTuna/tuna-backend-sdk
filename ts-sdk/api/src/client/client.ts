@@ -55,6 +55,7 @@ export type OrderBookNotificationMeta = z.infer<typeof schemas.OrderBookNotifica
 export type LendingPosition = z.infer<typeof schemas.LendingPosition>;
 export type TunaPosition = z.infer<typeof schemas.TunaPosition>;
 export type TunaLpPosition = z.infer<typeof schemas.TunaLpPosition>;
+export type TunaLpPositionV2 = z.infer<typeof schemas.TunaLpPositionDtoSchema>;
 export type TunaLpPositionAction = z.infer<typeof schemas.TunaLpPositionAction>;
 export type TunaSpotPosition = z.infer<typeof schemas.TunaSpotPosition>;
 export type LimitOrder = z.infer<typeof schemas.LimitOrder>;
@@ -450,7 +451,7 @@ export class TunaApiClient {
     return await this.httpRequest(url, schemas.LendingPosition);
   }
 
-  async getUserTunaPositions(userAddress: string): Promise<TunaPosition[]> {
+  async getUserTunaPositions(userAddress: string): Promise<TunaLpPositionV2[]> {
     const url = this.buildURL(`users/${userAddress}/tuna-positions`);
     return await this.httpRequest(url, schemas.TunaPosition.array());
   }
