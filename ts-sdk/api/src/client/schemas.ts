@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import { AmountWithUsdSchema, PoolProviderSchema, TokensPnlSchema, UsdPnlSchema } from "./schemas/basic";
-import { TunaPositionStateSchema } from "./schemas/lp_positions.ts";
+import { TunaPositionStateSchema } from "./schemas/lp_positions";
 
 export * from "./schemas/basic";
 export * from "./schemas/lp_positions";
