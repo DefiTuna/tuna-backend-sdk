@@ -384,16 +384,16 @@ describe("Tuna Positions", async () => {
     expect(tunaPositions.every(position => position.totalA.usd + position.totalB.usd > 0)).toBe(true);
   });
   it("Has correct values for position without leverage", () => {
-    expect(testPositionWithoutLeverage.currentLoanA.amount + testPositionWithoutLeverage.currentLoanB.amount).toBe(0n);
+    expect(testPositionWithoutLeverage.currentDebtA.amount + testPositionWithoutLeverage.currentDebtB.amount).toBe(0n);
     expect(testPositionWithoutLeverage.yieldA.amount).toBeGreaterThanOrEqual(38556n);
     expect(testPositionWithoutLeverage.yieldB.amount).toBeGreaterThanOrEqual(4435n);
   });
   it("Has correct values for position with leverage", () => {
-    expect(testPositionWithLeverage.currentLoanA.amount + testPositionWithLeverage.currentLoanB.amount).toBeGreaterThan(
+    expect(testPositionWithLeverage.currentDebtA.amount + testPositionWithLeverage.currentDebtB.amount).toBeGreaterThan(
       0n,
     );
-    expect(testPositionWithLeverage.currentLoanA.amount).toBeGreaterThanOrEqual(168783n);
-    expect(testPositionWithLeverage.currentLoanB.amount).toBeGreaterThanOrEqual(25002n);
+    expect(testPositionWithLeverage.currentDebtA.amount).toBeGreaterThanOrEqual(168783n);
+    expect(testPositionWithLeverage.currentDebtB.amount).toBeGreaterThanOrEqual(25002n);
     expect(testPositionWithLeverage.yieldA.amount).toBeGreaterThanOrEqual(1680n);
     expect(testPositionWithLeverage.yieldB.amount).toBeGreaterThanOrEqual(189n);
   });
