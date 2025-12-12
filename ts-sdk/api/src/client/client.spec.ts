@@ -113,7 +113,10 @@ describe("Markets", async () => {
 
 describe("Single Market", async () => {
   const rpcMarkets = await testUtils.getMarkets();
-  const sampleMarketAddress = rpcMarkets[0].address;
+  // Prefer SOL/USDC pool
+  const marketDst =
+    rpcMarkets.find(market => market.data.pool === "7VuKeevbvbQQcxz6N4SNLmuq6PYy4AcGQRDssoqo4t65") ?? rpcMarkets[0];
+  const sampleMarketAddress = marketDst.address;
   const unsavedMarketAddress = "FeR8VBqNRSUD5NtXAj2n3j1dAHkZHfyDktKuLXD4pump";
   const market = await client.getMarket(sampleMarketAddress);
 
