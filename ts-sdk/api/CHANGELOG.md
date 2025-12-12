@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.10.1
+
+### Patch Changes
+
+- ea79ddd: Changing tuna LP position DTO for GET ../users/{wallet}/tuna-positions
+
 ## 1.10.0
 
 ### Minor Changes
