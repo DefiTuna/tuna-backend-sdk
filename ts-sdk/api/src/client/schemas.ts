@@ -1,23 +1,17 @@
 import { z } from "zod";
 
-const amountWithoutUsd = z.object({
-  amount: z.coerce.bigint(),
-});
+import { AmountWithUsdSchema, PoolProviderSchema } from "./schemas/basic";
+import { LimitOrder } from "./schemas/limit_orders";
+import { TunaPositionLegacy } from "./schemas/lp_positions";
+import { TunaSpotPosition } from "./schemas/spot_positions";
+import { PoolPriceUpdate, StateSnapshot } from "./schemas/state_snapshot";
 
-const amountWithUsd = z.object({
-  amount: z.coerce.bigint(),
-  usd: z.number(),
-});
-
-const tokensPnl = z.object({
-  amount: z.coerce.bigint(),
-  bps: z.number(),
-});
-
-const usdPnl = z.object({
-  amount: z.number(),
-  bps: z.number(),
-});
+export * from "./schemas/basic";
+export * from "./schemas/limit_orders";
+export * from "./schemas/lp_positions";
+export * from "./schemas/spot_positions";
+export * from "./schemas/positions_shared";
+export * from "./schemas/state_snapshot";
 
 export const NotificationEntity = {
   POOL_SWAP: "pool_swap",
@@ -36,27 +30,7 @@ export const NotificationAction = {
   CREATE: "create",
   UPDATE: "update",
 } as const;
-export const PoolProvider = {
-  ORCA: "orca",
-  FUSION: "fusion",
-} as const;
-export const TunaPositionState = {
-  OPEN: "open",
-  LIQUIDATED: "liquidated",
-  CLOSED_BY_LIMIT_ORDER: "closed_by_limit_order",
-  CLOSED: "closed",
-} as const;
-export const TunaSpotPositionState = {
-  OPEN: "open",
-  CLOSED: "closed",
-} as const;
-export const LimitOrderState = {
-  OPEN: "open",
-  PARTIALLY_FILLED: "partially_filled",
-  FILLED: "filled",
-  COMPLETE: "complete",
-  CANCELLED: "cancelled",
-} as const;
+
 export const TradeHistoryAction = {
   SWAP: "swap",
   LIMIT_ORDER_FILL: "limit_order_fill",
@@ -116,46 +90,10 @@ export const WalletSubscriptionTopic = {
   TRADE_HISTORY: "trade_history",
   ORDER_HISTORY: "order_history",
 } as const;
-export const LpPositionLimitOrderSwap = {
-  NO_SWAP: "no_swap",
-  SWAP_TO_TOKEN_A: "swap_to_token_a",
-  SWAP_TO_TOKEN_B: "swap_to_token_b",
-} as const;
-export const LpPositionAutoCompound = {
-  NO_AUTO_COMPOUND: "no_auto_compound",
-  AUTO_COMPOUND: "auto_compound",
-  AUTO_COMPOUND_WITH_LEVERAGE: "auto_compound_with_leverage",
-} as const;
-export const LpPositionRebalance = {
-  NO_REBALANCE: "no_rebalance",
-  AUTO_REBALANCE: "auto_rebalance",
-} as const;
-export const LpPositionsActionType = {
-  OPEN_POSITION: "open_position",
-  CLOSE_POSITION: "close_position",
-  INCREASE_LIQUIDITY: "increase_liquidity",
-  DECREASE_LIQUIDITY: "decrease_liquidity",
-  REPAY_DEBT: "repay_debt",
-  LIQUIDATE: "liquidate",
-  EXECUTE_LIMIT_ORDER: "execute_limit_order",
-  COLLECT_FEES: "collect_fees",
-  COLLECT_REWARDS: "collect_rewards",
-  COLLECT_AND_COMPOUND_FEES: "collect_and_compound_fees",
-  REBALANCE_POSITION: "rebalance_position",
-  SET_LIMIT_ORDERS: "set_limit_orders",
-  SET_FLAGS: "set_flags",
-  SET_REBALANCE_THRESHOLD: "set_rebalance_threshold",
-} as const;
 
 export const NotificationEntitySchema = z.enum([NotificationEntity.POOL_SWAP, ...Object.values(NotificationEntity)]);
 export const NotificationActionSchema = z.enum([NotificationAction.CREATE, ...Object.values(NotificationAction)]);
-export const PoolProviderSchema = z.enum([PoolProvider.ORCA, ...Object.values(PoolProvider)]);
-export const TunaPositionStateSchema = z.enum([TunaPositionState.OPEN, ...Object.values(TunaPositionState)]);
-export const TunaSpotPositionStateSchema = z.enum([
-  TunaSpotPositionState.OPEN,
-  ...Object.values(TunaSpotPositionState),
-]);
-export const LimitOrderStateSchema = z.enum([LimitOrderState.OPEN, ...Object.values(LimitOrderState)]);
+
 export const TradeHistoryActionSchema = z.enum([TradeHistoryAction.SWAP, ...Object.values(TradeHistoryAction)]);
 export const TradeHistoryUIDirectionSchema = z.enum([
   TradeHistoryUIDirection.BUY,
@@ -182,10 +120,7 @@ export const WalletSubscriptionTopicSchema = z.enum([
   WalletSubscriptionTopic.TUNA_POSITIONS,
   ...Object.values(WalletSubscriptionTopic),
 ]);
-export const LpPositionLimitOrderSwapSchema = z.enum(Object.values(LpPositionLimitOrderSwap) as [string, ...string[]]);
-export const LpPositionAutoCompoundSchema = z.enum(Object.values(LpPositionAutoCompound) as [string, ...string[]]);
-export const LpPositionRebalanceSchema = z.enum(Object.values(LpPositionRebalance) as [string, ...string[]]);
-export const LpPositionsActionTypeSchema = z.enum(Object.values(LpPositionsActionType) as [string, ...string[]]);
+
 export const PaginationMeta = z.object({
   total: z.number(),
 });
@@ -211,15 +146,14 @@ export const Market = z.object({
   liquidationFee: z.number(),
   liquidationThreshold: z.number(),
   oraclePriceDeviationThreshold: z.number(),
-  limitOrderExecutionFee: z.number(),
-  maxSpotPositionSizeA: amountWithUsd,
-  maxSpotPositionSizeB: amountWithUsd,
-  borrowedFundsA: amountWithUsd,
-  borrowedFundsB: amountWithUsd,
-  availableBorrowA: amountWithUsd,
-  availableBorrowB: amountWithUsd,
-  borrowLimitA: amountWithUsd,
-  borrowLimitB: amountWithUsd,
+  maxSpotPositionSizeA: AmountWithUsdSchema,
+  maxSpotPositionSizeB: AmountWithUsdSchema,
+  borrowedFundsA: AmountWithUsdSchema,
+  borrowedFundsB: AmountWithUsdSchema,
+  availableBorrowA: AmountWithUsdSchema,
+  availableBorrowB: AmountWithUsdSchema,
+  borrowLimitA: AmountWithUsdSchema,
+  borrowLimitB: AmountWithUsdSchema,
   disabled: z.boolean(),
   createdAt: z.coerce.date(),
 });
@@ -234,9 +168,9 @@ export const TokenOraclePrice = z.object({
 export const Vault = z.object({
   address: z.string(),
   mint: z.string(),
-  depositedFunds: amountWithUsd,
-  borrowedFunds: amountWithUsd,
-  supplyLimit: amountWithUsd,
+  depositedFunds: AmountWithUsdSchema,
+  borrowedFunds: AmountWithUsdSchema,
+  supplyLimit: AmountWithUsdSchema,
   borrowedShares: z.coerce.bigint(),
   depositedShares: z.coerce.bigint(),
   supplyApy: z.number(),
@@ -261,8 +195,8 @@ export const VaultHistoricalStats = z.object({
 
     return z.NEVER;
   }, z.date()),
-  supply: amountWithUsd,
-  borrow: amountWithUsd,
+  supply: AmountWithUsdSchema,
+  borrow: AmountWithUsdSchema,
   supplyApy: z.number(),
   borrowApr: z.number(),
 });
@@ -321,236 +255,8 @@ export const LendingPosition = z.object({
   mint: z.string(),
   vault: z.string(),
   shares: z.coerce.bigint(),
-  funds: amountWithUsd,
-  earned: amountWithUsd,
-});
-
-export const TunaPosition = z.object({
-  address: z.string(),
-  authority: z.string(),
-  version: z.number(),
-  state: TunaPositionStateSchema,
-  positionMint: z.string(),
-  liquidity: z.coerce.bigint(),
-  tickLowerIndex: z.number(),
-  tickUpperIndex: z.number(),
-  entrySqrtPrice: z.coerce.bigint(),
-  lowerLimitOrderSqrtPrice: z.coerce.bigint(),
-  upperLimitOrderSqrtPrice: z.coerce.bigint(),
-  flags: z.number(),
-  pool: z.string(),
-  poolSqrtPrice: z.coerce.bigint(),
-  depositedCollateralA: amountWithoutUsd,
-  depositedCollateralB: amountWithoutUsd,
-  depositedCollateralUsd: z.object({
-    amount: z.number(),
-  }),
-  loanFundsA: amountWithUsd,
-  loanFundsB: amountWithUsd,
-  currentLoanA: amountWithUsd,
-  currentLoanB: amountWithUsd,
-  leftoversA: amountWithUsd,
-  leftoversB: amountWithUsd,
-  yieldA: amountWithUsd,
-  yieldB: amountWithUsd,
-  compoundedYieldA: amountWithUsd,
-  compoundedYieldB: amountWithUsd,
-  totalA: amountWithUsd,
-  totalB: amountWithUsd,
-  pnlA: tokensPnl,
-  pnlB: tokensPnl,
-  pnlUsd: usdPnl,
-  openedAt: z.coerce.date(),
-  updatedAtSlot: z.coerce.bigint(),
-  closedAt: z.nullable(z.coerce.date()),
-});
-
-export const TunaLpPosition = z.object({
-  positionAddress: z.string(),
-  authority: z.string(),
-  pool: z.string(),
-  state: TunaPositionStateSchema,
-  lowerPrice: z.number(),
-  upperPrice: z.number(),
-  lowerLimitOrder: z.number().nullable(),
-  upperLimitOrder: z.number().nullable(),
-  marketMaker: PoolProviderSchema,
-  openedAt: z.coerce.date(),
-  closedAt: z.coerce.date().nullable(),
-  totalValueUsd: z.number(),
-  leverage: z.number(),
-  initialLeverage: z.number(),
-  totalDepositUsd: z.number(),
-  totalWithdrawnUsd: z.number(),
-  feesSumUsd: z.number(),
-  closedPnlSumUsd: z.number(),
-  entryPrice: z.number(),
-  exitPrice: z.number().nullable(),
-});
-
-export const TunaLpPositionParameters = z.object({
-  lowerPrice: z.number(),
-  upperPrice: z.number(),
-  lowerLimitOrder: z.number().nullable(),
-  upperLimitOrder: z.number().nullable(),
-  lowerLimitOrderSwap: LpPositionLimitOrderSwapSchema,
-  upperLimitOrderSwap: LpPositionLimitOrderSwapSchema,
-  autoCompound: LpPositionAutoCompoundSchema,
-  rebalance: LpPositionRebalanceSchema,
-  rebalanceThresholdTicks: z.number(),
-});
-
-export const TunaLpPositionValue = z.object({
-  totalValueA: z.number(),
-  totalValueB: z.number(),
-  totalValueUsd: z.number(),
-  loanFundsA: z.number(),
-  loanFundsB: z.number(),
-  loanFundsUsd: z.number(),
-  leverage: z.number(),
-});
-
-export const TunaLpPositionTransfer = z.object({
-  amountA: z.number(),
-  amountB: z.number(),
-  amountUsd: z.number(),
-});
-
-export const TunaLpPositionTokenPrices = z.object({
-  tokenPriceA: z.number(),
-  tokenPriceB: z.number(),
-});
-
-export const TunaLpPositionActionOpen = z.object({
-  parameters: TunaLpPositionParameters,
-});
-
-export const TunaLpPositionActionClose = z.object({
-  toOwner: TunaLpPositionTransfer.nullable(),
-  prices: TunaLpPositionTokenPrices.nullable(),
-});
-
-export const TunaLpPositionActionIncreaseLiquidity = z.object({
-  fromPosition: TunaLpPositionValue.nullable(),
-  toPosition: TunaLpPositionValue,
-  fromOwner: TunaLpPositionTransfer,
-  fromLending: TunaLpPositionTransfer,
-  protocolFees: TunaLpPositionTransfer,
-  prices: TunaLpPositionTokenPrices,
-});
-
-export const TunaLpPositionActionDecreaseLiquidity = z.object({
-  withdrawPercent: z.number(),
-  closedPnlUsd: z.number(),
-  fromPosition: TunaLpPositionValue,
-  toPosition: TunaLpPositionValue.nullable(),
-  toOwner: TunaLpPositionTransfer,
-  toLending: TunaLpPositionTransfer,
-  collectedFees: TunaLpPositionTransfer,
-  prices: TunaLpPositionTokenPrices,
-});
-
-export const TunaLpPositionActionLiquidate = z.object({
-  withdrawPercent: z.number(),
-  fromPosition: TunaLpPositionValue,
-  toLending: TunaLpPositionTransfer,
-  protocolFees: TunaLpPositionTransfer,
-  prices: TunaLpPositionTokenPrices,
-});
-
-export const TunaLpPositionActionRepayDebt = z.object({
-  fromPosition: TunaLpPositionValue,
-  toPosition: TunaLpPositionValue,
-  fromOwner: TunaLpPositionTransfer,
-  toLending: TunaLpPositionTransfer,
-  prices: TunaLpPositionTokenPrices,
-});
-
-export const TunaLpPositionActionCollectFees = z.object({
-  closedPnlUsd: z.number(),
-  position: TunaLpPositionValue,
-  collectedFees: TunaLpPositionTransfer,
-  toOwner: TunaLpPositionTransfer,
-  prices: TunaLpPositionTokenPrices,
-});
-
-export const TunaLpPositionActionCollectAndCompoundFees = z.object({
-  fromPosition: TunaLpPositionValue,
-  toPosition: TunaLpPositionValue,
-  collectedFees: TunaLpPositionTransfer,
-  fromLending: TunaLpPositionTransfer,
-  protocolFees: TunaLpPositionTransfer,
-  prices: TunaLpPositionTokenPrices,
-});
-
-export const TunaLpPositionActionParametersUpdate = z.object({
-  fromParameters: TunaLpPositionParameters,
-  toParameters: TunaLpPositionParameters,
-});
-
-export const TunaLpPositionAction = z.object({
-  action: LpPositionsActionTypeSchema,
-  txSignature: z.string(),
-  txTimestamp: z.coerce.date(),
-  data: z.object({
-    /** defined for: IncreaseLiquidity, DecreaseLiquidity, Liquidate, ExecuteLimitOrder, RepayDebt, CollectAndCompoundFees */
-    fromPosition: TunaLpPositionValue.optional().nullable(),
-    /** defined for: IncreaseLiquidity, DecreaseLiquidity, Liquidate, ExecuteLimitOrder, RepayDebt, CollectAndCompoundFees */
-    toPosition: TunaLpPositionValue.optional().nullable(),
-    /** defined for: CollectFees */
-    position: TunaLpPositionValue.optional().nullable(),
-    /** defined for: IncreaseLiquidity, RepayDebt */
-    fromOwner: TunaLpPositionTransfer.optional(),
-    /** defined for: DecreaseLiquidity, CollectFees, ClosePosition; nullable for: ClosePosition */
-    toOwner: TunaLpPositionTransfer.optional().nullable(),
-    /** defined for: IncreaseLiquidity, CollectAndCompoundFees */
-    fromLending: TunaLpPositionTransfer.optional(),
-    /** defined for: DecreaseLiquidity, Liquidate, ExecuteLimitOrder, RepayDebt */
-    toLending: TunaLpPositionTransfer.optional(),
-    /** defined for: CollectFees, CollectAndCompoundFees */
-    collectedFees: TunaLpPositionTransfer.optional(),
-    /** defined for: IncreaseLiquidity, Liquidate, ExecuteLimitOrder, CollectAndCompoundFees */
-    protocolFees: TunaLpPositionTransfer.optional(),
-    /** defined for: IncreaseLiquidity, DecreaseLiquidity, Liquidate, ExecuteLimitOrder, RepayDebt, CollectFees, CollectAndCompoundFees, ClosePosition; nullable for: ClosePosition */
-    prices: TunaLpPositionTokenPrices.optional().nullable(),
-    /** defined for: OpenPosition */
-    parameters: TunaLpPositionParameters.optional(),
-    /** defined for: ParametersUpdate */
-    fromParameters: TunaLpPositionParameters.optional(),
-    /** defined for: ParametersUpdate */
-    toParameters: TunaLpPositionParameters.optional(),
-    /** defined for: DecreaseLiquidity */
-    withdrawPercent: z.number().optional(),
-    /** defined for: DecreaseLiquidity, CollectFees */
-    closedPnlUsd: z.number().optional(),
-  }),
-});
-
-export const TunaSpotPosition = z.object({
-  address: z.string(),
-  authority: z.string(),
-  version: z.number(),
-  state: TunaSpotPositionStateSchema,
-  entrySqrtPrice: z.coerce.bigint(),
-  lowerLimitOrderSqrtPrice: z.coerce.bigint(),
-  upperLimitOrderSqrtPrice: z.coerce.bigint(),
-  flags: z.number(),
-  pool: z.string(),
-  poolSqrtPrice: z.coerce.bigint(),
-  collateralToken: z.string(),
-  borrowToken: z.string(),
-  positionToken: z.string(),
-  collateral: amountWithUsd,
-  loanFunds: amountWithUsd,
-  currentLoan: amountWithUsd,
-  total: amountWithUsd,
-  uiLiquidationPrice: z.nullable(z.number()),
-  pnlUsd: usdPnl,
-  leverage: z.number(),
-  openedAt: z.coerce.date(),
-  openedAtSlot: z.coerce.bigint(),
-  updatedAtSlot: z.coerce.bigint(),
-  closedAt: z.nullable(z.coerce.date()),
+  funds: AmountWithUsdSchema,
+  earned: AmountWithUsdSchema,
 });
 
 export const PoolSwap = z.object({
@@ -576,32 +282,9 @@ export const OrderBookEntry = z.object({
   askSide: z.boolean(),
 });
 
-export const PoolPriceUpdate = z.object({
-  pool: z.string(),
-  price: z.number(),
-  sqrtPrice: z.coerce.bigint(),
-  time: z.coerce.date(),
-});
-
 export const OrderBook = z.object({
   entries: OrderBookEntry.array(),
   poolPrice: z.number(),
-});
-
-export const LimitOrder = z.object({
-  address: z.string(),
-  mint: z.string(),
-  pool: z.string(),
-  state: LimitOrderStateSchema,
-  aToB: z.boolean(),
-  tickIndex: z.number(),
-  fillRatio: z.number(),
-  openTxSignature: z.string(),
-  closeTxSignature: z.nullable(z.string()),
-  amountIn: amountWithUsd,
-  amountOut: amountWithUsd,
-  openedAt: z.coerce.date(),
-  closedAt: z.nullable(z.coerce.date()),
 });
 
 export const TradeHistoryEntry = z.object({
@@ -616,9 +299,9 @@ export const TradeHistoryEntry = z.object({
   uiDirection: TradeHistoryUIDirectionSchema,
   // Trade price formatted for ui display
   uiPrice: z.number(),
-  baseToken: amountWithUsd,
-  quoteToken: amountWithUsd,
-  fee: amountWithUsd,
+  baseToken: AmountWithUsdSchema,
+  quoteToken: AmountWithUsdSchema,
+  fee: AmountWithUsdSchema,
   pnl: z.nullable(
     z.object({
       usd: z.number(),
@@ -643,10 +326,10 @@ export const OrderHistoryEntry = z.object({
   uiPrice: z.nullable(z.number()),
   uiExecutionPrice: z.nullable(z.number()),
   status: OrderHistoryStatusSchema,
-  baseToken: amountWithUsd,
-  quoteToken: amountWithUsd,
-  baseTokenConsumedAmount: z.nullable(amountWithUsd),
-  quoteTokenFilledAmount: z.nullable(amountWithUsd),
+  baseToken: AmountWithUsdSchema,
+  quoteToken: AmountWithUsdSchema,
+  baseTokenConsumedAmount: z.nullable(AmountWithUsdSchema),
+  quoteTokenFilledAmount: z.nullable(AmountWithUsdSchema),
   txSignature: z.nullable(z.string()),
   positionAddress: z.nullable(z.string()),
   slot: z.coerce.bigint(),
@@ -659,8 +342,8 @@ export const StakingTreasury = z.object({
   rewardTokenMint: z.string(),
   apy: z.number(),
   uniqueStakers: z.number(),
-  totalStaked: amountWithUsd,
-  totalReward: amountWithUsd,
+  totalStaked: AmountWithUsdSchema,
+  totalReward: AmountWithUsdSchema,
   unstakeCooldownSeconds: z.number(),
   isStakingEnabled: z.boolean(),
   isUnstakingEnabled: z.boolean(),
@@ -670,14 +353,14 @@ export const StakingTreasury = z.object({
 export const StakingPosition = z.object({
   address: z.string(),
   owner: z.string(),
-  staked: amountWithUsd,
-  unstaked: amountWithUsd,
-  claimedReward: amountWithUsd,
-  unclaimedReward: amountWithUsd,
+  staked: AmountWithUsdSchema,
+  unstaked: AmountWithUsdSchema,
+  claimedReward: AmountWithUsdSchema,
+  unclaimedReward: AmountWithUsdSchema,
   rank: z.nullable(z.number()),
   vesting: z.object({
-    locked: amountWithUsd,
-    unlocked: amountWithUsd,
+    locked: AmountWithUsdSchema,
+    unlocked: AmountWithUsdSchema,
     unlockRate: z.coerce.bigint(),
     unlockEverySeconds: z.number(),
     unlockCliffSeconds: z.number(),
@@ -691,7 +374,7 @@ export const StakingLeaderboardPosition = z.object({
   rank: z.number(),
   address: z.string(),
   owner: z.string(),
-  staked: amountWithUsd,
+  staked: AmountWithUsdSchema,
 });
 
 export const StakingLeaderboardPage = z.object({
@@ -756,57 +439,6 @@ export const StakingRevenueStatsGroup = z.object({
   runningTotalDepositsSol: z.coerce.bigint(),
 });
 
-export const IncreaseSpotPositionQuote = z.object({
-  /** Required collateral amount */
-  collateralAmount: z.coerce.bigint(),
-  /** Required amount to borrow */
-  borrowAmount: z.coerce.bigint(),
-  /** Estimated position size in the position token. */
-  estimatedAmount: z.coerce.bigint(),
-  /** Swap input amount. */
-  swapInputAmount: z.coerce.bigint(),
-  /** Minimum swap output amount according to the provided slippage. */
-  minSwapOutputAmount: z.coerce.bigint(),
-  /** Protocol fee in token A */
-  protocolFeeA: z.coerce.bigint(),
-  /** Protocol fee in token B */
-  protocolFeeB: z.coerce.bigint(),
-  /** Price impact in percents */
-  priceImpact: z.number(),
-  /** Liquidation price */
-  uiLiquidationPrice: z.nullable(z.number()),
-});
-
-export const DecreaseSpotPositionQuote = z.object({
-  /** Confirmed position decrease percentage (100% = 1.0) */
-  decreasePercent: z.number(),
-  /** The maximum acceptable swap input amount for position decrease according to the provided slippage
-   * (if collateral_token == position_token) OR the minimum swap output amount (if collateral_token != position_token).
-   */
-  requiredSwapAmount: z.coerce.bigint(),
-  /**  Estimated total amount of the adjusted position */
-  estimatedAmount: z.coerce.bigint(),
-  /** Estimated amount of the withdrawn collateral */
-  estimatedWithdrawnCollateral: z.coerce.bigint(),
-  /** Price impact in percents */
-  priceImpact: z.number(),
-  /** Liquidation price */
-  uiLiquidationPrice: z.nullable(z.number()),
-});
-
-export const CloseSpotPositionQuote = z.object({
-  /** Position decrease percentage */
-  decreasePercent: z.number(),
-  /** The maximum acceptable swap input amount for position decrease according to the provided slippage
-   * (if collateral_token == position_token) OR the minimum swap output amount (if collateral_token != position_token).
-   */
-  requiredSwapAmount: z.coerce.bigint(),
-  /** Estimated amount of the withdrawn collateral */
-  estimatedWithdrawnCollateral: z.coerce.bigint(),
-  /** Price impact in percents */
-  priceImpact: z.number(),
-});
-
 export const SwapQuoteByInput = z.object({
   estimatedAmountOut: z.coerce.bigint(),
   minAmountOut: z.coerce.bigint(),
@@ -825,15 +457,6 @@ export const SwapQuoteByOutput = z.object({
   priceImpact: z.number(),
 });
 
-export const StateSnapshot = z.object({
-  slot: z.coerce.bigint(),
-  blockTime: z.coerce.date(),
-  poolPrices: z.optional(z.record(z.string(), PoolPriceUpdate)),
-  tunaSpotPositions: z.optional(z.array(TunaSpotPosition)),
-  tunaLpPositions: z.optional(z.array(TunaPosition)),
-  fusionLimitOrders: z.optional(z.array(LimitOrder)),
-});
-
 export const LimitOrderQuoteByInput = z.object({
   amountOut: z.coerce.bigint(),
 });
@@ -842,7 +465,7 @@ export const LimitOrderQuoteByOutput = z.object({
   amountIn: z.coerce.bigint(),
 });
 
-export const TradableAmount = amountWithUsd;
+export const TradableAmount = AmountWithUsdSchema;
 
 export const UpdateStreamSubscriptionResult = z.object({
   status: z.string(),
@@ -870,7 +493,7 @@ export const OrderBookNotificationMeta = z.object({
 export const PoolSwapNotification = createNotificationSchema(PoolSwap);
 export const PoolPriceUpdateNotification = createNotificationSchema(PoolPriceUpdate);
 export const OrderBookNotification = createNotificationSchema(OrderBook, OrderBookNotificationMeta);
-export const TunaPositionNotification = createNotificationSchema(TunaPosition);
+export const TunaPositionNotification = createNotificationSchema(TunaPositionLegacy);
 export const TunaSpotPositionNotification = createNotificationSchema(TunaSpotPosition);
 export const LendingPositionNotification = createNotificationSchema(LendingPosition);
 export const LimitOrderNotification = createNotificationSchema(LimitOrder);

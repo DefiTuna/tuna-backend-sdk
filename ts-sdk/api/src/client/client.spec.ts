@@ -113,7 +113,10 @@ describe("Markets", async () => {
 
 describe("Single Market", async () => {
   const rpcMarkets = await testUtils.getMarkets();
-  const sampleMarketAddress = rpcMarkets[0].address;
+  // Prefer SOL/USDC pool
+  const marketDst =
+    rpcMarkets.find(market => market.data.pool === "7VuKeevbvbQQcxz6N4SNLmuq6PYy4AcGQRDssoqo4t65") ?? rpcMarkets[0];
+  const sampleMarketAddress = marketDst.address;
   const unsavedMarketAddress = "FeR8VBqNRSUD5NtXAj2n3j1dAHkZHfyDktKuLXD4pump";
   const market = await client.getMarket(sampleMarketAddress);
 
@@ -374,7 +377,7 @@ describe("Tuna Positions", async () => {
           position.address,
           position.authority,
           position.positionMint,
-          position.pool,
+          position.pool.addr,
           position.liquidity,
         ])
         .sort(([a], [b]) => a.toString().localeCompare(b.toString())),
@@ -384,16 +387,16 @@ describe("Tuna Positions", async () => {
     expect(tunaPositions.every(position => position.totalA.usd + position.totalB.usd > 0)).toBe(true);
   });
   it("Has correct values for position without leverage", () => {
-    expect(testPositionWithoutLeverage.currentLoanA.amount + testPositionWithoutLeverage.currentLoanB.amount).toBe(0n);
+    expect(testPositionWithoutLeverage.currentDebtA.amount + testPositionWithoutLeverage.currentDebtB.amount).toBe(0n);
     expect(testPositionWithoutLeverage.yieldA.amount).toBeGreaterThanOrEqual(38556n);
     expect(testPositionWithoutLeverage.yieldB.amount).toBeGreaterThanOrEqual(4435n);
   });
   it("Has correct values for position with leverage", () => {
-    expect(testPositionWithLeverage.currentLoanA.amount + testPositionWithLeverage.currentLoanB.amount).toBeGreaterThan(
+    expect(testPositionWithLeverage.currentDebtA.amount + testPositionWithLeverage.currentDebtB.amount).toBeGreaterThan(
       0n,
     );
-    expect(testPositionWithLeverage.currentLoanA.amount).toBeGreaterThanOrEqual(168783n);
-    expect(testPositionWithLeverage.currentLoanB.amount).toBeGreaterThanOrEqual(25002n);
+    expect(testPositionWithLeverage.currentDebtA.amount).toBeGreaterThanOrEqual(168783n);
+    expect(testPositionWithLeverage.currentDebtB.amount).toBeGreaterThanOrEqual(25002n);
     expect(testPositionWithLeverage.yieldA.amount).toBeGreaterThanOrEqual(1680n);
     expect(testPositionWithLeverage.yieldB.amount).toBeGreaterThanOrEqual(189n);
   });
@@ -511,7 +514,7 @@ describe("Quotes", async () => {
     });
 
     expect(increaseSpotPositionQuote.borrowAmount).toEqual(usdcIncreaseAmount / BigInt(leverage));
-    expect(increaseSpotPositionQuote.uiLiquidationPrice).toBeGreaterThan(0);
+    expect(increaseSpotPositionQuote.liquidationPrice).toBeGreaterThan(0);
     expect(increaseSpotPositionQuote.protocolFeeA + increaseSpotPositionQuote.protocolFeeB).toBeGreaterThan(0n);
   });
 
@@ -531,7 +534,7 @@ describe("Quotes", async () => {
       slippageTolerance: BPS_DENOMINATOR,
     });
     expect(increaseSpotPositionQuote.borrowAmount).toEqual(usdcIncreaseAmount / BigInt(leverage));
-    expect(increaseSpotPositionQuote.uiLiquidationPrice).toBeGreaterThan(0);
+    expect(increaseSpotPositionQuote.liquidationPrice).toBeGreaterThan(0);
     expect(increaseSpotPositionQuote.protocolFeeA + increaseSpotPositionQuote.protocolFeeB).toBeGreaterThan(0n);
   });
 
@@ -550,7 +553,7 @@ describe("Quotes", async () => {
       positionDebt,
       slippageTolerance: BPS_DENOMINATOR,
     });
-    expect(decreaseSpotPositionQuote.uiLiquidationPrice).toBeGreaterThan(0);
+    expect(decreaseSpotPositionQuote.liquidationPrice).toBeGreaterThan(0);
   });
 
   it("Calculates close spot position quote", async () => {
@@ -621,9 +624,9 @@ describe("Spot Positions", async () => {
           position.pool,
           position.collateralToken,
           position.positionToken,
-          position.loanFunds.amount,
+          position.initialDebt.amount,
         ])
-        .sort(([a], [b]) => a.toString().localeCompare(b.toString())),
+        .sort(([a], [b]) => (a as object).toString().localeCompare((b as object).toString())),
     );
   });
   it("Have USD values for tokens", () => {
