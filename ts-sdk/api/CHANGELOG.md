@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.10.3
+
+### Patch Changes
+
+- 86a02be: fix: Replace lower/upper_price by lower/upper_tick_index in LP position DTO v2
+
 ## 1.10.2
 
 ### Patch Changes
