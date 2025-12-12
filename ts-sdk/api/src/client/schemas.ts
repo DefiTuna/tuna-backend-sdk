@@ -12,6 +12,7 @@ export * from "./schemas/lp_positions";
 export * from "./schemas/spot_positions";
 export * from "./schemas/positions_shared";
 export * from "./schemas/state_snapshot";
+export * from "./schemas/mint";
 
 export const NotificationEntity = {
   POOL_SWAP: "pool_swap",
@@ -123,13 +124,6 @@ export const WalletSubscriptionTopicSchema = z.enum([
 
 export const PaginationMeta = z.object({
   total: z.number(),
-});
-
-export const Mint = z.object({
-  symbol: z.string(),
-  mint: z.string(),
-  logo: z.string(),
-  decimals: z.number(),
 });
 
 export const Market = z.object({
