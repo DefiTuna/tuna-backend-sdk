@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.10.2
+
+### Patch Changes
+
+- bcdf222: feat: Add name to mints and use mint object inside SPOT & LP positions
+
 ## 1.10.1
 
 ### Patch Changes
