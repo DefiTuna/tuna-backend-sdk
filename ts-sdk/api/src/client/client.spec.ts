@@ -374,7 +374,7 @@ describe("Tuna Positions", async () => {
           position.address,
           position.authority,
           position.positionMint,
-          position.pool,
+          position.pool.addr,
           position.liquidity,
         ])
         .sort(([a], [b]) => a.toString().localeCompare(b.toString())),
