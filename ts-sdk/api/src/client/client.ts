@@ -53,8 +53,8 @@ export type OrderBookEntry = z.infer<typeof schemas.OrderBookEntry>;
 export type OrderBook = z.infer<typeof schemas.OrderBook>;
 export type OrderBookNotificationMeta = z.infer<typeof schemas.OrderBookNotificationMeta>;
 export type LendingPosition = z.infer<typeof schemas.LendingPosition>;
-export type TunaPosition = z.infer<typeof schemas.TunaPosition>;
-export type TunaLpPosition = z.infer<typeof schemas.TunaLpPosition>;
+export type TunaPosition = z.infer<typeof schemas.TunaPositionLegacy>;
+export type TunaLpPosition = z.infer<typeof schemas.TunaLpPositionHistorical>;
 export type TunaLpPositionV2 = z.infer<typeof schemas.TunaLpPositionDtoSchema>;
 export type TunaLpPositionAction = z.infer<typeof schemas.TunaLpPositionAction>;
 export type TunaSpotPosition = z.infer<typeof schemas.TunaSpotPosition>;
@@ -458,7 +458,7 @@ export class TunaApiClient {
 
   async getUserTunaPositionByAddress(userAddress: string, tunaPositionAddress: string): Promise<TunaPosition> {
     const url = this.buildURL(`users/${userAddress}/tuna-positions/${tunaPositionAddress}`);
-    return await this.httpRequest(url, schemas.TunaPosition);
+    return await this.httpRequest(url, schemas.TunaPositionLegacy);
   }
 
   async getUserLpPositions(userAddress: string, options?: GetLpPositionsOptions): Promise<TunaLpPosition[]> {
@@ -488,7 +488,7 @@ export class TunaApiClient {
       }
     }
     const url = this.appendUrlSearchParams(this.buildURL(`users/${userAddress}/lp-positions`), query);
-    return await this.httpRequest(url, schemas.TunaLpPosition.array());
+    return await this.httpRequest(url, schemas.TunaLpPositionHistorical.array());
   }
 
   async getUserLpPositionActions(userAddress: string, positionAddress: string): Promise<TunaLpPositionAction[]> {

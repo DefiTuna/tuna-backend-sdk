@@ -511,7 +511,7 @@ describe("Quotes", async () => {
     });
 
     expect(increaseSpotPositionQuote.borrowAmount).toEqual(usdcIncreaseAmount / BigInt(leverage));
-    expect(increaseSpotPositionQuote.uiLiquidationPrice).toBeGreaterThan(0);
+    expect(increaseSpotPositionQuote.liquidationPrice).toBeGreaterThan(0);
     expect(increaseSpotPositionQuote.protocolFeeA + increaseSpotPositionQuote.protocolFeeB).toBeGreaterThan(0n);
   });
 
@@ -531,7 +531,7 @@ describe("Quotes", async () => {
       slippageTolerance: BPS_DENOMINATOR,
     });
     expect(increaseSpotPositionQuote.borrowAmount).toEqual(usdcIncreaseAmount / BigInt(leverage));
-    expect(increaseSpotPositionQuote.uiLiquidationPrice).toBeGreaterThan(0);
+    expect(increaseSpotPositionQuote.liquidationPrice).toBeGreaterThan(0);
     expect(increaseSpotPositionQuote.protocolFeeA + increaseSpotPositionQuote.protocolFeeB).toBeGreaterThan(0n);
   });
 
@@ -550,7 +550,7 @@ describe("Quotes", async () => {
       positionDebt,
       slippageTolerance: BPS_DENOMINATOR,
     });
-    expect(decreaseSpotPositionQuote.uiLiquidationPrice).toBeGreaterThan(0);
+    expect(decreaseSpotPositionQuote.liquidationPrice).toBeGreaterThan(0);
   });
 
   it("Calculates close spot position quote", async () => {

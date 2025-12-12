@@ -5,14 +5,18 @@ export const AmountWithUsdSchema = z.object({
   usd: z.number(),
 });
 
+export const AmountWithoutUsdSchema = z.object({
+  amount: z.coerce.bigint(),
+});
+
 export const TokensPnlSchema = z.object({
   amount: z.coerce.bigint(),
-  bps: z.number(),
+  rate: z.number(),
 });
 
 export const UsdPnlSchema = z.object({
   amount: z.number(),
-  bps: z.number(),
+  rate: z.number(),
 });
 
 export const PoolProvider = {
