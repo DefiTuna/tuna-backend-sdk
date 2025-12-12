@@ -621,9 +621,9 @@ describe("Spot Positions", async () => {
           position.pool,
           position.collateralToken,
           position.positionToken,
-          position.loanFunds.amount,
+          position.initialDebt.amount,
         ])
-        .sort(([a], [b]) => a.toString().localeCompare(b.toString())),
+        .sort(([a], [b]) => (a as object).toString().localeCompare((b as object).toString())),
     );
   });
   it("Have USD values for tokens", () => {
