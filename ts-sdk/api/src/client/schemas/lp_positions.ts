@@ -7,7 +7,8 @@ import {
   TokensPnlSchema,
   UsdPnlSchema,
 } from "./basic";
-import { TunaPositionMintSchema, TunaPositionPoolSchema, TunaPositionPoolTokenSchema } from "./positions_shared";
+import { Mint } from "./mint";
+import { TunaPositionPoolSchema, TunaPositionPoolTokenSchema } from "./positions_shared";
 
 export const LpPositionLimitOrderSwap = {
   NO_SWAP: "no_swap",
@@ -91,8 +92,8 @@ export const TunaLpPositionDtoSchema = z.object({
   upperLimitOrderPrice: z.number(),
   entryPrice: z.number(),
   flags: TunaLpPositionFlagsSchema,
-  mintA: TunaPositionMintSchema,
-  mintB: TunaPositionMintSchema,
+  mintA: Mint,
+  mintB: Mint,
   pool: TunaPositionPoolSchema,
   marketMaker: PoolProviderSchema,
   depositedCollateralA: AmountWithUsdSchema,
