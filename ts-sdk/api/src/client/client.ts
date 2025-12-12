@@ -456,9 +456,9 @@ export class TunaApiClient {
     return await this.httpRequest(url, schemas.TunaLpPositionDtoSchema.array());
   }
 
-  async getUserTunaPositionByAddress(userAddress: string, tunaPositionAddress: string): Promise<TunaPosition> {
+  async getUserTunaPositionByAddress(userAddress: string, tunaPositionAddress: string): Promise<TunaLpPositionV2> {
     const url = this.buildURL(`users/${userAddress}/tuna-positions/${tunaPositionAddress}`);
-    return await this.httpRequest(url, schemas.TunaPositionLegacy);
+    return await this.httpRequest(url, schemas.TunaLpPositionDtoSchema);
   }
 
   async getUserLpPositions(userAddress: string, options?: GetLpPositionsOptions): Promise<TunaLpPosition[]> {
