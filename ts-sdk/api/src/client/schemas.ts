@@ -1,10 +1,7 @@
 import { z } from "zod";
 
 import { AmountWithUsdSchema, PoolProviderSchema } from "./schemas/basic";
-import { LimitOrder } from "./schemas/limit_orders";
-import { TunaPositionLegacy } from "./schemas/lp_positions";
-import { TunaSpotPosition } from "./schemas/spot_positions";
-import { PoolPriceUpdate, StateSnapshot } from "./schemas/state_snapshot";
+import { StateSnapshot } from "./schemas/state_snapshot";
 
 export * from "./schemas/basic";
 export * from "./schemas/limit_orders";
@@ -485,12 +482,12 @@ export const OrderBookNotificationMeta = z.object({
 });
 
 export const PoolSwapNotification = createNotificationSchema(PoolSwap);
-export const PoolPriceUpdateNotification = createNotificationSchema(PoolPriceUpdate);
+// export const PoolPriceUpdateNotification = createNotificationSchema(PoolPriceUpdate);
 export const OrderBookNotification = createNotificationSchema(OrderBook, OrderBookNotificationMeta);
-export const TunaPositionNotification = createNotificationSchema(TunaPositionLegacy);
-export const TunaSpotPositionNotification = createNotificationSchema(TunaSpotPosition);
+// export const TunaPositionNotification = createNotificationSchema(TunaPositionLegacy);
+// export const TunaSpotPositionNotification = createNotificationSchema(TunaSpotPosition);
 export const LendingPositionNotification = createNotificationSchema(LendingPosition);
-export const LimitOrderNotification = createNotificationSchema(LimitOrder);
+// export const LimitOrderNotification = createNotificationSchema(LimitOrder);
 export const TradeHistoryEntryNotification = createNotificationSchema(TradeHistoryEntry);
 export const OrderHistoryEntryNotification = createNotificationSchema(OrderHistoryEntry);
 export const StakingPositionNotification = createNotificationSchema(StakingPosition);

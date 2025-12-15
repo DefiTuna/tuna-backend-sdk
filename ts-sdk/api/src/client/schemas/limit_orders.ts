@@ -1,6 +1,8 @@
 import { z } from "zod";
 
 import { AmountWithUsdSchema } from "./basic";
+import { Mint } from "./mint";
+import { TunaPositionPoolSchema } from "./positions_shared";
 
 export const LimitOrderState = {
   OPEN: "open",
@@ -14,8 +16,9 @@ export const LimitOrderStateSchema = z.enum([LimitOrderState.OPEN, ...Object.val
 
 export const LimitOrder = z.object({
   address: z.string(),
-  mint: z.string(),
-  pool: z.string(),
+  mintA: Mint,
+  mintB: Mint,
+  pool: TunaPositionPoolSchema,
   state: LimitOrderStateSchema,
   aToB: z.boolean(),
   tickIndex: z.number(),
