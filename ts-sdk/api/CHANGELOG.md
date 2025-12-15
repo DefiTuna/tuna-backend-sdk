@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.10.5
+
+### Patch Changes
+
+- 1672b27: feat: Add order mint to LimitOrder DTO
+
 ## 1.10.4
 
 ### Patch Changes
