@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.10.4
+
+### Patch Changes
+
+- 6891828: feat: Limit Order DTO update + removed unnessary notifications
+
 ## 1.10.3
 
 ### Patch Changes
