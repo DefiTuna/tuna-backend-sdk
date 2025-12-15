@@ -2,7 +2,7 @@ import { z } from "zod";
 
 import { AmountWithUsdSchema, PoolProviderSchema, UsdPnlSchema } from "./basic";
 import { Mint } from "./mint";
-import { TunaPositionPoolSchema, TunaPositionPoolToken } from "./positions_shared";
+import { TunaPositionPoolSchema, TunaPositionPoolTokenSchema } from "./positions_shared";
 
 export const TunaSpotPositionState = {
   OPEN: "open",
@@ -27,8 +27,8 @@ export const TunaSpotPosition = z.object({
   mintB: Mint,
   pool: TunaPositionPoolSchema,
 
-  positionToken: TunaPositionPoolToken,
-  collateralToken: TunaPositionPoolToken,
+  positionToken: TunaPositionPoolTokenSchema,
+  collateralToken: TunaPositionPoolTokenSchema,
 
   marketMaker: PoolProviderSchema,
 
