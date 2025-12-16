@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.10.6
+
+### Patch Changes
+
+- 2cb8460: feat: Add OrderBook types to state snapshot
+
 ## 1.10.5
 
 ### Patch Changes
