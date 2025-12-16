@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { AmountWithUsdSchema, PoolProviderSchema } from "./schemas/basic";
+import { OrderBook } from "./schemas/order_book";
 import { StateSnapshot } from "./schemas/state_snapshot";
 
 export * from "./schemas/basic";
@@ -10,6 +11,7 @@ export * from "./schemas/spot_positions";
 export * from "./schemas/positions_shared";
 export * from "./schemas/state_snapshot";
 export * from "./schemas/mint";
+export * from "./schemas/order_book";
 
 export const NotificationEntity = {
   POOL_SWAP: "pool_swap",
@@ -258,24 +260,6 @@ export const PoolSwap = z.object({
   aToB: z.boolean(),
   pool: z.string(),
   time: z.coerce.date(),
-});
-
-export const OrderBookEntry = z.object({
-  concentratedAmount: z.coerce.bigint(),
-  concentratedAmountQuote: z.coerce.bigint(),
-  concentratedTotal: z.coerce.bigint(),
-  concentratedTotalQuote: z.coerce.bigint(),
-  limitAmount: z.coerce.bigint(),
-  limitAmountQuote: z.coerce.bigint(),
-  limitTotal: z.coerce.bigint(),
-  limitTotalQuote: z.coerce.bigint(),
-  price: z.number(),
-  askSide: z.boolean(),
-});
-
-export const OrderBook = z.object({
-  entries: OrderBookEntry.array(),
-  poolPrice: z.number(),
 });
 
 export const TradeHistoryEntry = z.object({
