@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.10.7
+
+### Patch Changes
+
+- dba2a26: feat: Add PoolSnapshot object to StateSnapshot
+
 ## 1.10.6
 
 ### Patch Changes
