@@ -1,0 +1,468 @@
+openapi: 3.1.0
+info:
+  title: DefiTuna API
+  description: Public API for DefiTuna protocol
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  version: 1.0.0
+paths:
+  /api/v1/users/{user_address}/tuna-positions/{position_address}:
+    get:
+      tags:
+      - users_lp_positions
+      summary: Request LP position data by address
+      operationId: get_tuna_position
+      parameters:
+      - name: user_address
+        in: path
+        description: User Solana wallet address (base58)
+        required: true
+        schema:
+          type: string
+      - name: position_address
+        in: path
+        description: LP position address (base58)
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Tuna position found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericHttpResponse_Option_TunaPositionDto'
+        '400':
+          description: Invalid position address
+        '500':
+          description: Internal error
+components:
+  schemas:
+    GenericHttpResponse_Option_TunaPositionDto:
+      type: object
+      required:
+      - data
+      properties:
+        data:
+          oneOf:
+          - type: 'null'
+          - type: object
+            required:
+            - address
+            - authority
+            - version
+            - state
+            - position_mint
+            - liquidity
+            - tick_lower_index
+            - tick_upper_index
+            - lower_limit_order_price
+            - upper_limit_order_price
+            - entry_price
+            - flags
+            - mint_a
+            - mint_b
+            - pool
+            - market_maker
+            - deposited_collateral_a
+            - deposited_collateral_b
+            - leverage
+            - max_leverage
+            - liquidation_price_lower
+            - liquidation_price_upper
+            - initial_debt_a
+            - initial_debt_b
+            - current_debt_a
+            - current_debt_b
+            - leftovers_a
+            - leftovers_b
+            - yield_a
+            - yield_b
+            - compounded_yield_a
+            - compounded_yield_b
+            - total_a
+            - total_b
+            - pnl_a
+            - pnl_b
+            - pnl_usd
+            - opened_at
+            properties:
+              address:
+                type: string
+                format: pubkey
+                description: Solana public key (base58)
+              authority:
+                type: string
+                description: Solana public key (base58)
+              closed_at:
+                type:
+                - string
+                - 'null'
+                format: date-time
+              compounded_yield_a:
+                $ref: '#/components/schemas/TokenAmountWithUsd'
+              compounded_yield_b:
+                $ref: '#/components/schemas/TokenAmountWithUsd'
+              current_debt_a:
+                $ref: '#/components/schemas/TokenAmountWithUsd'
+              current_debt_b:
+                $ref: '#/components/schemas/TokenAmountWithUsd'
+              deposited_collateral_a:
+                $ref: '#/components/schemas/TunaPositionTokenDepositedCollateral'
+              deposited_collateral_b:
+                $ref: '#/components/schemas/TunaPositionTokenDepositedCollateral'
+              entry_price:
+                type: number
+                format: double
+              flags:
+                $ref: '#/components/schemas/TunaLpPositionFlags'
+              initial_debt_a:
+                $ref: '#/components/schemas/TokenAmountWithUsd'
+              initial_debt_b:
+                $ref: '#/components/schemas/TokenAmountWithUsd'
+              leftovers_a:
+                $ref: '#/components/schemas/TokenAmountWithUsd'
+              leftovers_b:
+                $ref: '#/components/schemas/TokenAmountWithUsd'
+              leverage:
+                type: number
+                format: double
+              liquidation_price_lower:
+                type: number
+                format: double
+              liquidation_price_upper:
+                type: number
+                format: double
+              liquidity:
+                type: string
+                format: bigint
+                x-ts-type: bigint
+                description: Unsigned 128-bit integer encoded as a decimal string
+              lower_limit_order_price:
+                type: number
+                format: double
+              market_maker:
+                $ref: '#/components/schemas/TunaPositionMarketMaker'
+              max_leverage:
+                type: number
+                format: double
+              mint_a:
+                $ref: '#/components/schemas/MintDto'
+              mint_b:
+                $ref: '#/components/schemas/MintDto'
+              opened_at:
+                type: string
+                format: date-time
+              pnl_a:
+                $ref: '#/components/schemas/TunaPositionTokenPnl'
+                description: Total PnL denominated/expressed in token A
+              pnl_b:
+                $ref: '#/components/schemas/TunaPositionTokenPnl'
+                description: Total PnL denominated/expressed in token B
+              pnl_usd:
+                $ref: '#/components/schemas/TunaPositionUsdPnl'
+              pool:
+                $ref: '#/components/schemas/TunaPositionPool'
+              position_mint:
+                type: string
+                description: Solana public key (base58)
+              state:
+                $ref: '#/components/schemas/TunaPositionDtoState'
+              tick_lower_index:
+                type: integer
+                format: int32
+              tick_upper_index:
+                type: integer
+                format: int32
+              total_a:
+                $ref: '#/components/schemas/TokenAmountWithUsd'
+              total_b:
+                $ref: '#/components/schemas/TokenAmountWithUsd'
+              upper_limit_order_price:
+                type: number
+                format: double
+              version:
+                type: integer
+                format: u-int16
+                minimum: 0
+              yield_a:
+                $ref: '#/components/schemas/TokenAmountWithUsd'
+              yield_b:
+                $ref: '#/components/schemas/TokenAmountWithUsd'
+    MintDto:
+      type: object
+      required:
+      - mint
+      - symbol
+      - name
+      - logo
+      - decimals
+      properties:
+        decimals:
+          type: integer
+          format: int32
+        logo:
+          type: string
+        mint:
+          type: string
+        name:
+          type: string
+        symbol:
+          type: string
+    TokenAmountWithUsd:
+      type: object
+      required:
+      - amount
+      - usd
+      properties:
+        amount:
+          type: integer
+          format: int64
+          description: Unsigned 64-bit integer encoded as a decimal string
+        usd:
+          type: number
+          format: double
+    TunaLpPositionAutoCompounding:
+      type: string
+      enum:
+      - with_leverage
+      - without_leverage
+    TunaLpPositionFlags:
+      type: object
+      required:
+      - auto_rebalancing
+      properties:
+        auto_compounding:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/TunaLpPositionAutoCompounding'
+        auto_rebalancing:
+          type: boolean
+        lower_limit_order_swap_to_token:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/TunaPositionPoolToken'
+        upper_limit_order_swap_to_token:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/TunaPositionPoolToken'
+    TunaPositionDto:
+      type: object
+      required:
+      - address
+      - authority
+      - version
+      - state
+      - position_mint
+      - liquidity
+      - tick_lower_index
+      - tick_upper_index
+      - lower_limit_order_price
+      - upper_limit_order_price
+      - entry_price
+      - flags
+      - mint_a
+      - mint_b
+      - pool
+      - market_maker
+      - deposited_collateral_a
+      - deposited_collateral_b
+      - leverage
+      - max_leverage
+      - liquidation_price_lower
+      - liquidation_price_upper
+      - initial_debt_a
+      - initial_debt_b
+      - current_debt_a
+      - current_debt_b
+      - leftovers_a
+      - leftovers_b
+      - yield_a
+      - yield_b
+      - compounded_yield_a
+      - compounded_yield_b
+      - total_a
+      - total_b
+      - pnl_a
+      - pnl_b
+      - pnl_usd
+      - opened_at
+      properties:
+        address:
+          type: string
+          format: pubkey
+          description: Solana public key (base58)
+        authority:
+          type: string
+          description: Solana public key (base58)
+        closed_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        compounded_yield_a:
+          $ref: '#/components/schemas/TokenAmountWithUsd'
+        compounded_yield_b:
+          $ref: '#/components/schemas/TokenAmountWithUsd'
+        current_debt_a:
+          $ref: '#/components/schemas/TokenAmountWithUsd'
+        current_debt_b:
+          $ref: '#/components/schemas/TokenAmountWithUsd'
+        deposited_collateral_a:
+          $ref: '#/components/schemas/TunaPositionTokenDepositedCollateral'
+        deposited_collateral_b:
+          $ref: '#/components/schemas/TunaPositionTokenDepositedCollateral'
+        entry_price:
+          type: number
+          format: double
+        flags:
+          $ref: '#/components/schemas/TunaLpPositionFlags'
+        initial_debt_a:
+          $ref: '#/components/schemas/TokenAmountWithUsd'
+        initial_debt_b:
+          $ref: '#/components/schemas/TokenAmountWithUsd'
+        leftovers_a:
+          $ref: '#/components/schemas/TokenAmountWithUsd'
+        leftovers_b:
+          $ref: '#/components/schemas/TokenAmountWithUsd'
+        leverage:
+          type: number
+          format: double
+        liquidation_price_lower:
+          type: number
+          format: double
+        liquidation_price_upper:
+          type: number
+          format: double
+        liquidity:
+          type: string
+          format: bigint
+          x-ts-type: bigint
+          description: Unsigned 128-bit integer encoded as a decimal string
+        lower_limit_order_price:
+          type: number
+          format: double
+        market_maker:
+          $ref: '#/components/schemas/TunaPositionMarketMaker'
+        max_leverage:
+          type: number
+          format: double
+        mint_a:
+          $ref: '#/components/schemas/MintDto'
+        mint_b:
+          $ref: '#/components/schemas/MintDto'
+        opened_at:
+          type: string
+          format: date-time
+        pnl_a:
+          $ref: '#/components/schemas/TunaPositionTokenPnl'
+          description: Total PnL denominated/expressed in token A
+        pnl_b:
+          $ref: '#/components/schemas/TunaPositionTokenPnl'
+          description: Total PnL denominated/expressed in token B
+        pnl_usd:
+          $ref: '#/components/schemas/TunaPositionUsdPnl'
+        pool:
+          $ref: '#/components/schemas/TunaPositionPool'
+        position_mint:
+          type: string
+          description: Solana public key (base58)
+        state:
+          $ref: '#/components/schemas/TunaPositionDtoState'
+        tick_lower_index:
+          type: integer
+          format: int32
+        tick_upper_index:
+          type: integer
+          format: int32
+        total_a:
+          $ref: '#/components/schemas/TokenAmountWithUsd'
+        total_b:
+          $ref: '#/components/schemas/TokenAmountWithUsd'
+        upper_limit_order_price:
+          type: number
+          format: double
+        version:
+          type: integer
+          format: u-int16
+          minimum: 0
+        yield_a:
+          $ref: '#/components/schemas/TokenAmountWithUsd'
+        yield_b:
+          $ref: '#/components/schemas/TokenAmountWithUsd'
+    TunaPositionDtoState:
+      type: string
+      enum:
+      - open
+      - liquidated
+      - closed_by_limit_order
+      - closed
+    TunaPositionMarketMaker:
+      type: string
+      enum:
+      - fusion
+      - orca
+    TunaPositionPool:
+      type: object
+      required:
+      - addr
+      - price
+      - tick_spacing
+      properties:
+        addr:
+          type: string
+          description: Solana public key (base58)
+        price:
+          type: number
+          format: double
+        tick_spacing:
+          type: integer
+          format: u-int16
+          minimum: 0
+    TunaPositionPoolToken:
+      type: string
+      enum:
+      - a
+      - b
+    TunaPositionTokenDepositedCollateral:
+      type: object
+      required:
+      - amount
+      - usd
+      properties:
+        amount:
+          type: integer
+          format: int64
+          description: Signed 128-bit integer encoded as a decimal string
+        usd:
+          type: number
+          format: double
+    TunaPositionTokenPnl:
+      type: object
+      required:
+      - amount
+      - rate
+      properties:
+        amount:
+          type: integer
+          format: int64
+          description: Signed 128-bit integer encoded as a decimal string
+        rate:
+          type: number
+          format: double
+    TunaPositionUsdPnl:
+      type: object
+      required:
+      - amount
+      - rate
+      properties:
+        amount:
+          type: number
+          format: double
+        rate:
+          type: number
+          format: double
+tags:
+- name: users_lp_positions
+  description: User Tuna LP positions

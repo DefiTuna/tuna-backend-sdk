@@ -1,11 +1,12 @@
 {
   "name": "@crypticdot/defituna-api",
-  "version": "1.9.0",
+  "version": "2.0.0",
   "private": false,
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "license": "MIT",
+  "type": "module",
   "publishConfig": {
     "access": "public"
   },
@@ -14,8 +15,10 @@
     "README.md"
   ],
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts",
-    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "build": "pnpm build:clean && pnpm build:orval && pnpm build:dist",
+    "build:clean": "find src -type f -name *.gen.ts -delete",
+    "build:orval": "pnpm orval",
+    "build:dist": "tsup src/index.ts --format cjs,esm --dts",
     "eslint": "eslint \"**/*.ts\"",
     "eslint:fix": "eslint \"**/*.ts\" --fix",
     "type-check": "tsc -p .",
@@ -38,14 +41,11 @@
     "eslint": "^8.57.0",
     "eventsource": "^3.0.6",
     "express": "^4.21.2",
+    "openapi3-ts": "^4.5.0",
+    "orval": "^7.17.0",
     "tsup": "^8.3.5",
     "typescript": "5.8.3",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.0.9"
-  },
-  "dependencies": {
-    "camelcase-keys": "^9.1.3",
-    "snakecase-keys": "^8.0.1",
-    "zod": "^4.1.12"
   }
 }
