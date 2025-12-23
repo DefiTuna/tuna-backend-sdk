@@ -14,6 +14,7 @@ export const PoolPriceUpdate = z.object({
 });
 
 export const OrderBookWrapper = z.object({
+  poolPrice: z.number(),
   priceStep: z.number(),
   entries: z.array(OrderBookEntry),
 });
