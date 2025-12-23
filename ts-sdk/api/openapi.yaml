@@ -1,0 +1,2408 @@
+openapi: 3.1.0
+info:
+  title: DefiTuna API
+  description: Public API for DefiTuna protocol
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  version: 1.0.0
+paths:
+  /v1/users/{user_address}/lending-positions:
+    get:
+      tags:
+      - users_lending_positions
+      summary: Request all user lending positions
+      operationId: get_lending_positions
+      parameters:
+      - name: user_address
+        in: path
+        description: Authority address (base58)
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: List of lending positions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericHttpResponse_Vec_LendingPositionDto'
+        '400':
+          description: Invalid user address
+        '500':
+          description: Internal error
+  /v1/users/{user_address}/lending-positions/{lending_position_address}:
+    get:
+      tags:
+      - users_lending_positions
+      summary: Request lending position data by position address
+      operationId: get_lending_position
+      parameters:
+      - name: user_address
+        in: path
+        description: Authority address (base58)
+        required: true
+        schema:
+          type: string
+      - name: lending_position_address
+        in: path
+        description: Lending position address (base58)
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Lending position found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericHttpResponse_Option_LendingPositionDto'
+        '400':
+          description: Invalid position address
+        '500':
+          description: Internal error
+  /v1/users/{user_address}/limit-orders:
+    get:
+      tags:
+      - users_limit_orders
+      summary: Request all user limit orders
+      operationId: get_limit_orders
+      parameters:
+      - name: user_address
+        in: path
+        description: Authority address (base58)
+        required: true
+        schema:
+          type: string
+      - name: pool
+        in: query
+        description: List of pool public keys to filter by
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          uniqueItems: true
+        style: form
+        explode: false
+      - name: status
+        in: query
+        description: List of limit order statuses to filter by
+        required: false
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/LimitOrderStatus'
+          uniqueItems: true
+        style: form
+        explode: false
+      - name: opened_at_from
+        in: query
+        description: Filter limit orders from timestamp (Unix timestamp format)
+        required: false
+        schema:
+          type: integer
+          format: int64
+      - name: opened_at_to
+        in: query
+        description: Filter limit orders to timestamp (Unix timestamp format)
+        required: false
+        schema:
+          type: integer
+          format: int64
+      - name: cursor
+        in: query
+        description: Cursor for pagination (id field)
+        required: false
+        schema:
+          type: string
+      - name: desc
+        in: query
+        description: 'Descending order flag (default: true)'
+        required: false
+        schema:
+          type: boolean
+      - name: limit
+        in: query
+        description: 'Limit number of returned limit orders (default: 100, max: 500)'
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+      responses:
+        '200':
+          description: List of lending positions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericHttpResponse_Vec_LimitOrderDto'
+        '400':
+          description: Invalid user address
+        '500':
+          description: Internal error
+  /v1/users/{user_address}/limit-orders/{limit_order_address}:
+    get:
+      tags:
+      - users_limit_orders
+      summary: Request limit order data by position address
+      operationId: get_limit_order
+      parameters:
+      - name: user_address
+        in: path
+        description: Authority address (base58)
+        required: true
+        schema:
+          type: string
+      - name: limit_order_address
+        in: path
+        description: Limit order address (base58)
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Limit order found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericHttpResponse_Option_LimitOrderDto'
+        '400':
+          description: Invalid position address
+        '500':
+          description: Internal error
+  /v1/users/{user_address}/order-history:
+    get:
+      tags:
+      - users_order_history
+      summary: Request user order history
+      operationId: get_order_history
+      parameters:
+      - name: user_address
+        in: path
+        description: Authority address (base58)
+        required: true
+        schema:
+          type: string
+      - name: pool
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          uniqueItems: true
+        style: form
+        explode: false
+      - name: order_type
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderHistoryType'
+          uniqueItems: true
+        style: form
+        explode: false
+      - name: ui_direction
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderHistoryUIDirection'
+          uniqueItems: true
+        style: form
+        explode: false
+      - name: cursor
+        in: query
+        description: |-
+          Cursor is the pagination point to start fetching from.
+
+            - Descending (asc = false): Returns records with ts <= cursor (i.e. earlier or at).
+            - Ascending  (asc = true):  Returns records with ts >= cursor (i.e. later or at).
+        required: false
+        schema:
+          type: string
+          format: uuid
+      - name: until
+        in: query
+        description: |-
+          "Until" is an optional range limit to trim the results.
+
+            - Descending: Only includes records with ts >= until (i.e. not too old).
+            - Ascending:  Only includes records with ts <= until (i.e. not too new).
+        required: false
+        schema:
+          type: string
+          format: uuid
+      - name: desc
+        in: query
+        description: |-
+          Desc defines the sort direction of results.
+
+            - If false:  Ascending (oldest → newest).
+            - If true:   Descending (newest → oldest, default).
+        required: false
+        schema:
+          type: boolean
+      - name: limit
+        in: query
+        description: 'Limit defines the maximum number of results to return (default: 100, max: 500)'
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+      responses:
+        '200':
+          description: List of order history entries
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericHttpResponse_Vec_OrderHistoryEntryDto'
+        '400':
+          description: Invalid user address
+        '500':
+          description: Internal error
+  /v1/users/{user_address}/spot-positions:
+    get:
+      tags:
+      - users_spot_positions
+      summary: Request all user spot positions
+      operationId: get_spot_positions
+      parameters:
+      - name: user_address
+        in: path
+        description: Authority address (base58)
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: List of spot positions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericHttpResponse_Vec_TunaSpotPositionDto'
+        '400':
+          description: Invalid user address
+        '500':
+          description: Internal error
+  /v1/users/{user_address}/spot-positions/{spot_position_address}:
+    get:
+      tags:
+      - users_spot_positions
+      summary: Request spot position data by position address
+      operationId: get_spot_position
+      parameters:
+      - name: user_address
+        in: path
+        description: Authority address (base58)
+        required: true
+        schema:
+          type: string
+      - name: spot_position_address
+        in: path
+        description: Spot position address (base58)
+        required: true
+        schema:
+          type: string
+      - name: tuna_spot_position_address
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Spot position found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericHttpResponse_TunaSpotPositionDto'
+        '400':
+          description: Invalid position address
+        '404':
+          description: Position not found
+        '500':
+          description: Internal error
+  /v1/users/{user_address}/staking-position:
+    get:
+      tags:
+      - users_staking_positions
+      summary: Request user staking position
+      operationId: get_staking_position
+      parameters:
+      - name: user_address
+        in: path
+        description: Authority address (base58)
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Staking position found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericHttpResponse_StakingPositionDto'
+        '400':
+          description: Invalid user address
+        '500':
+          description: Internal error
+  /v1/users/{user_address}/staking-position/history:
+    get:
+      tags:
+      - users_staking_positions
+      summary: Request user staking position history
+      operationId: get_staking_position_history
+      parameters:
+      - name: user_address
+        in: path
+        description: Authority address (base58)
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Staking position found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericHttpResponse_Vec_StakingPositionActionDto'
+        '400':
+          description: Invalid user address
+        '500':
+          description: Internal error
+  /v1/users/{user_address}/trade-history:
+    get:
+      tags:
+      - users_trade_history
+      summary: Request user trade history
+      operationId: get_trade_history
+      parameters:
+      - name: user_address
+        in: path
+        description: Authority address (base58)
+        required: true
+        schema:
+          type: string
+      - name: pool
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          uniqueItems: true
+        style: form
+        explode: false
+      - name: action
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/TradeHistoryAction'
+          uniqueItems: true
+        style: form
+        explode: false
+      - name: ui_direction
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/TradeHistoryUIDirection'
+          uniqueItems: true
+        style: form
+        explode: false
+      - name: cursor
+        in: query
+        description: |-
+          Cursor is the pagination point to start fetching from.
+
+            - Descending (asc = false): Returns records with ts <= cursor (i.e. earlier or at).
+            - Ascending  (asc = true):  Returns records with ts >= cursor (i.e. later or at).
+        required: false
+        schema:
+          type: string
+          format: uuid
+      - name: until
+        in: query
+        description: |-
+          "Until" is an optional range limit to trim the results.
+
+            - Descending: Only includes records with ts >= until (i.e. not too old).
+            - Ascending:  Only includes records with ts <= until (i.e. not too new).
+        required: false
+        schema:
+          type: string
+          format: uuid
+      - name: desc
+        in: query
+        description: |-
+          Desc defines the sort direction of results.
+
+            - If false:  Ascending (oldest → newest).
+            - If true:   Descending (newest → oldest, default).
+        required: false
+        schema:
+          type: boolean
+      - name: limit
+        in: query
+        description: 'Limit defines the maximum number of results to return (default: 100, max: 500)'
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+      responses:
+        '200':
+          description: List of trade history entries
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericHttpResponse_Vec_TradeHistoryEntryDto'
+        '400':
+          description: Invalid user address
+        '500':
+          description: Internal error
+  /v1/users/{user_address}/tuna-positions:
+    get:
+      tags:
+      - users_lp_positions
+      summary: Request all user LP positions
+      operationId: get_tuna_positions
+      parameters:
+      - name: user_address
+        in: path
+        description: Authority address (base58)
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: List of LP positions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericHttpResponse_Vec_TunaPositionDto'
+        '400':
+          description: Invalid user address
+        '500':
+          description: Internal error
+  /v1/users/{user_address}/tuna-positions/{position_address}:
+    get:
+      tags:
+      - users_lp_positions
+      summary: Request LP position data by position address
+      operationId: get_tuna_position
+      parameters:
+      - name: user_address
+        in: path
+        description: Authority address (base58)
+        required: true
+        schema:
+          type: string
+      - name: position_address
+        in: path
+        description: LP position address (base58)
+        required: true
+        schema:
+          type: string
+      - name: tuna_position_address
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: LP position found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericHttpResponse_Option_TunaPositionDto'
+        '400':
+          description: Invalid position address
+        '500':
+          description: Internal error
+components:
+  schemas:
+    FeeAmountWithUsd:
+      type: object
+      required:
+      - amount
+      - usd
+      properties:
+        amount:
+          type: integer
+          format: int64
+        usd:
+          type: number
+          format: double
+    GenericHttpResponse_Option_LendingPositionDto:
+      type: object
+      required:
+      - data
+      properties:
+        data:
+          oneOf:
+          - type: 'null'
+          - type: object
+            required:
+            - address
+            - authority
+            - shares
+            - funds
+            - earned
+            - mint
+            - vault
+            - updated_at_slot
+            properties:
+              address:
+                type: string
+                format: pubkey
+                description: Solana public key (base58)
+              authority:
+                type: string
+                format: pubkey
+                description: Solana public key (base58)
+              earned:
+                $ref: '#/components/schemas/TokenAmountWithUsd'
+              funds:
+                $ref: '#/components/schemas/TokenAmountWithUsd'
+              mint:
+                type: string
+                format: pubkey
+                description: Solana public key (base58)
+              shares:
+                type: string
+                format: uint64
+                description: Unsigned 64-bit integer encoded as a decimal string
+              updated_at_slot:
+                type: string
+                format: uint64
+                description: Unsigned 64-bit integer encoded as a decimal string
+              vault:
+                type: string
+                format: pubkey
+                description: Solana public key (base58)
+    GenericHttpResponse_Option_LimitOrderDto:
+      type: object
+      required:
+      - data
+      properties:
+        data:
+          oneOf:
+          - type: 'null'
+          - type: object
+            required:
+            - id
+            - address
+            - order_mint
+            - authority
+            - pool
+            - mint_a
+            - mint_b
+            - state
+            - fill_ratio
+            - a_to_b
+            - tick_index
+            - open_tx_signature
+            - amount_in
+            - amount_out
+            - opened_at
+            properties:
+              a_to_b:
+                type: boolean
+              address:
+                type: string
+                format: pubkey
+                description: Solana public key (base58)
+              amount_in:
+                $ref: '#/components/schemas/TokenAmountWithUsd'
+              amount_out:
+                $ref: '#/components/schemas/TokenAmountWithUsd'
+              authority:
+                type: string
+                format: pubkey
+                description: Solana public key (base58)
+              close_tx_signature:
+                type:
+                - string
+                - 'null'
+              closed_at:
+                type:
+                - string
+                - 'null'
+                format: date-time
+              fill_ratio:
+                type: number
+                format: double
+              id:
+                type: string
+              mint_a:
+                $ref: '#/components/schemas/MintDto'
+              mint_b:
+                $ref: '#/components/schemas/MintDto'
+              open_tx_signature:
+                type: string
+              opened_at:
+                type: string
+                format: date-time
+              order_mint:
+                type: string
+                format: pubkey
+                description: Solana public key (base58)
+              pool:
+                $ref: '#/components/schemas/TunaPositionPool'
+              state:
+                $ref: '#/components/schemas/LimitOrderStatus'
+              tick_index:
+                type: integer
+                format: int32
+    GenericHttpResponse_Option_TunaPositionDto:
+      type: object
+      required:
+      - data
+      properties:
+        data:
+          oneOf:
+          - type: 'null'
+          - type: object
+            required:
+            - address
+            - authority
+            - version
+            - state
+            - position_mint
+            - liquidity
+            - tick_lower_index
+            - tick_upper_index
+            - lower_limit_order_price
+            - upper_limit_order_price
+            - entry_price
+            - flags
+            - mint_a
+            - mint_b
+            - pool
+            - market_maker
+            - deposited_collateral_a
+            - deposited_collateral_b
+            - leverage
+            - max_leverage
+            - liquidation_price_lower
+            - liquidation_price_upper
+            - initial_debt_a
+            - initial_debt_b
+            - current_debt_a
+            - current_debt_b
+            - leftovers_a
+            - leftovers_b
+            - yield_a
+            - yield_b
+            - compounded_yield_a
+            - compounded_yield_b
+            - total_a
+            - total_b
+            - pnl_a
+            - pnl_b
+            - pnl_usd
+            - opened_at
+            properties:
+              address:
+                type: string
+                format: pubkey
+                description: Solana public key (base58)
+              authority:
+                type: string
+                format: pubkey
+                description: Solana public key (base58)
+              closed_at:
+                type:
+                - string
+                - 'null'
+                format: date-time
+              compounded_yield_a:
+                $ref: '#/components/schemas/TokenAmountWithUsd'
+              compounded_yield_b:
+                $ref: '#/components/schemas/TokenAmountWithUsd'
+              current_debt_a:
+                $ref: '#/components/schemas/TokenAmountWithUsd'
+              current_debt_b:
+                $ref: '#/components/schemas/TokenAmountWithUsd'
+              deposited_collateral_a:
+                $ref: '#/components/schemas/TunaPositionTokenDepositedCollateral'
+              deposited_collateral_b:
+                $ref: '#/components/schemas/TunaPositionTokenDepositedCollateral'
+              entry_price:
+                type: number
+                format: double
+              flags:
+                $ref: '#/components/schemas/TunaLpPositionFlags'
+              initial_debt_a:
+                $ref: '#/components/schemas/TokenAmountWithUsd'
+              initial_debt_b:
+                $ref: '#/components/schemas/TokenAmountWithUsd'
+              leftovers_a:
+                $ref: '#/components/schemas/TokenAmountWithUsd'
+              leftovers_b:
+                $ref: '#/components/schemas/TokenAmountWithUsd'
+              leverage:
+                type: number
+                format: double
+              liquidation_price_lower:
+                type: number
+                format: double
+              liquidation_price_upper:
+                type: number
+                format: double
+              liquidity:
+                type: string
+                format: uint128
+                description: Unsigned 128-bit integer encoded as a decimal string
+              lower_limit_order_price:
+                type: number
+                format: double
+              market_maker:
+                $ref: '#/components/schemas/TunaPositionMarketMaker'
+              max_leverage:
+                type: number
+                format: double
+              mint_a:
+                $ref: '#/components/schemas/MintDto'
+              mint_b:
+                $ref: '#/components/schemas/MintDto'
+              opened_at:
+                type: string
+                format: date-time
+              pnl_a:
+                $ref: '#/components/schemas/TunaPositionTokenPnl'
+                description: Total PnL denominated/expressed in token A
+              pnl_b:
+                $ref: '#/components/schemas/TunaPositionTokenPnl'
+                description: Total PnL denominated/expressed in token B
+              pnl_usd:
+                $ref: '#/components/schemas/TunaPositionUsdPnl'
+              pool:
+                $ref: '#/components/schemas/TunaPositionPool'
+              position_mint:
+                type: string
+                format: pubkey
+                description: Solana public key (base58)
+              state:
+                $ref: '#/components/schemas/TunaPositionDtoState'
+              tick_lower_index:
+                type: integer
+                format: int32
+              tick_upper_index:
+                type: integer
+                format: int32
+              total_a:
+                $ref: '#/components/schemas/TokenAmountWithUsd'
+              total_b:
+                $ref: '#/components/schemas/TokenAmountWithUsd'
+              upper_limit_order_price:
+                type: number
+                format: double
+              version:
+                type: integer
+                format: int32
+                minimum: 0
+              yield_a:
+                $ref: '#/components/schemas/TokenAmountWithUsd'
+              yield_b:
+                $ref: '#/components/schemas/TokenAmountWithUsd'
+    GenericHttpResponse_StakingPositionDto:
+      type: object
+      required:
+      - data
+      properties:
+        data:
+          type: object
+          required:
+          - address
+          - owner
+          - staked
+          - unclaimed_reward
+          - claimed_reward
+          - unstaked
+          - vesting
+          properties:
+            address:
+              type: string
+              format: pubkey
+              description: Solana public key (base58)
+            claimed_reward:
+              $ref: '#/components/schemas/TokenAmountWithUsd'
+            last_unstaked_at:
+              type:
+              - string
+              - 'null'
+              format: date-time
+            owner:
+              type: string
+              format: pubkey
+              description: Solana public key (base58)
+            rank:
+              type:
+              - integer
+              - 'null'
+              format: int32
+              minimum: 0
+            staked:
+              $ref: '#/components/schemas/TokenAmountWithUsd'
+            unclaimed_reward:
+              $ref: '#/components/schemas/TokenAmountWithUsd'
+            unstaked:
+              $ref: '#/components/schemas/TokenAmountWithUsd'
+            vesting:
+              $ref: '#/components/schemas/VestingDto'
+            withdraw_available_at:
+              type:
+              - string
+              - 'null'
+              format: date-time
+    GenericHttpResponse_TunaSpotPositionDto:
+      type: object
+      required:
+      - data
+      properties:
+        data:
+          type: object
+          required:
+          - address
+          - authority
+          - version
+          - state
+          - lower_limit_order_price
+          - upper_limit_order_price
+          - entry_price
+          - mint_a
+          - mint_b
+          - pool
+          - position_token
+          - collateral_token
+          - market_maker
+          - deposited_collateral
+          - initial_debt
+          - current_debt
+          - total
+          - leverage
+          - max_leverage
+          - liquidation_price
+          - pnl_usd
+          - opened_at
+          properties:
+            address:
+              type: string
+              format: pubkey
+              description: Solana public key (base58)
+            authority:
+              type: string
+              format: pubkey
+              description: Solana public key (base58)
+            closed_at:
+              type:
+              - string
+              - 'null'
+              format: date-time
+            collateral_token:
+              $ref: '#/components/schemas/TunaPositionPoolToken'
+            current_debt:
+              $ref: '#/components/schemas/TokenAmountWithUsd'
+            deposited_collateral:
+              $ref: '#/components/schemas/TokenAmountWithUsd'
+            entry_price:
+              type: number
+              format: double
+            initial_debt:
+              $ref: '#/components/schemas/TokenAmountWithUsd'
+            leverage:
+              type: number
+              format: double
+            liquidation_price:
+              type: number
+              format: double
+            lower_limit_order_price:
+              type: number
+              format: double
+            market_maker:
+              $ref: '#/components/schemas/TunaPositionMarketMaker'
+            max_leverage:
+              type: number
+              format: double
+            mint_a:
+              $ref: '#/components/schemas/MintDto'
+            mint_b:
+              $ref: '#/components/schemas/MintDto'
+            opened_at:
+              type: string
+              format: date-time
+            pnl_usd:
+              $ref: '#/components/schemas/TunaPositionUsdPnl'
+            pool:
+              $ref: '#/components/schemas/TunaPositionPool'
+            position_token:
+              $ref: '#/components/schemas/TunaPositionPoolToken'
+            state:
+              $ref: '#/components/schemas/TunaSpotPositionDtoState'
+            total:
+              $ref: '#/components/schemas/TokenAmountWithUsd'
+            upper_limit_order_price:
+              type: number
+              format: double
+            version:
+              type: integer
+              format: int32
+              minimum: 0
+    GenericHttpResponse_Vec_LendingPositionDto:
+      type: object
+      required:
+      - data
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            required:
+            - address
+            - authority
+            - shares
+            - funds
+            - earned
+            - mint
+            - vault
+            - updated_at_slot
+            properties:
+              address:
+                type: string
+                format: pubkey
+                description: Solana public key (base58)
+              authority:
+                type: string
+                format: pubkey
+                description: Solana public key (base58)
+              earned:
+                $ref: '#/components/schemas/TokenAmountWithUsd'
+              funds:
+                $ref: '#/components/schemas/TokenAmountWithUsd'
+              mint:
+                type: string
+                format: pubkey
+                description: Solana public key (base58)
+              shares:
+                type: string
+                format: uint64
+                description: Unsigned 64-bit integer encoded as a decimal string
+              updated_at_slot:
+                type: string
+                format: uint64
+                description: Unsigned 64-bit integer encoded as a decimal string
+              vault:
+                type: string
+                format: pubkey
+                description: Solana public key (base58)
+    GenericHttpResponse_Vec_LimitOrderDto:
+      type: object
+      required:
+      - data
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            required:
+            - id
+            - address
+            - order_mint
+            - authority
+            - pool
+            - mint_a
+            - mint_b
+            - state
+            - fill_ratio
+            - a_to_b
+            - tick_index
+            - open_tx_signature
+            - amount_in
+            - amount_out
+            - opened_at
+            properties:
+              a_to_b:
+                type: boolean
+              address:
+                type: string
+                format: pubkey
+                description: Solana public key (base58)
+              amount_in:
+                $ref: '#/components/schemas/TokenAmountWithUsd'
+              amount_out:
+                $ref: '#/components/schemas/TokenAmountWithUsd'
+              authority:
+                type: string
+                format: pubkey
+                description: Solana public key (base58)
+              close_tx_signature:
+                type:
+                - string
+                - 'null'
+              closed_at:
+                type:
+                - string
+                - 'null'
+                format: date-time
+              fill_ratio:
+                type: number
+                format: double
+              id:
+                type: string
+              mint_a:
+                $ref: '#/components/schemas/MintDto'
+              mint_b:
+                $ref: '#/components/schemas/MintDto'
+              open_tx_signature:
+                type: string
+              opened_at:
+                type: string
+                format: date-time
+              order_mint:
+                type: string
+                format: pubkey
+                description: Solana public key (base58)
+              pool:
+                $ref: '#/components/schemas/TunaPositionPool'
+              state:
+                $ref: '#/components/schemas/LimitOrderStatus'
+              tick_index:
+                type: integer
+                format: int32
+    GenericHttpResponse_Vec_OrderHistoryEntryDto:
+      type: object
+      required:
+      - data
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            required:
+            - id
+            - ts
+            - slot
+            - pool
+            - authority
+            - order_type
+            - is_reduce_only
+            - a_to_b
+            - ui_direction
+            - status
+            - base_token
+            - quote_token
+            properties:
+              a_to_b:
+                type: boolean
+                description: |-
+                  Mints (Tokens) Pair direction in pool
+                  When TRUE  - Base token is Mint A, Quote token is Mint B
+                  WHEN FALSE - Base token is Mint B, Quote token is MInt A
+              authority:
+                type: string
+                format: pubkey
+                description: Solana public key (base58)
+              base_token:
+                $ref: '#/components/schemas/TokenAmountWithUsd'
+              base_token_consumed_amount:
+                oneOf:
+                - type: 'null'
+                - $ref: '#/components/schemas/TokenAmountWithUsd'
+                  description: Filled only for limit orders (consumed_amount_in)
+              id:
+                type: string
+                format: uuid
+              is_reduce_only:
+                type: boolean
+              ix_index:
+                type:
+                - integer
+                - 'null'
+                format: int32
+                description: |-
+                  Filled for swaps (spot)
+                  Flatten transaction instruction index
+              order_type:
+                $ref: '#/components/schemas/OrderHistoryType'
+              pool:
+                type: string
+                format: pubkey
+                description: Solana public key (base58)
+              position_address:
+                type: string
+                format: pubkey
+                description: Solana public key (base58)
+              quote_token:
+                $ref: '#/components/schemas/TokenAmountWithUsd'
+              quote_token_filled_amount:
+                oneOf:
+                - type: 'null'
+                - $ref: '#/components/schemas/TokenAmountWithUsd'
+                  description: Filled only for limit orders (filled_amount_out)
+              slot:
+                type: string
+                format: uint64
+                description: Unsigned 64-bit integer encoded as a decimal string
+              status:
+                $ref: '#/components/schemas/OrderHistoryStatus'
+              ts:
+                type: string
+                format: date-time
+                description: Block time of slot this entry was create from
+              tx_signature:
+                type:
+                - string
+                - 'null'
+                description: Filled for swaps (spot) and margin positions
+              ui_direction:
+                $ref: '#/components/schemas/OrderHistoryUIDirection'
+              ui_execution_price:
+                type:
+                - number
+                - 'null'
+                format: double
+                description: |-
+                  A decimal price based on the action.
+                  For market (swaps + margin) orders, displays average execution price for the order excluding the fee
+              ui_price:
+                type:
+                - number
+                - 'null'
+                format: double
+                description: |-
+                  A decimal price based on the action.
+                  Only for limit orders & trigger actions.
+
+                  * For limit order fills - price derived from order tick_index
+                  * For take profit / stop loss / liquidation - trigger price
+    GenericHttpResponse_Vec_StakingPositionActionDto:
+      type: object
+      required:
+      - data
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            required:
+            - position
+            - action
+            - amount
+            - time
+            - tx_signature
+            properties:
+              action:
+                $ref: '#/components/schemas/StakingPositionActionType'
+              amount:
+                type: string
+                format: uint64
+                description: Unsigned 64-bit integer encoded as a decimal string
+              position:
+                type: string
+                format: pubkey
+                description: Solana public key (base58)
+              time:
+                type: string
+                format: date-time
+              tx_signature:
+                type: string
+    GenericHttpResponse_Vec_TradeHistoryEntryDto:
+      type: object
+      required:
+      - data
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            required:
+            - id
+            - ts
+            - slot
+            - pool
+            - authority
+            - a_to_b
+            - action
+            - ui_direction
+            - ui_price
+            - base_token
+            - quote_token
+            - fee
+            properties:
+              a_to_b:
+                type: boolean
+                description: |-
+                  Mints (Tokens) Pair direction in pool
+                  When TRUE  - Base token is Mint A, Quote token is Mint B
+                  WHEN FALSE - Base token is Mint B, Quote token is MInt A
+              action:
+                $ref: '#/components/schemas/TradeHistoryAction'
+              authority:
+                type: string
+                format: pubkey
+                description: Solana public key (base58)
+              base_token:
+                $ref: '#/components/schemas/TokenAmountWithUsd'
+              fee:
+                $ref: '#/components/schemas/FeeAmountWithUsd'
+                description: |-
+                  Positive for taker trades (swaps + spot) and negative for maker trades (limit orders)
+                  Measured in quote tokens for limit orders
+              id:
+                type: string
+                format: uuid
+              ix_index:
+                type:
+                - integer
+                - 'null'
+                format: int32
+                description: |-
+                  Filled for swaps (spot)
+                  Flatten transaction instruction index
+              pnl:
+                oneOf:
+                - type: 'null'
+                - $ref: '#/components/schemas/TradeHistoryEntryPnlUsd'
+                  description: |-
+                    Only for margin positions,
+                    will be calculated based on the price of collateral when opening a position
+                    and the position value on decrease/close.
+              pool:
+                type: string
+                format: pubkey
+                description: Solana public key (base58)
+              position_address:
+                type: string
+                format: pubkey
+                description: Solana public key (base58)
+              quote_token:
+                $ref: '#/components/schemas/TokenAmountWithUsd'
+              slot:
+                type: string
+                format: uint64
+                description: Unsigned 64-bit integer encoded as a decimal string
+              ts:
+                type: string
+                format: date-time
+              tx_signature:
+                type:
+                - string
+                - 'null'
+                description: Filled for swaps (spot) and margin positions
+              ui_direction:
+                $ref: '#/components/schemas/TradeHistoryUIDirection'
+              ui_price:
+                type: number
+                format: double
+                description: |-
+                  A decimal price based on the action.
+
+                  * For spot and margin positions - average execution price excluding the fee.
+                  * For limit order fills - price derived from order tick_index.
+    GenericHttpResponse_Vec_TunaPositionDto:
+      type: object
+      required:
+      - data
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            required:
+            - address
+            - authority
+            - version
+            - state
+            - position_mint
+            - liquidity
+            - tick_lower_index
+            - tick_upper_index
+            - lower_limit_order_price
+            - upper_limit_order_price
+            - entry_price
+            - flags
+            - mint_a
+            - mint_b
+            - pool
+            - market_maker
+            - deposited_collateral_a
+            - deposited_collateral_b
+            - leverage
+            - max_leverage
+            - liquidation_price_lower
+            - liquidation_price_upper
+            - initial_debt_a
+            - initial_debt_b
+            - current_debt_a
+            - current_debt_b
+            - leftovers_a
+            - leftovers_b
+            - yield_a
+            - yield_b
+            - compounded_yield_a
+            - compounded_yield_b
+            - total_a
+            - total_b
+            - pnl_a
+            - pnl_b
+            - pnl_usd
+            - opened_at
+            properties:
+              address:
+                type: string
+                format: pubkey
+                description: Solana public key (base58)
+              authority:
+                type: string
+                format: pubkey
+                description: Solana public key (base58)
+              closed_at:
+                type:
+                - string
+                - 'null'
+                format: date-time
+              compounded_yield_a:
+                $ref: '#/components/schemas/TokenAmountWithUsd'
+              compounded_yield_b:
+                $ref: '#/components/schemas/TokenAmountWithUsd'
+              current_debt_a:
+                $ref: '#/components/schemas/TokenAmountWithUsd'
+              current_debt_b:
+                $ref: '#/components/schemas/TokenAmountWithUsd'
+              deposited_collateral_a:
+                $ref: '#/components/schemas/TunaPositionTokenDepositedCollateral'
+              deposited_collateral_b:
+                $ref: '#/components/schemas/TunaPositionTokenDepositedCollateral'
+              entry_price:
+                type: number
+                format: double
+              flags:
+                $ref: '#/components/schemas/TunaLpPositionFlags'
+              initial_debt_a:
+                $ref: '#/components/schemas/TokenAmountWithUsd'
+              initial_debt_b:
+                $ref: '#/components/schemas/TokenAmountWithUsd'
+              leftovers_a:
+                $ref: '#/components/schemas/TokenAmountWithUsd'
+              leftovers_b:
+                $ref: '#/components/schemas/TokenAmountWithUsd'
+              leverage:
+                type: number
+                format: double
+              liquidation_price_lower:
+                type: number
+                format: double
+              liquidation_price_upper:
+                type: number
+                format: double
+              liquidity:
+                type: string
+                format: uint128
+                description: Unsigned 128-bit integer encoded as a decimal string
+              lower_limit_order_price:
+                type: number
+                format: double
+              market_maker:
+                $ref: '#/components/schemas/TunaPositionMarketMaker'
+              max_leverage:
+                type: number
+                format: double
+              mint_a:
+                $ref: '#/components/schemas/MintDto'
+              mint_b:
+                $ref: '#/components/schemas/MintDto'
+              opened_at:
+                type: string
+                format: date-time
+              pnl_a:
+                $ref: '#/components/schemas/TunaPositionTokenPnl'
+                description: Total PnL denominated/expressed in token A
+              pnl_b:
+                $ref: '#/components/schemas/TunaPositionTokenPnl'
+                description: Total PnL denominated/expressed in token B
+              pnl_usd:
+                $ref: '#/components/schemas/TunaPositionUsdPnl'
+              pool:
+                $ref: '#/components/schemas/TunaPositionPool'
+              position_mint:
+                type: string
+                format: pubkey
+                description: Solana public key (base58)
+              state:
+                $ref: '#/components/schemas/TunaPositionDtoState'
+              tick_lower_index:
+                type: integer
+                format: int32
+              tick_upper_index:
+                type: integer
+                format: int32
+              total_a:
+                $ref: '#/components/schemas/TokenAmountWithUsd'
+              total_b:
+                $ref: '#/components/schemas/TokenAmountWithUsd'
+              upper_limit_order_price:
+                type: number
+                format: double
+              version:
+                type: integer
+                format: int32
+                minimum: 0
+              yield_a:
+                $ref: '#/components/schemas/TokenAmountWithUsd'
+              yield_b:
+                $ref: '#/components/schemas/TokenAmountWithUsd'
+    GenericHttpResponse_Vec_TunaSpotPositionDto:
+      type: object
+      required:
+      - data
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            required:
+            - address
+            - authority
+            - version
+            - state
+            - lower_limit_order_price
+            - upper_limit_order_price
+            - entry_price
+            - mint_a
+            - mint_b
+            - pool
+            - position_token
+            - collateral_token
+            - market_maker
+            - deposited_collateral
+            - initial_debt
+            - current_debt
+            - total
+            - leverage
+            - max_leverage
+            - liquidation_price
+            - pnl_usd
+            - opened_at
+            properties:
+              address:
+                type: string
+                format: pubkey
+                description: Solana public key (base58)
+              authority:
+                type: string
+                format: pubkey
+                description: Solana public key (base58)
+              closed_at:
+                type:
+                - string
+                - 'null'
+                format: date-time
+              collateral_token:
+                $ref: '#/components/schemas/TunaPositionPoolToken'
+              current_debt:
+                $ref: '#/components/schemas/TokenAmountWithUsd'
+              deposited_collateral:
+                $ref: '#/components/schemas/TokenAmountWithUsd'
+              entry_price:
+                type: number
+                format: double
+              initial_debt:
+                $ref: '#/components/schemas/TokenAmountWithUsd'
+              leverage:
+                type: number
+                format: double
+              liquidation_price:
+                type: number
+                format: double
+              lower_limit_order_price:
+                type: number
+                format: double
+              market_maker:
+                $ref: '#/components/schemas/TunaPositionMarketMaker'
+              max_leverage:
+                type: number
+                format: double
+              mint_a:
+                $ref: '#/components/schemas/MintDto'
+              mint_b:
+                $ref: '#/components/schemas/MintDto'
+              opened_at:
+                type: string
+                format: date-time
+              pnl_usd:
+                $ref: '#/components/schemas/TunaPositionUsdPnl'
+              pool:
+                $ref: '#/components/schemas/TunaPositionPool'
+              position_token:
+                $ref: '#/components/schemas/TunaPositionPoolToken'
+              state:
+                $ref: '#/components/schemas/TunaSpotPositionDtoState'
+              total:
+                $ref: '#/components/schemas/TokenAmountWithUsd'
+              upper_limit_order_price:
+                type: number
+                format: double
+              version:
+                type: integer
+                format: int32
+                minimum: 0
+    LendingPositionDto:
+      type: object
+      required:
+      - address
+      - authority
+      - shares
+      - funds
+      - earned
+      - mint
+      - vault
+      - updated_at_slot
+      properties:
+        address:
+          type: string
+          format: pubkey
+          description: Solana public key (base58)
+        authority:
+          type: string
+          format: pubkey
+          description: Solana public key (base58)
+        earned:
+          $ref: '#/components/schemas/TokenAmountWithUsd'
+        funds:
+          $ref: '#/components/schemas/TokenAmountWithUsd'
+        mint:
+          type: string
+          format: pubkey
+          description: Solana public key (base58)
+        shares:
+          type: string
+          format: uint64
+          description: Unsigned 64-bit integer encoded as a decimal string
+        updated_at_slot:
+          type: string
+          format: uint64
+          description: Unsigned 64-bit integer encoded as a decimal string
+        vault:
+          type: string
+          format: pubkey
+          description: Solana public key (base58)
+    LimitOrderDto:
+      type: object
+      required:
+      - id
+      - address
+      - order_mint
+      - authority
+      - pool
+      - mint_a
+      - mint_b
+      - state
+      - fill_ratio
+      - a_to_b
+      - tick_index
+      - open_tx_signature
+      - amount_in
+      - amount_out
+      - opened_at
+      properties:
+        a_to_b:
+          type: boolean
+        address:
+          type: string
+          format: pubkey
+          description: Solana public key (base58)
+        amount_in:
+          $ref: '#/components/schemas/TokenAmountWithUsd'
+        amount_out:
+          $ref: '#/components/schemas/TokenAmountWithUsd'
+        authority:
+          type: string
+          format: pubkey
+          description: Solana public key (base58)
+        close_tx_signature:
+          type:
+          - string
+          - 'null'
+        closed_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        fill_ratio:
+          type: number
+          format: double
+        id:
+          type: string
+        mint_a:
+          $ref: '#/components/schemas/MintDto'
+        mint_b:
+          $ref: '#/components/schemas/MintDto'
+        open_tx_signature:
+          type: string
+        opened_at:
+          type: string
+          format: date-time
+        order_mint:
+          type: string
+          format: pubkey
+          description: Solana public key (base58)
+        pool:
+          $ref: '#/components/schemas/TunaPositionPool'
+        state:
+          $ref: '#/components/schemas/LimitOrderStatus'
+        tick_index:
+          type: integer
+          format: int32
+    LimitOrderStatus:
+      type: string
+      enum:
+      - open
+      - partially_filled
+      - filled
+      - complete
+      - cancelled
+    MintDto:
+      type: object
+      required:
+      - mint
+      - symbol
+      - name
+      - logo
+      - decimals
+      properties:
+        decimals:
+          type: integer
+          format: int32
+        logo:
+          type: string
+        mint:
+          type: string
+          format: pubkey
+          description: Solana public key (base58)
+        name:
+          type: string
+        symbol:
+          type: string
+    OrderHistoryEntryDto:
+      type: object
+      required:
+      - id
+      - ts
+      - slot
+      - pool
+      - authority
+      - order_type
+      - is_reduce_only
+      - a_to_b
+      - ui_direction
+      - status
+      - base_token
+      - quote_token
+      properties:
+        a_to_b:
+          type: boolean
+          description: |-
+            Mints (Tokens) Pair direction in pool
+            When TRUE  - Base token is Mint A, Quote token is Mint B
+            WHEN FALSE - Base token is Mint B, Quote token is MInt A
+        authority:
+          type: string
+          format: pubkey
+          description: Solana public key (base58)
+        base_token:
+          $ref: '#/components/schemas/TokenAmountWithUsd'
+        base_token_consumed_amount:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/TokenAmountWithUsd'
+            description: Filled only for limit orders (consumed_amount_in)
+        id:
+          type: string
+          format: uuid
+        is_reduce_only:
+          type: boolean
+        ix_index:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          description: |-
+            Filled for swaps (spot)
+            Flatten transaction instruction index
+        order_type:
+          $ref: '#/components/schemas/OrderHistoryType'
+        pool:
+          type: string
+          format: pubkey
+          description: Solana public key (base58)
+        position_address:
+          type: string
+          format: pubkey
+          description: Solana public key (base58)
+        quote_token:
+          $ref: '#/components/schemas/TokenAmountWithUsd'
+        quote_token_filled_amount:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/TokenAmountWithUsd'
+            description: Filled only for limit orders (filled_amount_out)
+        slot:
+          type: string
+          format: uint64
+          description: Unsigned 64-bit integer encoded as a decimal string
+        status:
+          $ref: '#/components/schemas/OrderHistoryStatus'
+        ts:
+          type: string
+          format: date-time
+          description: Block time of slot this entry was create from
+        tx_signature:
+          type:
+          - string
+          - 'null'
+          description: Filled for swaps (spot) and margin positions
+        ui_direction:
+          $ref: '#/components/schemas/OrderHistoryUIDirection'
+        ui_execution_price:
+          type:
+          - number
+          - 'null'
+          format: double
+          description: |-
+            A decimal price based on the action.
+            For market (swaps + margin) orders, displays average execution price for the order excluding the fee
+        ui_price:
+          type:
+          - number
+          - 'null'
+          format: double
+          description: |-
+            A decimal price based on the action.
+            Only for limit orders & trigger actions.
+
+            * For limit order fills - price derived from order tick_index
+            * For take profit / stop loss / liquidation - trigger price
+    OrderHistoryStatus:
+      type: string
+      description: |-
+        Swaps && Spot Positions (Margin) can be only only in these statuses:
+         * filled when is_tx_failed = FALSE
+         * rejected when is_tx_failed = TRUE
+      enum:
+      - open
+      - partially_filled
+      - filled
+      - cancelled
+      - claimed
+      - rejected
+    OrderHistoryType:
+      type: string
+      enum:
+      - market
+      - limit
+      - take_profit_market
+      - stop_loss_market
+      - liquidation_market
+    OrderHistoryUIDirection:
+      type: string
+      enum:
+      - buy
+      - sell
+      - long
+      - short
+    StakingPositionActionDto:
+      type: object
+      required:
+      - position
+      - action
+      - amount
+      - time
+      - tx_signature
+      properties:
+        action:
+          $ref: '#/components/schemas/StakingPositionActionType'
+        amount:
+          type: string
+          format: uint64
+          description: Unsigned 64-bit integer encoded as a decimal string
+        position:
+          type: string
+          format: pubkey
+          description: Solana public key (base58)
+        time:
+          type: string
+          format: date-time
+        tx_signature:
+          type: string
+    StakingPositionActionType:
+      type: string
+      enum:
+      - stake
+      - unstake
+      - withdraw
+      - claim_rewards
+      - compound_rewards
+    StakingPositionDto:
+      type: object
+      required:
+      - address
+      - owner
+      - staked
+      - unclaimed_reward
+      - claimed_reward
+      - unstaked
+      - vesting
+      properties:
+        address:
+          type: string
+          format: pubkey
+          description: Solana public key (base58)
+        claimed_reward:
+          $ref: '#/components/schemas/TokenAmountWithUsd'
+        last_unstaked_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        owner:
+          type: string
+          format: pubkey
+          description: Solana public key (base58)
+        rank:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          minimum: 0
+        staked:
+          $ref: '#/components/schemas/TokenAmountWithUsd'
+        unclaimed_reward:
+          $ref: '#/components/schemas/TokenAmountWithUsd'
+        unstaked:
+          $ref: '#/components/schemas/TokenAmountWithUsd'
+        vesting:
+          $ref: '#/components/schemas/VestingDto'
+        withdraw_available_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+    TokenAmountWithUsd:
+      type: object
+      required:
+      - amount
+      - usd
+      properties:
+        amount:
+          type: string
+          format: uint64
+          description: Unsigned 64-bit integer encoded as a decimal string
+        usd:
+          type: number
+          format: double
+    TradeHistoryAction:
+      type: string
+      enum:
+      - swap
+      - limit_order_fill
+      - position_increase
+      - position_decrease
+      - take_profit
+      - stop_loss
+      - liquidation
+    TradeHistoryEntryDto:
+      type: object
+      required:
+      - id
+      - ts
+      - slot
+      - pool
+      - authority
+      - a_to_b
+      - action
+      - ui_direction
+      - ui_price
+      - base_token
+      - quote_token
+      - fee
+      properties:
+        a_to_b:
+          type: boolean
+          description: |-
+            Mints (Tokens) Pair direction in pool
+            When TRUE  - Base token is Mint A, Quote token is Mint B
+            WHEN FALSE - Base token is Mint B, Quote token is MInt A
+        action:
+          $ref: '#/components/schemas/TradeHistoryAction'
+        authority:
+          type: string
+          format: pubkey
+          description: Solana public key (base58)
+        base_token:
+          $ref: '#/components/schemas/TokenAmountWithUsd'
+        fee:
+          $ref: '#/components/schemas/FeeAmountWithUsd'
+          description: |-
+            Positive for taker trades (swaps + spot) and negative for maker trades (limit orders)
+            Measured in quote tokens for limit orders
+        id:
+          type: string
+          format: uuid
+        ix_index:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          description: |-
+            Filled for swaps (spot)
+            Flatten transaction instruction index
+        pnl:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/TradeHistoryEntryPnlUsd'
+            description: |-
+              Only for margin positions,
+              will be calculated based on the price of collateral when opening a position
+              and the position value on decrease/close.
+        pool:
+          type: string
+          format: pubkey
+          description: Solana public key (base58)
+        position_address:
+          type: string
+          format: pubkey
+          description: Solana public key (base58)
+        quote_token:
+          $ref: '#/components/schemas/TokenAmountWithUsd'
+        slot:
+          type: string
+          format: uint64
+          description: Unsigned 64-bit integer encoded as a decimal string
+        ts:
+          type: string
+          format: date-time
+        tx_signature:
+          type:
+          - string
+          - 'null'
+          description: Filled for swaps (spot) and margin positions
+        ui_direction:
+          $ref: '#/components/schemas/TradeHistoryUIDirection'
+        ui_price:
+          type: number
+          format: double
+          description: |-
+            A decimal price based on the action.
+
+            * For spot and margin positions - average execution price excluding the fee.
+            * For limit order fills - price derived from order tick_index.
+    TradeHistoryEntryPnlUsd:
+      type: object
+      required:
+      - usd
+      - bps
+      properties:
+        bps:
+          type: integer
+          format: int32
+        usd:
+          type: number
+          format: double
+    TradeHistoryUIDirection:
+      type: string
+      enum:
+      - buy
+      - sell
+      - open_long
+      - close_long
+      - open_short
+      - close_short
+    TunaLpPositionAutoCompounding:
+      type: string
+      enum:
+      - with_leverage
+      - without_leverage
+    TunaLpPositionFlags:
+      type: object
+      required:
+      - auto_rebalancing
+      properties:
+        auto_compounding:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/TunaLpPositionAutoCompounding'
+        auto_rebalancing:
+          type: boolean
+        lower_limit_order_swap_to_token:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/TunaPositionPoolToken'
+        upper_limit_order_swap_to_token:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/TunaPositionPoolToken'
+    TunaPositionDto:
+      type: object
+      required:
+      - address
+      - authority
+      - version
+      - state
+      - position_mint
+      - liquidity
+      - tick_lower_index
+      - tick_upper_index
+      - lower_limit_order_price
+      - upper_limit_order_price
+      - entry_price
+      - flags
+      - mint_a
+      - mint_b
+      - pool
+      - market_maker
+      - deposited_collateral_a
+      - deposited_collateral_b
+      - leverage
+      - max_leverage
+      - liquidation_price_lower
+      - liquidation_price_upper
+      - initial_debt_a
+      - initial_debt_b
+      - current_debt_a
+      - current_debt_b
+      - leftovers_a
+      - leftovers_b
+      - yield_a
+      - yield_b
+      - compounded_yield_a
+      - compounded_yield_b
+      - total_a
+      - total_b
+      - pnl_a
+      - pnl_b
+      - pnl_usd
+      - opened_at
+      properties:
+        address:
+          type: string
+          format: pubkey
+          description: Solana public key (base58)
+        authority:
+          type: string
+          format: pubkey
+          description: Solana public key (base58)
+        closed_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        compounded_yield_a:
+          $ref: '#/components/schemas/TokenAmountWithUsd'
+        compounded_yield_b:
+          $ref: '#/components/schemas/TokenAmountWithUsd'
+        current_debt_a:
+          $ref: '#/components/schemas/TokenAmountWithUsd'
+        current_debt_b:
+          $ref: '#/components/schemas/TokenAmountWithUsd'
+        deposited_collateral_a:
+          $ref: '#/components/schemas/TunaPositionTokenDepositedCollateral'
+        deposited_collateral_b:
+          $ref: '#/components/schemas/TunaPositionTokenDepositedCollateral'
+        entry_price:
+          type: number
+          format: double
+        flags:
+          $ref: '#/components/schemas/TunaLpPositionFlags'
+        initial_debt_a:
+          $ref: '#/components/schemas/TokenAmountWithUsd'
+        initial_debt_b:
+          $ref: '#/components/schemas/TokenAmountWithUsd'
+        leftovers_a:
+          $ref: '#/components/schemas/TokenAmountWithUsd'
+        leftovers_b:
+          $ref: '#/components/schemas/TokenAmountWithUsd'
+        leverage:
+          type: number
+          format: double
+        liquidation_price_lower:
+          type: number
+          format: double
+        liquidation_price_upper:
+          type: number
+          format: double
+        liquidity:
+          type: string
+          format: uint128
+          description: Unsigned 128-bit integer encoded as a decimal string
+        lower_limit_order_price:
+          type: number
+          format: double
+        market_maker:
+          $ref: '#/components/schemas/TunaPositionMarketMaker'
+        max_leverage:
+          type: number
+          format: double
+        mint_a:
+          $ref: '#/components/schemas/MintDto'
+        mint_b:
+          $ref: '#/components/schemas/MintDto'
+        opened_at:
+          type: string
+          format: date-time
+        pnl_a:
+          $ref: '#/components/schemas/TunaPositionTokenPnl'
+          description: Total PnL denominated/expressed in token A
+        pnl_b:
+          $ref: '#/components/schemas/TunaPositionTokenPnl'
+          description: Total PnL denominated/expressed in token B
+        pnl_usd:
+          $ref: '#/components/schemas/TunaPositionUsdPnl'
+        pool:
+          $ref: '#/components/schemas/TunaPositionPool'
+        position_mint:
+          type: string
+          format: pubkey
+          description: Solana public key (base58)
+        state:
+          $ref: '#/components/schemas/TunaPositionDtoState'
+        tick_lower_index:
+          type: integer
+          format: int32
+        tick_upper_index:
+          type: integer
+          format: int32
+        total_a:
+          $ref: '#/components/schemas/TokenAmountWithUsd'
+        total_b:
+          $ref: '#/components/schemas/TokenAmountWithUsd'
+        upper_limit_order_price:
+          type: number
+          format: double
+        version:
+          type: integer
+          format: int32
+          minimum: 0
+        yield_a:
+          $ref: '#/components/schemas/TokenAmountWithUsd'
+        yield_b:
+          $ref: '#/components/schemas/TokenAmountWithUsd'
+    TunaPositionDtoState:
+      type: string
+      enum:
+      - open
+      - liquidated
+      - closed_by_limit_order
+      - closed
+    TunaPositionMarketMaker:
+      type: string
+      enum:
+      - fusion
+      - orca
+    TunaPositionPool:
+      type: object
+      required:
+      - addr
+      - price
+      - tick_spacing
+      properties:
+        addr:
+          type: string
+          format: pubkey
+          description: Solana public key (base58)
+        price:
+          type: number
+          format: double
+        tick_spacing:
+          type: integer
+          format: int32
+          minimum: 0
+    TunaPositionPoolToken:
+      type: string
+      enum:
+      - a
+      - b
+    TunaPositionTokenDepositedCollateral:
+      type: object
+      required:
+      - amount
+      - usd
+      properties:
+        amount:
+          type: string
+          format: int128
+          description: Signed 128-bit integer encoded as a decimal string
+        usd:
+          type: number
+          format: double
+    TunaPositionTokenPnl:
+      type: object
+      required:
+      - amount
+      - rate
+      properties:
+        amount:
+          type: string
+          format: int128
+          description: Signed 128-bit integer encoded as a decimal string
+        rate:
+          type: number
+          format: double
+    TunaPositionUsdPnl:
+      type: object
+      required:
+      - amount
+      - rate
+      properties:
+        amount:
+          type: number
+          format: double
+        rate:
+          type: number
+          format: double
+    TunaSpotPositionDto:
+      type: object
+      required:
+      - address
+      - authority
+      - version
+      - state
+      - lower_limit_order_price
+      - upper_limit_order_price
+      - entry_price
+      - mint_a
+      - mint_b
+      - pool
+      - position_token
+      - collateral_token
+      - market_maker
+      - deposited_collateral
+      - initial_debt
+      - current_debt
+      - total
+      - leverage
+      - max_leverage
+      - liquidation_price
+      - pnl_usd
+      - opened_at
+      properties:
+        address:
+          type: string
+          format: pubkey
+          description: Solana public key (base58)
+        authority:
+          type: string
+          format: pubkey
+          description: Solana public key (base58)
+        closed_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        collateral_token:
+          $ref: '#/components/schemas/TunaPositionPoolToken'
+        current_debt:
+          $ref: '#/components/schemas/TokenAmountWithUsd'
+        deposited_collateral:
+          $ref: '#/components/schemas/TokenAmountWithUsd'
+        entry_price:
+          type: number
+          format: double
+        initial_debt:
+          $ref: '#/components/schemas/TokenAmountWithUsd'
+        leverage:
+          type: number
+          format: double
+        liquidation_price:
+          type: number
+          format: double
+        lower_limit_order_price:
+          type: number
+          format: double
+        market_maker:
+          $ref: '#/components/schemas/TunaPositionMarketMaker'
+        max_leverage:
+          type: number
+          format: double
+        mint_a:
+          $ref: '#/components/schemas/MintDto'
+        mint_b:
+          $ref: '#/components/schemas/MintDto'
+        opened_at:
+          type: string
+          format: date-time
+        pnl_usd:
+          $ref: '#/components/schemas/TunaPositionUsdPnl'
+        pool:
+          $ref: '#/components/schemas/TunaPositionPool'
+        position_token:
+          $ref: '#/components/schemas/TunaPositionPoolToken'
+        state:
+          $ref: '#/components/schemas/TunaSpotPositionDtoState'
+        total:
+          $ref: '#/components/schemas/TokenAmountWithUsd'
+        upper_limit_order_price:
+          type: number
+          format: double
+        version:
+          type: integer
+          format: int32
+          minimum: 0
+    TunaSpotPositionDtoState:
+      type: string
+      enum:
+      - open
+      - closed
+    VestingDto:
+      type: object
+      required:
+      - locked
+      - unlocked
+      - unlock_rate
+      - unlock_every_seconds
+      - unlock_cliff_seconds
+      properties:
+        locked:
+          $ref: '#/components/schemas/TokenAmountWithUsd'
+          description: Amount of locked tokens remaining
+        locked_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: The timestamp when the position has been locked
+        unlock_cliff_seconds:
+          type: integer
+          format: int32
+          description: The period in seconds after which the unlock starts. The first unlock occurs after 'locked_at (timestamp) + unlock_cliff_seconds + unlock_every_seconds'
+          minimum: 0
+        unlock_every_seconds:
+          type: integer
+          format: int32
+          description: How often tokens are unlocked in seconds
+          minimum: 0
+        unlock_rate:
+          type: string
+          format: uint64
+          description: Unsigned 64-bit integer encoded as a decimal string
+        unlocked:
+          $ref: '#/components/schemas/TokenAmountWithUsd'
+          description: Amount of tokens unlocked since the beginning of lock
+tags:
+- name: users_lp_positions
+  description: User LP positions
+- name: users_lending_positions
+  description: User lending positions
+- name: users_limit_orders
+  description: User limit orders
+- name: users_order_history
+  description: User order history
+- name: users_staking_positions
+  description: User staking positions
+- name: users_trade_history
+  description: User trade history
