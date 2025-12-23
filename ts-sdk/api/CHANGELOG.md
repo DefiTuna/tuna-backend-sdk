@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.10.8
+
+### Patch Changes
+
+- 73fa14f: feat: Add pool price to order book state snapshot
+
 ## 1.10.7
 
 ### Patch Changes
