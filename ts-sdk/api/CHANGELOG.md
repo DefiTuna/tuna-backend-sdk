@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.10.9
+
+### Patch Changes
+
+- a75d8b6: feat: Order book inverted price && removed pool prices
+
 ## 1.10.8
 
 ### Patch Changes
