@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.10.10
+
+### Patch Changes
+
+- 4259acc: fix: Pool Sqrt Price in State Snapshot
+
 ## 1.10.9
 
 ### Patch Changes
