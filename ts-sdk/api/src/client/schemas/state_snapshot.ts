@@ -10,7 +10,7 @@ export const PoolSnapshot = z.object({
   liquidity: z.coerce.bigint(),
   tickCurrentIndex: z.number(),
   price: z.number(),
-  sqrtPrice: z.number(),
+  sqrtPrice: z.coerce.bigint(),
   tvl: z.number(),
   priceChange24H: z.number(),
   volume24H: z.number(),
