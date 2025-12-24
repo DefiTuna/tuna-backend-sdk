@@ -77,7 +77,6 @@ export type IncreaseSpotPositionQuote = z.infer<typeof schemas.IncreaseSpotPosit
 export type DecreaseSpotPositionQuote = z.infer<typeof schemas.DecreaseSpotPositionQuote>;
 export type CloseSpotPositionQuote = z.infer<typeof schemas.CloseSpotPositionQuote>;
 export type TradableAmount = z.infer<typeof schemas.TradableAmount>;
-export type PoolPriceUpdate = z.infer<typeof schemas.PoolPriceUpdate>;
 export type StateSnapshot = z.infer<typeof schemas.StateSnapshot>;
 
 /* Request payloads */
