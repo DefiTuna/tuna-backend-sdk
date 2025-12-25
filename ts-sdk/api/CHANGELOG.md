@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.10.11
+
+### Patch Changes
+
+- b300446: feat: [TUNA-1675] Update state snapshot & markets & pools API
+
 ## 1.10.10
 
 ### Patch Changes
