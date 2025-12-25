@@ -16,4 +16,5 @@ export const OrderBookEntry = z.object({
 export const OrderBook = z.object({
   entries: OrderBookEntry.array(),
   poolPrice: z.number(),
+  poolAddress: z.string(),
 });

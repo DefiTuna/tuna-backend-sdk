@@ -1,7 +1,8 @@
 import { z } from "zod";
 
-import { AmountWithUsdSchema, PoolProviderSchema, UsdPnlSchema } from "./basic";
+import { AmountWithUsdSchema, UsdPnlSchema } from "./basic";
 import { Mint } from "./mint";
+import { PoolProviderSchema } from "./pool";
 import { TunaPositionPoolSchema, TunaPositionPoolTokenSchema } from "./positions_shared";
 
 export const TunaSpotPositionState = {

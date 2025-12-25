@@ -1,10 +1,11 @@
 import { z } from "zod";
 
-import { AmountWithUsdSchema, PoolProviderSchema } from "./schemas/basic";
-import { OrderBook } from "./schemas/order_book";
+import { AmountWithUsdSchema } from "./schemas/basic";
+import { Pool } from "./schemas/pool";
 import { StateSnapshot } from "./schemas/state_snapshot";
 
 export * from "./schemas/basic";
+export * from "./schemas/pool";
 export * from "./schemas/limit_orders";
 export * from "./schemas/lp_positions";
 export * from "./schemas/spot_positions";
@@ -128,25 +129,21 @@ export const PaginationMeta = z.object({
 export const Market = z.object({
   address: z.string(),
   addressLookupTable: z.string(),
-  poolAddress: z.string(),
-  poolFeeRate: z.number(),
-  provider: PoolProviderSchema,
   maxLeverage: z.number(),
   maxSwapSlippage: z.number(),
   protocolFee: z.number(),
-  rebalanceProtocolFee: z.number(),
   protocolFeeOnCollateral: z.number(),
   liquidationFee: z.number(),
   liquidationThreshold: z.number(),
   oraclePriceDeviationThreshold: z.number(),
-  maxSpotPositionSizeA: AmountWithUsdSchema,
-  maxSpotPositionSizeB: AmountWithUsdSchema,
+  rebalanceProtocolFee: z.number(),
   borrowedFundsA: AmountWithUsdSchema,
   borrowedFundsB: AmountWithUsdSchema,
-  availableBorrowA: AmountWithUsdSchema,
-  availableBorrowB: AmountWithUsdSchema,
   borrowLimitA: AmountWithUsdSchema,
   borrowLimitB: AmountWithUsdSchema,
+  maxSpotPositionSizeA: AmountWithUsdSchema,
+  maxSpotPositionSizeB: AmountWithUsdSchema,
+  pool: Pool,
   disabled: z.boolean(),
   createdAt: z.coerce.date(),
 });
@@ -192,44 +189,6 @@ export const VaultHistoricalStats = z.object({
   borrow: AmountWithUsdSchema,
   supplyApy: z.number(),
   borrowApr: z.number(),
-});
-
-export const Pool = z.object({
-  address: z.string(),
-  provider: PoolProviderSchema,
-  tokenAMint: z.string(),
-  tokenBMint: z.string(),
-  tokenAVault: z.string(),
-  tokenBVault: z.string(),
-  tvlUsdc: z.coerce.number(),
-  priceChange24H: z.number(),
-  tickSpacing: z.number(),
-  feeRate: z.number(),
-  olpFeeRate: z.nullable(z.number()),
-  protocolFeeRate: z.number(),
-  liquidity: z.coerce.bigint(),
-  sqrtPrice: z.coerce.bigint(),
-  tickCurrentIndex: z.number(),
-  stats: z.object({
-    "24h": z.object({
-      volume: z.coerce.number(),
-      fees: z.coerce.number(),
-      rewards: z.coerce.number(),
-      yieldOverTvl: z.coerce.number(),
-    }),
-    "7d": z.object({
-      volume: z.coerce.number(),
-      fees: z.coerce.number(),
-      rewards: z.coerce.number(),
-      yieldOverTvl: z.coerce.number(),
-    }),
-    "30d": z.object({
-      volume: z.coerce.number(),
-      fees: z.coerce.number(),
-      rewards: z.coerce.number(),
-      yieldOverTvl: z.coerce.number(),
-    }),
-  }),
 });
 
 export const Tick = z.object({
@@ -459,15 +418,15 @@ const createNotificationSchema = <DataType extends z.ZodTypeAny, MetaType extend
     ...(metaSchema ? { meta: metaSchema } : { meta: z.undefined().nullable() }),
   });
 
-export const OrderBookNotificationMeta = z.object({
-  pool: z.string(),
-  priceStep: z.number(),
-  inverted: z.boolean(),
-});
+// export const OrderBookNotificationMeta = z.object({
+//   pool: z.string(),
+//   priceStep: z.number(),
+//   inverted: z.boolean(),
+// });
 
 export const PoolSwapNotification = createNotificationSchema(PoolSwap);
 // export const PoolPriceUpdateNotification = createNotificationSchema(PoolPriceUpdate);
-export const OrderBookNotification = createNotificationSchema(OrderBook, OrderBookNotificationMeta);
+// export const OrderBookNotification = createNotificationSchema(OrderBook, OrderBookNotificationMeta);
 // export const TunaPositionNotification = createNotificationSchema(TunaPositionLegacy);
 // export const TunaSpotPositionNotification = createNotificationSchema(TunaSpotPosition);
 export const LendingPositionNotification = createNotificationSchema(LendingPosition);

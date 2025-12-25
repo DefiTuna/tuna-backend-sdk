@@ -106,7 +106,7 @@ describe("Markets", async () => {
   });
   it("Match RPC markets pool addresses", () => {
     expect(rpcMarkets.map(rpcMarket => rpcMarket.data.pool).sort()).toEqual(
-      markets.map(market => market.poolAddress).sort(),
+      markets.map(market => market.pool.address).sort(),
     );
   });
 });
@@ -122,7 +122,7 @@ describe("Single Market", async () => {
 
   it("Returns market data", () => {
     expect(market.address).toBe(sampleMarketAddress);
-    expect(market.poolFeeRate).toBeGreaterThan(0);
+    expect(market.pool.feeRate).toBeGreaterThan(0);
   });
 
   it("Returns 404 for unsaved market", async () => {

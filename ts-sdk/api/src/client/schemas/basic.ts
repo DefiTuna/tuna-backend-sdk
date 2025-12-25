@@ -18,10 +18,3 @@ export const UsdPnlSchema = z.object({
   amount: z.number(),
   rate: z.number(),
 });
-
-export const PoolProvider = {
-  ORCA: "orca",
-  FUSION: "fusion",
-} as const;
-
-export const PoolProviderSchema = z.enum([PoolProvider.ORCA, ...Object.values(PoolProvider)]);

@@ -17,6 +17,7 @@ export const LimitOrderStateSchema = z.enum([LimitOrderState.OPEN, ...Object.val
 export const LimitOrder = z.object({
   address: z.string(),
   orderMint: z.string(),
+  authority: z.string(),
   mintA: Mint,
   mintB: Mint,
   pool: TunaPositionPoolSchema,

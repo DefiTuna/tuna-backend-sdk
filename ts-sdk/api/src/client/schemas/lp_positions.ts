@@ -1,13 +1,8 @@
 import z from "zod";
 
-import {
-  AmountWithoutUsdSchema,
-  AmountWithUsdSchema,
-  PoolProviderSchema,
-  TokensPnlSchema,
-  UsdPnlSchema,
-} from "./basic";
+import { AmountWithoutUsdSchema, AmountWithUsdSchema, TokensPnlSchema, UsdPnlSchema } from "./basic";
 import { Mint } from "./mint";
+import { PoolProviderSchema } from "./pool";
 import { TunaPositionPoolSchema, TunaPositionPoolTokenSchema } from "./positions_shared";
 
 export const LpPositionLimitOrderSwap = {
