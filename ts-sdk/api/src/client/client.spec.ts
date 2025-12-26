@@ -60,7 +60,7 @@ describe("Mints", async () => {
     expect(mints.length).toBe(rpcVaults.length);
   });
   it("Match RPC vaults mints", () => {
-    expect(rpcVaults.map(rpcVault => rpcVault.data.mint).sort()).toEqual(mints.map(mint => mint.mint).sort());
+    expect(rpcVaults.map(rpcVault => rpcVault.data.mint).sort()).toEqual(mints.map(mint => mint.address).sort());
   });
   it("Have valid decimals", () => {
     expect(mints.every(mint => mint.decimals > 0)).toBe(true);
@@ -74,7 +74,7 @@ describe("Single Mint", async () => {
   const mint = await client.getMint(sampleMintAddress);
 
   it("Returns mint data", () => {
-    expect(mint.mint).toBe(sampleMintAddress);
+    expect(mint.address).toBe(sampleMintAddress);
     expect(mint.decimals).toBeGreaterThan(0);
   });
 
@@ -377,7 +377,7 @@ describe("Tuna Positions", async () => {
           position.address,
           position.authority,
           position.positionMint,
-          position.pool.addr,
+          position.pool.address,
           position.liquidity,
         ])
         .sort(([a], [b]) => a.toString().localeCompare(b.toString())),

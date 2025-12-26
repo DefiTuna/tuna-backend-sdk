@@ -16,13 +16,9 @@ export * from "./schemas/order_book";
 
 export const NotificationEntity = {
   POOL_SWAP: "pool_swap",
-  POOL_PRICE: "pool_price",
-  ORDER_BOOK: "order_book",
-  TUNA_POSITION: "tuna_position",
-  TUNA_SPOT_POSITION: "tuna_spot_position",
   LENDING_POSITION: "lending_position",
   STAKING_POSITION: "staking_position",
-  FUSION_LIMIT_ORDER: "fusion_limit_order",
+  MARKET: "market",
   TRADE_HISTORY_ENTRY: "trade_history_entry",
   ORDER_HISTORY_ENTRY: "order_history_entry",
   STATE_SNAPSHOT: "state_snapshot",
@@ -224,7 +220,7 @@ export const PoolSwap = z.object({
 export const TradeHistoryEntry = z.object({
   // Internal entry ID
   id: z.string(),
-  pool: z.string(),
+  pool: Pool,
   authority: z.string(),
   aToB: z.boolean(),
   // Trade action which created entry
@@ -251,7 +247,7 @@ export const TradeHistoryEntry = z.object({
 export const OrderHistoryEntry = z.object({
   // Internal entry ID
   id: z.string(),
-  pool: z.string(),
+  pool: Pool,
   authority: z.string(),
   orderType: OrderHistoryOrderTypeSchema,
   isReduceOnly: z.nullable(z.boolean()),
