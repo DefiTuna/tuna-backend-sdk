@@ -1,8 +1,7 @@
 import { z } from "zod";
 
 import { AmountWithUsdSchema } from "./basic";
-import { Mint } from "./mint";
-import { TunaPositionPoolSchema } from "./positions_shared";
+import { Pool } from "./pool";
 
 export const LimitOrderState = {
   OPEN: "open",
@@ -18,9 +17,7 @@ export const LimitOrder = z.object({
   address: z.string(),
   orderMint: z.string(),
   authority: z.string(),
-  mintA: Mint,
-  mintB: Mint,
-  pool: TunaPositionPoolSchema,
+  pool: Pool,
   state: LimitOrderStateSchema,
   aToB: z.boolean(),
   tickIndex: z.number(),

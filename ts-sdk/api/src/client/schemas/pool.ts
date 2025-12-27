@@ -1,5 +1,7 @@
 import z from "zod";
 
+import { Mint } from "./mint";
+
 export const PoolProvider = {
   ORCA: "orca",
   FUSION: "fusion",
@@ -10,11 +12,10 @@ export const PoolProviderSchema = z.enum([PoolProvider.ORCA, ...Object.values(Po
 export const Pool = z.object({
   address: z.string(),
   provider: PoolProviderSchema,
-  tokenAMint: z.string(),
-  tokenBMint: z.string(),
+  mintA: Mint,
+  mintB: Mint,
   tokenAVault: z.string(),
   tokenBVault: z.string(),
-  tvlUsd: z.coerce.number(),
   tickSpacing: z.number(),
   feeRate: z.number(),
   protocolFeeRate: z.number(),
@@ -23,11 +24,18 @@ export const Pool = z.object({
   sqrtPrice: z.coerce.bigint(),
   price: z.number(),
   tickCurrentIndex: z.number(),
-  stats: z.object({
-    "24h": z.object({
-      volume: z.number(),
-      fees: z.number(),
-      priceChange: z.number(),
-    }),
-  }),
+  stats: z.optional(
+    z.nullable(
+      z.object({
+        tvlUsd: z.coerce.number(),
+        groups: z.object({
+          "24h": z.object({
+            volumeUsd: z.number(),
+            feesUsd: z.number(),
+            priceChange: z.number(),
+          }),
+        }),
+      }),
+    ),
+  ),
 });

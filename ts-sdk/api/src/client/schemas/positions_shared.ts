@@ -1,11 +1,5 @@
 import z from "zod";
 
-export const TunaPositionPoolSchema = z.object({
-  addr: z.string(),
-  price: z.number(),
-  tickSpacing: z.number(),
-});
-
 export const TunaPositionPoolToken = {
   A: "a",
   B: "b",
