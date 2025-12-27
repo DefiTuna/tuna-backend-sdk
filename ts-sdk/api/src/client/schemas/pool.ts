@@ -25,15 +25,17 @@ export const Pool = z.object({
   price: z.number(),
   tickCurrentIndex: z.number(),
   stats: z.optional(
-    z.object({
-      tvlUsd: z.coerce.number(),
-      groups: z.object({
-        "24h": z.object({
-          volumeUsd: z.number(),
-          feesUsd: z.number(),
-          priceChange: z.number(),
+    z.nullable(
+      z.object({
+        tvlUsd: z.coerce.number(),
+        groups: z.object({
+          "24h": z.object({
+            volumeUsd: z.number(),
+            feesUsd: z.number(),
+            priceChange: z.number(),
+          }),
         }),
       }),
-    }),
+    ),
   ),
 });

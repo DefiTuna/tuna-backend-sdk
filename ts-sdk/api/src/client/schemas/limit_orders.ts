@@ -18,8 +18,6 @@ export const LimitOrder = z.object({
   address: z.string(),
   orderMint: z.string(),
   authority: z.string(),
-  mintA: Mint,
-  mintB: Mint,
   pool: Pool,
   state: LimitOrderStateSchema,
   aToB: z.boolean(),

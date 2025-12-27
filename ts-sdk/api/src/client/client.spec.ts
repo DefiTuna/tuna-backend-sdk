@@ -267,7 +267,11 @@ describe("Single Vault", async () => {
 
 describe("Single Pool", async () => {
   const rpcMarkets = await testUtils.getMarkets();
-  const samplePoolAddress = rpcMarkets[0].data.pool;
+  // Prefer SOL/USDC pool
+  const marketDst =
+    rpcMarkets.find(market => market.data.pool === "7VuKeevbvbQQcxz6N4SNLmuq6PYy4AcGQRDssoqo4t65") ?? rpcMarkets[0];
+
+  const samplePoolAddress = marketDst.data.pool;
   const unsavedPoolAddress = "FeR8VBqNRSUD5NtXAj2n3j1dAHkZHfyDktKuLXD4pump";
   const pool = await client.getPool(samplePoolAddress);
 
