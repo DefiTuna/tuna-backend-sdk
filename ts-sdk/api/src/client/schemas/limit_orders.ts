@@ -1,7 +1,6 @@
 import { z } from "zod";
 
 import { AmountWithUsdSchema } from "./basic";
-import { Mint } from "./mint";
 import { Pool } from "./pool";
 
 export const LimitOrderState = {
