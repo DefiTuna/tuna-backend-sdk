@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.10.12
+
+### Patch Changes
+
+- 1666e24: feat: [TUNA-1675] Update Pool DTO, and make all entities with pool_address to use Pool DTO now
+
 ## 1.10.11
 
 ### Patch Changes
