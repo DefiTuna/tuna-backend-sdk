@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.10.14
+
+### Patch Changes
+
+- 8c35e16: fix: SubscriptionPayload type
+
 ## 1.10.13
 
 ### Patch Changes
