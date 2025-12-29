@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.10.13
+
+### Patch Changes
+
+- 6919552: fix: StateSnapshot typing wasn't updated
+
 ## 1.10.12
 
 ### Patch Changes
