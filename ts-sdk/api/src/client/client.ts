@@ -87,6 +87,7 @@ export type SubscriptionPayload = {
     orderBookPriceStep?: number;
     isInverted?: boolean;
   }[];
+  markets?: string[];
   wallet?: {
     address: string;
     topics: WalletSubscriptionTopicType[];

@@ -76,7 +76,6 @@ export const StakingPositionHistoryActionType = {
 } as const;
 export const PoolSubscriptionTopic = {
   ORDER_BOOK: "order_book",
-  POOL: "pool",
   POOL_SWAPS: "pool_swaps",
 } as const;
 export const WalletSubscriptionTopic = {
