@@ -9,9 +9,9 @@ import { TunaSpotPosition } from "./spot_positions";
 export const StateSnapshot = z.object({
   slot: z.coerce.bigint(),
   blockTime: z.coerce.date(),
-  markets: z.optional(z.record(z.string(), Market)),
+  markets: z.optional(z.array(Market)),
   tunaSpotPositions: z.optional(z.array(TunaSpotPosition)),
   tunaLpPositions: z.optional(z.array(TunaLpPositionDtoSchema)),
   fusionLimitOrders: z.optional(z.array(LimitOrder)),
-  orderBooks: z.optional(z.record(z.string(), OrderBook)),
+  orderBooks: z.optional(z.array(OrderBook)),
 });
