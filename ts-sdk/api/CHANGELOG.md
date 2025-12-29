@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.10.16
+
+### Patch Changes
+
+- 4699593: fix: [TUNA-1675] Revert Pool Typing (stats.groups)
+
 ## 1.10.15
 
 ### Patch Changes
