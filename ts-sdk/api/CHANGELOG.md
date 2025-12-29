@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 1.10.15
+
+### Patch Changes
+
+- 2410143: fix: [TUNA-1675] Pool Typing (stats.groups)
+
 ## 1.10.14
 
 ### Patch Changes
