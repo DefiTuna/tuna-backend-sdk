@@ -29,11 +29,15 @@ export const Pool = z.object({
       z.object({
         tvlUsd: z.coerce.number(),
         groups: z.object({
-          "24h": z.object({
-            volumeUsd: z.number(),
-            feesUsd: z.number(),
-            priceChange: z.number(),
-          }),
+          "24h": z.optional(
+            z.nullable(
+              z.object({
+                volumeUsd: z.number(),
+                feesUsd: z.number(),
+                priceChange: z.number(),
+              }),
+            ),
+          ),
         }),
       }),
     ),
