@@ -6,6 +6,7 @@ import { StateSnapshot } from "./schemas/state_snapshot";
 
 export * from "./schemas/basic";
 export * from "./schemas/pool";
+export * from "./schemas/market";
 export * from "./schemas/limit_orders";
 export * from "./schemas/lp_positions";
 export * from "./schemas/spot_positions";
@@ -120,28 +121,6 @@ export const WalletSubscriptionTopicSchema = z.enum([
 
 export const PaginationMeta = z.object({
   total: z.number(),
-});
-
-export const Market = z.object({
-  address: z.string(),
-  addressLookupTable: z.string(),
-  maxLeverage: z.number(),
-  maxSwapSlippage: z.number(),
-  protocolFee: z.number(),
-  protocolFeeOnCollateral: z.number(),
-  liquidationFee: z.number(),
-  liquidationThreshold: z.number(),
-  oraclePriceDeviationThreshold: z.number(),
-  rebalanceProtocolFee: z.number(),
-  borrowedFundsA: AmountWithUsdSchema,
-  borrowedFundsB: AmountWithUsdSchema,
-  borrowLimitA: AmountWithUsdSchema,
-  borrowLimitB: AmountWithUsdSchema,
-  maxSpotPositionSizeA: AmountWithUsdSchema,
-  maxSpotPositionSizeB: AmountWithUsdSchema,
-  pool: Pool,
-  disabled: z.boolean(),
-  createdAt: z.coerce.date(),
 });
 
 export const TokenOraclePrice = z.object({
