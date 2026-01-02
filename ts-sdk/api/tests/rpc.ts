@@ -9,7 +9,7 @@ const base64Encoder = getBase64Encoder();
 const addressEncoder = getAddressEncoder();
 const rpc = createSolanaRpc(process.env.RPC_URL!);
 
-export async function getMarkets() {
+export async function getMarketsFromRpc() {
   const accounts = await rpc
     .getProgramAccounts(TUNA_PROGRAM_ID, {
       filters: [{ dataSize: BigInt(DefiTunaClient.getMarketSize()) }],
@@ -31,7 +31,7 @@ export async function getMarkets() {
   }));
 }
 
-export async function getVaults() {
+export async function getVaultsFromRpc() {
   const accounts = await rpc
     .getProgramAccounts(TUNA_PROGRAM_ID, {
       filters: [{ dataSize: BigInt(DefiTunaClient.getVaultSize()) }],
@@ -53,7 +53,7 @@ export async function getVaults() {
   }));
 }
 
-export async function getLendingPositions(userAddress: string) {
+export async function getLendingPositionsFromRpc(userAddress: string) {
   const accounts = await rpc
     .getProgramAccounts(TUNA_PROGRAM_ID, {
       filters: [
@@ -84,7 +84,7 @@ export async function getLendingPositions(userAddress: string) {
   }));
 }
 
-export async function getTunaPositions(userAddress: string) {
+export async function getTunaPositionsFromRpc(userAddress: string) {
   const accounts = await rpc
     .getProgramAccounts(TUNA_PROGRAM_ID, {
       filters: [
@@ -115,7 +115,7 @@ export async function getTunaPositions(userAddress: string) {
   }));
 }
 
-export async function getTunaSpotPositions(userAddress: string) {
+export async function getTunaSpotPositionsFromRpc(userAddress: string) {
   const accounts = await rpc
     .getProgramAccounts(TUNA_PROGRAM_ID, {
       filters: [
