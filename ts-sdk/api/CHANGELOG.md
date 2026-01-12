@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 3.0.0
+
+### Major Changes
+
+- 8489d4b: SDK based on OpenAPI autogeneration
+
 ## 1.10.16
 
 ### Patch Changes
