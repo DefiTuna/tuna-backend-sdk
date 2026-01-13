@@ -39,7 +39,8 @@ describe("Limit Order Quotes", async () => {
         tickIndex,
       }),
     );
-    expect(limitOrderQuoteByInput.amountOut).toEqual(Number(200053968277n));
+    expect(limitOrderQuoteByInput.amountOut).toEqual(200053968277n);
+    expect(limitOrderQuoteByInput.amountOut).toBeTypeOf("bigint");
   });
 
   it("Calculates limit order quote by output", async () => {
@@ -54,7 +55,8 @@ describe("Limit Order Quotes", async () => {
         tickIndex,
       }),
     );
-    expect(limitOrderQuoteByOutput.amountIn).toEqual(Number(1000000000n));
+    expect(limitOrderQuoteByOutput.amountIn).toEqual(1000000000n);
+    expect(limitOrderQuoteByOutput.amountIn).toBeTypeOf("bigint");
   });
 });
 
@@ -115,7 +117,7 @@ describe("Quotes", async () => {
       }),
     );
 
-    expect(increaseSpotPositionQuote.borrowAmount).toEqual(Number(usdcIncreaseAmount / BigInt(leverage)));
+    expect(increaseSpotPositionQuote.borrowAmount).toEqual(usdcIncreaseAmount / BigInt(leverage));
     expect(increaseSpotPositionQuote.liquidationPrice).toBeGreaterThan(0);
     expect(increaseSpotPositionQuote.protocolFeeA + increaseSpotPositionQuote.protocolFeeB).toBeGreaterThan(0n);
   });
@@ -137,7 +139,7 @@ describe("Quotes", async () => {
         slippageTolerance: BPS_DENOMINATOR,
       }),
     );
-    expect(increaseSpotPositionQuote.borrowAmount).toEqual(Number(usdcIncreaseAmount / BigInt(leverage)));
+    expect(increaseSpotPositionQuote.borrowAmount).toEqual(usdcIncreaseAmount / BigInt(leverage));
     expect(increaseSpotPositionQuote.liquidationPrice).toBeGreaterThan(0);
     expect(increaseSpotPositionQuote.protocolFeeA + increaseSpotPositionQuote.protocolFeeB).toBeGreaterThan(0n);
   });
