@@ -1,4 +1,3 @@
-import camelcaseKeys from "camelcase-keys";
 import { once } from "node:events";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
@@ -7,8 +6,10 @@ import {
   eventIsPoolSwap,
   eventIsStateSnapshot,
   getSseUpdatesStream,
+  normalizeResponseJson,
   PoolSubscriptionTopic,
   setTunaBaseUrl,
+  SseResponse,
   SubscriptionOptions,
   updateStreamSubscription,
 } from "../src";
@@ -32,7 +33,7 @@ describe("General updates stream", { timeout: 30000 }, async () => {
 
   it("Receives messages", async () => {
     const firstEvent = (await once(updatesStream, "message")) as MessageEvent<string>[];
-    const rawData = camelcaseKeys(JSON.parse(firstEvent[0].data), { deep: true });
+    const rawData = normalizeResponseJson(JSON.parse(firstEvent[0].data)) as SseResponse;
     let streamId: string | undefined;
     if (eventIsInitialMessage(rawData)) {
       streamId = rawData.streamId;
@@ -51,12 +52,13 @@ describe("General updates stream", { timeout: 30000 }, async () => {
     let poolSwapFound = false;
     while (!poolSwapFound) {
       const event = (await once(updatesStream, "message")) as MessageEvent<string>[];
-      const rawData = camelcaseKeys(JSON.parse(event[0].data), { deep: true });
+      const rawData = normalizeResponseJson(JSON.parse(event[0].data)) as SseResponse;
       if (eventIsStateSnapshot(rawData)) {
         continue;
       }
       if (eventIsPoolSwap(rawData)) {
         poolSwapFound = true;
+        expect(rawData.data.amountIn).toBeTypeOf("bigint");
       }
     }
   });

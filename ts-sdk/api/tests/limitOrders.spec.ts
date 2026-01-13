@@ -65,8 +65,8 @@ describe("Limit orders filter by time", async () => {
   // 2025-10-09 - 2025-10-10
   const data = await unwrap(
     getLimitOrders(TEST_WALLET_ADDRESS, {
-      openedAtFrom: 1759968000000n,
-      openedAtTo: 1760054400000n,
+      openedAtFrom: 1759968000000,
+      openedAtTo: 1760054400000,
     }),
   );
   it("Can filter by time", () => {

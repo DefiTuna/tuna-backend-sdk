@@ -25,6 +25,7 @@ function isObj(v: unknown): v is Record<string, unknown> {
 /**
  * Converts OpenAPI schemas that represent BigInt values as string
  * into integer/int64 so they are mapped to `bigint` in orval.
+ * Do not convert i64 transfered as numbers from Rust to bigint.
  */
 function normalizeBigIntSchema(schema: unknown) {
   if (!isObj(schema)) return;
@@ -32,6 +33,8 @@ function normalizeBigIntSchema(schema: unknown) {
   if (schema.type === "string" && typeof schema.format === "string" && ANY_INT_RE.test(schema.format)) {
     schema.type = "integer";
     schema.format = "int64";
+  } else if (schema.type === "integer" && schema.format === "int64") {
+    schema.format = "";
   }
 }
 
@@ -138,18 +141,14 @@ function camelizeParameters(params: unknown): unknown {
 
     // We only care about query parameters with a string name
     if (p.in === "query" && typeof p.name === "string") {
-      const camelName = snakeToCamel(p.name);
+      p.name = snakeToCamel(p.name);
 
-      // Only create a new object if the name actually changes
-      if (camelName !== p.name) {
-        return {
-          ...p,
-          name: camelName,
-        };
+      // Update query schema
+      if (p.schema) {
+        p.schema = camelizeSchema(p.schema);
       }
     }
 
-    // No changes for this parameter
     return p;
   });
 
