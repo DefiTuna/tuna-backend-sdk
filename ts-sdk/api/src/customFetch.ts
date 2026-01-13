@@ -103,7 +103,7 @@ function reviveScalars(v: unknown): unknown {
  * 1. First revive scalar values (Date, BigInt, PublicKey)
  * 2. Then convert keys from snake_case to camelCase
  */
-function normalizeResponseJson(raw: unknown) {
+export function normalizeResponseJson(raw: unknown) {
   // Step 1: revive values without changing keys
   const revived = mapKeysDeep(raw, k => k, reviveScalars);
   // Step 2: convert keys to camelCase

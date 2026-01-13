@@ -1,4 +1,5 @@
 export type ApiError = {
+  message: string;
   status: number;
 };
 
@@ -21,6 +22,7 @@ export async function unwrap<T, E = unknown>(promise: Promise<HttpResponse<T, E>
 
   if (res.status != 200) {
     throw {
+      message: String(res.data),
       status: res.status,
     } satisfies ApiError;
   }
