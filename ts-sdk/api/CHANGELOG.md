@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 3.0.2
+
+### Patch Changes
+
+- 99797c1: FeeAmountWithUsd struct update
+
 ## 3.0.1
 
 ### Patch Changes
