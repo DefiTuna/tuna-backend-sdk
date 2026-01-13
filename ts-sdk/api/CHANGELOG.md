@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 3.0.1
+
+### Patch Changes
+
+- dff8249: Fix autoconversion of all i64 to bigint
+
 ## 3.0.0
 
 ### Major Changes
