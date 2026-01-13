@@ -1815,8 +1815,9 @@ components:
       - usd
       properties:
         amount:
-          type: integer
+          type: string
           format: int64
+          description: Signed 64-bit integer encoded as a decimal string
         usd:
           type: number
           format: double

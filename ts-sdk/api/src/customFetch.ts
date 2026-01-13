@@ -183,6 +183,17 @@ export async function customFetch<T>(url: string, init: RequestInit & { baseUrl?
   // Clone init to avoid mutating Orval's internal object
   const finalInit: RequestInit = { ...init };
 
+  // In case it is stringified object
+  if (finalInit.body && typeof finalInit.body === "string") {
+    try {
+      const body = JSON.parse(finalInit.body);
+      const snaked = normalizeRequestBody(body);
+      finalInit.body = JSON.stringify(snaked);
+    } catch {
+      // do nothing
+    }
+  }
+
   // If request body is a plain object:
   //  - convert keys to snake_case
   //  - JSON.stringify manually
@@ -191,7 +202,7 @@ export async function customFetch<T>(url: string, init: RequestInit & { baseUrl?
     const snaked = normalizeRequestBody(finalInit.body);
     finalInit.body = JSON.stringify(snaked);
     finalInit.headers = {
-      "content-type": "application/json",
+      "Content-Type": "application/json",
       ...(finalInit.headers || {}),
     };
   }

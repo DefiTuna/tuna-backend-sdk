@@ -97,6 +97,6 @@ describe("Single trade history item", async () => {
   it("Correct amounts", () => {
     expect(data.baseToken.amount).toBe(445188n);
     expect(data.quoteToken.amount).toBe(100017n);
-    expect(data.fee.amount).toBe(-37);
+    expect(data.fee.amount).toBe(-37n);
   });
 });
