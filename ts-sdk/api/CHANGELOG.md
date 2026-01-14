@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 3.0.3
+
+### Patch Changes
+
+- ea13ea4: LP Positions history update
+
 ## 3.0.2
 
 ### Patch Changes
