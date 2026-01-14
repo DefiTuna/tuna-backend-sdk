@@ -6,6 +6,9 @@ info:
     name: MIT
     url: https://opensource.org/licenses/MIT
   version: 1.0.0
+servers:
+- url: /api
+  description: API base path
 paths:
   /v1/lp-spot-leaderboard:
     get:
@@ -1216,7 +1219,7 @@ paths:
           description: Invalid position address
         '500':
           description: Internal error
-  /v1/users/{user_address}/lp-positions:
+  /v1/users/{user_address}/lp-positions-history:
     get:
       tags:
       - LpPositions
@@ -1287,7 +1290,7 @@ paths:
           description: Invalid position address or query parameters
         '500':
           description: Internal error
-  /v1/users/{user_address}/lp-positions/{position_address}/actions:
+  /v1/users/{user_address}/lp-positions-history/{position_address}/actions:
     get:
       tags:
       - LpPositions
@@ -4088,9 +4091,7 @@ components:
                 type: string
                 format: date-time
               pool:
-                type: string
-                format: pubkey
-                description: Solana public key (base58)
+                $ref: '#/components/schemas/PoolDto'
               position_address:
                 type: string
                 format: pubkey
@@ -6318,9 +6319,7 @@ components:
           type: string
           format: date-time
         pool:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
+          $ref: '#/components/schemas/PoolDto'
         position_address:
           type: string
           format: pubkey
