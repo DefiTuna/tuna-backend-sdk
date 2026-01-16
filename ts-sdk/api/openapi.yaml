@@ -376,11 +376,9 @@ paths:
       parameters:
       - name: market
         in: query
-        required: false
+        required: true
         schema:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
+          $ref: '#/components/schemas/PubkeyDto'
       - name: decrease_percent
         in: query
         required: true
@@ -411,18 +409,18 @@ paths:
           minimum: 0
       - name: position_amount
         in: query
-        required: false
+        required: true
         schema:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          type: integer
+          format: int64
+          minimum: 0
       - name: position_debt
         in: query
-        required: false
+        required: true
         schema:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          type: integer
+          format: int64
+          minimum: 0
       responses:
         '200':
           description: Close spot position quote
@@ -441,18 +439,16 @@ paths:
       parameters:
       - name: market
         in: query
-        required: false
+        required: true
         schema:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
+          $ref: '#/components/schemas/PubkeyDto'
       - name: decrease_amount
         in: query
-        required: false
+        required: true
         schema:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          type: integer
+          format: int64
+          minimum: 0
       - name: collateral_token
         in: query
         required: true
@@ -487,18 +483,18 @@ paths:
           minimum: 0
       - name: position_amount
         in: query
-        required: false
+        required: true
         schema:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          type: integer
+          format: int64
+          minimum: 0
       - name: position_debt
         in: query
-        required: false
+        required: true
         schema:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          type: integer
+          format: int64
+          minimum: 0
       responses:
         '200':
           description: Decrease spot position quote
@@ -517,18 +513,16 @@ paths:
       parameters:
       - name: market
         in: query
-        required: false
+        required: true
         schema:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
+          $ref: '#/components/schemas/PubkeyDto'
       - name: increase_amount
         in: query
-        required: false
+        required: true
         schema:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          type: integer
+          format: int64
+          minimum: 0
       - name: collateral_token
         in: query
         required: true
@@ -560,16 +554,16 @@ paths:
         in: query
         required: false
         schema:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          type: integer
+          format: int64
+          minimum: 0
       - name: position_debt
         in: query
         required: false
         schema:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          type: integer
+          format: int64
+          minimum: 0
       responses:
         '200':
           description: Increase spot position quote
@@ -588,18 +582,16 @@ paths:
       parameters:
       - name: pool
         in: query
-        required: false
+        required: true
         schema:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
+          $ref: '#/components/schemas/PubkeyDto'
       - name: amount_in
         in: query
-        required: false
+        required: true
         schema:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          type: integer
+          format: int64
+          minimum: 0
       - name: a_to_b
         in: query
         required: true
@@ -613,13 +605,34 @@ paths:
           format: int32
       responses:
         '200':
-          description: Limit order quote
+          description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericHttpResponse_LimitOrderQuoteByInputDto'
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    $ref: '#/components/schemas/LimitOrderQuoteByInputDto'
         '400':
-          description: Bad request
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorCodeErrorBody'
+        '422':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorCodeErrorBody'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorCodeErrorBody'
   /v1/quotes/limit-order-by-output:
     get:
       tags:
@@ -629,18 +642,16 @@ paths:
       parameters:
       - name: pool
         in: query
-        required: false
+        required: true
         schema:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
+          $ref: '#/components/schemas/PubkeyDto'
       - name: amount_out
         in: query
-        required: false
+        required: true
         schema:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          type: integer
+          format: int64
+          minimum: 0
       - name: a_to_b
         in: query
         required: true
@@ -670,18 +681,16 @@ paths:
       parameters:
       - name: pool
         in: query
-        required: false
+        required: true
         schema:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
+          $ref: '#/components/schemas/PubkeyDto'
       - name: amount_in
         in: query
-        required: false
+        required: true
         schema:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          type: integer
+          format: int64
+          minimum: 0
       - name: a_to_b
         in: query
         required: true
@@ -712,18 +721,16 @@ paths:
       parameters:
       - name: pool
         in: query
-        required: false
+        required: true
         schema:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
+          $ref: '#/components/schemas/PubkeyDto'
       - name: amount_out
         in: query
-        required: false
+        required: true
         schema:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          type: integer
+          format: int64
+          minimum: 0
       - name: a_to_b
         in: query
         required: true
@@ -754,11 +761,9 @@ paths:
       parameters:
       - name: market
         in: query
-        required: false
+        required: true
         schema:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
+          $ref: '#/components/schemas/PubkeyDto'
       - name: collateral_token
         in: query
         required: true
@@ -768,11 +773,11 @@ paths:
           minimum: 0
       - name: available_balance
         in: query
-        required: false
+        required: true
         schema:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          type: integer
+          format: int64
+          minimum: 0
       - name: leverage
         in: query
         required: true
@@ -788,11 +793,11 @@ paths:
           minimum: 0
       - name: position_amount
         in: query
-        required: false
+        required: true
         schema:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          type: integer
+          format: int64
+          minimum: 0
       - name: increase
         in: query
         required: true
@@ -1201,24 +1206,49 @@ paths:
         description: Authority address (base58)
         required: true
         schema:
-          type: string
+          $ref: '#/components/schemas/PubkeyDto'
       - name: limit_order_address
         in: path
         description: Limit order address (base58)
         required: true
         schema:
-          type: string
+          $ref: '#/components/schemas/PubkeyDto'
       responses:
         '200':
-          description: Limit order found
+          description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericHttpResponse_Option_LimitOrderDto'
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    $ref: '#/components/schemas/LimitOrderDto'
         '400':
-          description: Invalid position address
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorCodeErrorBody'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetLimitOrderError404Error'
+        '422':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorCodeErrorBody'
         '500':
-          description: Internal error
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetLimitOrderError500Error'
   /v1/users/{user_address}/lp-positions-history:
     get:
       tags:
@@ -1232,46 +1262,34 @@ paths:
         required: true
         schema:
           type: string
-      - name: filter
+      - name: liquidity_pool
+        in: query
+        description: Filter by pool
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          uniqueItems: true
+        style: form
+        explode: false
+      - name: state
         in: query
         description: Filter by state
         required: false
         schema:
-          $ref: '#/components/schemas/LpPositionsHistoryQueryFilter'
+          type: array
+          items:
+            $ref: '#/components/schemas/TunaPositionDtoState'
+          uniqueItems: true
+        style: form
+        explode: false
       - name: after_position
         in: query
         description: Address of the position after which to start fetching results
         required: false
         schema:
           type: string
-      - name: opened_at_min
-        in: query
-        description: Minimal opened at time
-        required: false
-        schema:
-          type: string
-          format: date-time
-      - name: opened_at_max
-        in: query
-        description: Maximal opened at time
-        required: false
-        schema:
-          type: string
-          format: date-time
-      - name: closed_at_min
-        in: query
-        description: Minimal closed at time
-        required: false
-        schema:
-          type: string
-          format: date-time
-      - name: closed_at_max
-        in: query
-        description: Maximal closed at time
-        required: false
-        schema:
-          type: string
-          format: date-time
       - name: limit
         in: query
         description: 'Limit the number of results returned (default: 1000, max: 1000)'
@@ -1753,6 +1771,17 @@ paths:
           description: Internal error
 components:
   schemas:
+    BadRequestErrorCodeErrorBody:
+      type: object
+      required:
+      - code
+      properties:
+        code:
+          type: string
+          enum:
+          - invalid_path
+          - invalid_query
+          - invalid_body
     CloseSpotPositionQuoteDto:
       type: object
       required:
@@ -1972,6 +2001,18 @@ components:
         yield_compounding_fees:
           type: number
           format: double
+    FieldError:
+      type: object
+      required:
+      - field
+      - message
+      properties:
+        field:
+          type: string
+          description: Field name in request.
+        message:
+          type: string
+          description: Validation error message.
     FusionFeesStatsGroupDto:
       type: object
       required:
@@ -2234,20 +2275,6 @@ components:
               type: string
               format: uint64
               description: Unsigned 64-bit integer encoded as a decimal string
-    GenericHttpResponse_LimitOrderQuoteByInputDto:
-      type: object
-      required:
-      - data
-      properties:
-        data:
-          type: object
-          required:
-          - amount_out
-          properties:
-            amount_out:
-              type: string
-              format: uint64
-              description: Unsigned 64-bit integer encoded as a decimal string
     GenericHttpResponse_LimitOrderQuoteByOutputDto:
       type: object
       required:
@@ -2423,74 +2450,6 @@ components:
                 type: string
                 format: pubkey
                 description: Solana public key (base58)
-    GenericHttpResponse_Option_LimitOrderDto:
-      type: object
-      required:
-      - data
-      properties:
-        data:
-          oneOf:
-          - type: 'null'
-          - type: object
-            required:
-            - id
-            - address
-            - order_mint
-            - authority
-            - pool
-            - state
-            - fill_ratio
-            - a_to_b
-            - tick_index
-            - open_tx_signature
-            - amount_in
-            - amount_out
-            - opened_at
-            properties:
-              a_to_b:
-                type: boolean
-              address:
-                type: string
-                format: pubkey
-                description: Solana public key (base58)
-              amount_in:
-                $ref: '#/components/schemas/TokenAmountWithUsd'
-              amount_out:
-                $ref: '#/components/schemas/TokenAmountWithUsd'
-              authority:
-                type: string
-                format: pubkey
-                description: Solana public key (base58)
-              close_tx_signature:
-                type:
-                - string
-                - 'null'
-              closed_at:
-                type:
-                - string
-                - 'null'
-                format: date-time
-              fill_ratio:
-                type: number
-                format: double
-              id:
-                type: string
-              open_tx_signature:
-                type: string
-              opened_at:
-                type: string
-                format: date-time
-              order_mint:
-                type: string
-                format: pubkey
-                description: Solana public key (base58)
-              pool:
-                $ref: '#/components/schemas/PoolDto'
-              state:
-                $ref: '#/components/schemas/LimitOrderStatus'
-              tick_index:
-                type: integer
-                format: int32
     GenericHttpResponse_Option_TunaPositionDto:
       type: object
       required:
@@ -4457,6 +4416,24 @@ components:
         data:
           type: integer
           format: int64
+    GetLimitOrderError404Error:
+      type: object
+      required:
+      - code
+      properties:
+        code:
+          type: string
+          enum:
+          - not_found
+    GetLimitOrderError500Error:
+      type: object
+      required:
+      - code
+      properties:
+        code:
+          type: string
+          enum:
+          - internal_error
     HashMap:
       type: object
       additionalProperties:
@@ -4533,6 +4510,15 @@ components:
           type: string
           format: uint64
           description: Unsigned 64-bit integer encoded as a decimal string
+    InternalErrorCodeErrorBody:
+      type: object
+      required:
+      - code
+      properties:
+        code:
+          type: string
+          enum:
+          - internal_error
     LeaderboardItemDto:
       type: object
       required:
@@ -4722,12 +4708,6 @@ components:
       - filled
       - complete
       - cancelled
-    LpPositionsHistoryQueryFilter:
-      type: string
-      enum:
-      - opened
-      - closed
-      - all
     MarketDto:
       type: object
       required:
@@ -5663,6 +5643,16 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TickDto'
+    PubkeyDto:
+      type: string
+      format: pubkey
+      description: |-
+        Pubkey represented as base58 string in JSON and OpenAPI.
+
+        - JSON: `"11111111111111111111111111111111"`
+        - OpenAPI: `type: string`, pattern for base58, optional format
+      example: '11111111111111111111111111111111'
+      pattern: ^[1-9A-HJ-NP-Za-km-z]+$
     Snapshot:
       type: object
       required:
@@ -6842,6 +6832,42 @@ components:
       enum:
       - open
       - closed
+    ValidationErrorCodeErrorBody:
+      type: object
+      required:
+      - code
+      properties:
+        code:
+          type: string
+          enum:
+          - validation_failed
+        data:
+          type: object
+          required:
+          - errors
+          properties:
+            errors:
+              type: array
+              items:
+                $ref: '#/components/schemas/FieldError'
+    ValidationErrorCodeValidationDetailsErrorBody:
+      type: object
+      required:
+      - code
+      properties:
+        code:
+          type: string
+          enum:
+          - validation_failed
+        data:
+          type: object
+          required:
+          - errors
+          properties:
+            errors:
+              type: array
+              items:
+                $ref: '#/components/schemas/FieldError'
     VaultDto:
       type: object
       required:
