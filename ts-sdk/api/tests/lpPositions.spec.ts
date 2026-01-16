@@ -5,11 +5,11 @@ import {
   getLpPositions,
   getTunaPosition,
   getTunaPositions,
-  LpPositionsHistoryQueryFilter,
   setTunaBaseUrl,
   TunaLpPositionAutoCompound,
   TunaLpPositionLimitOrderSwap,
   TunaLpPositionsActionType,
+  TunaPositionDtoState,
   unwrap,
 } from "../src";
 
@@ -98,10 +98,21 @@ describe("All historical LP positions", async () => {
   });
 });
 
-describe("Historical LP positions by state", async () => {
+describe("Historical LP positions by open state", async () => {
   const data = await unwrap(
     getLpPositions(TEST_WALLET_ADDRESS, {
-      filter: LpPositionsHistoryQueryFilter.closed,
+      state: [TunaPositionDtoState.open],
+    }),
+  );
+  it("Can filter by state", () => {
+    expect(data.length).toBeGreaterThanOrEqual(2);
+  });
+});
+
+describe("Historical LP positions by non-existing states", async () => {
+  const data = await unwrap(
+    getLpPositions(TEST_WALLET_ADDRESS, {
+      state: [TunaPositionDtoState.liquidated, TunaPositionDtoState.closedByLimitOrder],
     }),
   );
   it("Can filter by state", () => {
@@ -109,15 +120,14 @@ describe("Historical LP positions by state", async () => {
   });
 });
 
-describe("Historical LP positions by opened time", async () => {
+describe("Historical LP positions by pool", async () => {
   const data = await unwrap(
     getLpPositions(TEST_WALLET_ADDRESS, {
-      openedAtMin: new Date("2025-03-07T19:30:00Z"),
-      openedAtMax: new Date("2025-03-07T19:31:00Z"),
+      liquidityPool: [SOL_USDC_ORCA_POOL_ADDRESS],
     }),
   );
-  it("Can filter by state", () => {
-    expect(data.length).toBe(1);
+  it("Can filter by pool", () => {
+    expect(data.length).toBeGreaterThanOrEqual(2);
   });
 });
 
