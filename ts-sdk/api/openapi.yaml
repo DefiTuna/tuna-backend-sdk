@@ -409,18 +409,18 @@ paths:
           minimum: 0
       - name: position_amount
         in: query
-        required: true
+        required: false
         schema:
-          type: integer
-          format: int64
-          minimum: 0
+          type: string
+          format: uint64
+          description: Unsigned 64-bit integer encoded as a decimal string
       - name: position_debt
         in: query
-        required: true
+        required: false
         schema:
-          type: integer
-          format: int64
-          minimum: 0
+          type: string
+          format: uint64
+          description: Unsigned 64-bit integer encoded as a decimal string
       responses:
         '200':
           description: Close spot position quote
@@ -444,11 +444,11 @@ paths:
           $ref: '#/components/schemas/PubkeyDto'
       - name: decrease_amount
         in: query
-        required: true
+        required: false
         schema:
-          type: integer
-          format: int64
-          minimum: 0
+          type: string
+          format: uint64
+          description: Unsigned 64-bit integer encoded as a decimal string
       - name: collateral_token
         in: query
         required: true
@@ -483,18 +483,18 @@ paths:
           minimum: 0
       - name: position_amount
         in: query
-        required: true
+        required: false
         schema:
-          type: integer
-          format: int64
-          minimum: 0
+          type: string
+          format: uint64
+          description: Unsigned 64-bit integer encoded as a decimal string
       - name: position_debt
         in: query
-        required: true
+        required: false
         schema:
-          type: integer
-          format: int64
-          minimum: 0
+          type: string
+          format: uint64
+          description: Unsigned 64-bit integer encoded as a decimal string
       responses:
         '200':
           description: Decrease spot position quote
@@ -518,11 +518,11 @@ paths:
           $ref: '#/components/schemas/PubkeyDto'
       - name: increase_amount
         in: query
-        required: true
+        required: false
         schema:
-          type: integer
-          format: int64
-          minimum: 0
+          type: string
+          format: uint64
+          description: Unsigned 64-bit integer encoded as a decimal string
       - name: collateral_token
         in: query
         required: true
@@ -554,16 +554,16 @@ paths:
         in: query
         required: false
         schema:
-          type: integer
-          format: int64
-          minimum: 0
+          type: string
+          format: uint64
+          description: Unsigned 64-bit integer encoded as a decimal string
       - name: position_debt
         in: query
         required: false
         schema:
-          type: integer
-          format: int64
-          minimum: 0
+          type: string
+          format: uint64
+          description: Unsigned 64-bit integer encoded as a decimal string
       responses:
         '200':
           description: Increase spot position quote
@@ -587,11 +587,11 @@ paths:
           $ref: '#/components/schemas/PubkeyDto'
       - name: amount_in
         in: query
-        required: true
+        required: false
         schema:
-          type: integer
-          format: int64
-          minimum: 0
+          type: string
+          format: uint64
+          description: Unsigned 64-bit integer encoded as a decimal string
       - name: a_to_b
         in: query
         required: true
@@ -647,11 +647,11 @@ paths:
           $ref: '#/components/schemas/PubkeyDto'
       - name: amount_out
         in: query
-        required: true
+        required: false
         schema:
-          type: integer
-          format: int64
-          minimum: 0
+          type: string
+          format: uint64
+          description: Unsigned 64-bit integer encoded as a decimal string
       - name: a_to_b
         in: query
         required: true
@@ -686,11 +686,11 @@ paths:
           $ref: '#/components/schemas/PubkeyDto'
       - name: amount_in
         in: query
-        required: true
+        required: false
         schema:
-          type: integer
-          format: int64
-          minimum: 0
+          type: string
+          format: uint64
+          description: Unsigned 64-bit integer encoded as a decimal string
       - name: a_to_b
         in: query
         required: true
@@ -726,11 +726,11 @@ paths:
           $ref: '#/components/schemas/PubkeyDto'
       - name: amount_out
         in: query
-        required: true
+        required: false
         schema:
-          type: integer
-          format: int64
-          minimum: 0
+          type: string
+          format: uint64
+          description: Unsigned 64-bit integer encoded as a decimal string
       - name: a_to_b
         in: query
         required: true
@@ -773,11 +773,11 @@ paths:
           minimum: 0
       - name: available_balance
         in: query
-        required: true
+        required: false
         schema:
-          type: integer
-          format: int64
-          minimum: 0
+          type: string
+          format: uint64
+          description: Unsigned 64-bit integer encoded as a decimal string
       - name: leverage
         in: query
         required: true
@@ -793,11 +793,11 @@ paths:
           minimum: 0
       - name: position_amount
         in: query
-        required: true
+        required: false
         schema:
-          type: integer
-          format: int64
-          minimum: 0
+          type: string
+          format: uint64
+          description: Unsigned 64-bit integer encoded as a decimal string
       - name: increase
         in: query
         required: true

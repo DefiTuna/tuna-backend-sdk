@@ -3,7 +3,12 @@ export type ApiError = {
   status: number;
 };
 
-type HttpResponse<T, E = unknown> = { status: number; data: T } | { status: number; data: E | void };
+type HttpLikeResponse = {
+  status: number;
+  data: unknown;
+};
+
+type ExtractSuccessData<R> = R extends { status: 200; data: infer T } ? T : never;
 
 type HasOnlyDataKey<T> = T extends object ? (Exclude<keyof T, "data"> extends never ? true : false) : false;
 
@@ -17,15 +22,17 @@ function unwrapData<T>(data: T): UnwrapData<T> {
   return data as UnwrapData<T>;
 }
 
-export async function unwrap<T, E = unknown>(promise: Promise<HttpResponse<T, E>>): Promise<UnwrapData<T>> {
+export async function unwrap<R extends HttpLikeResponse>(
+  promise: Promise<R>,
+): Promise<UnwrapData<ExtractSuccessData<R>>> {
   const res = await promise;
 
-  if (res.status != 200) {
+  if (res.status !== 200) {
     throw {
       message: String(res.data),
       status: res.status,
     } satisfies ApiError;
   }
 
-  return unwrapData(res.data as T);
+  return unwrapData(res.data as ExtractSuccessData<R>);
 }
