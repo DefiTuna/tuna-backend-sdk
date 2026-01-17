@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 3.0.4
+
+### Patch Changes
+
+- 3f384ae: Update unwrap() and add new query parameters for historical LP positions
+
 ## 3.0.3
 
 ### Patch Changes
