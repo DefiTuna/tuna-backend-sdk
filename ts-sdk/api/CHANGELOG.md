@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 3.1.1
+
+### Patch Changes
+
+- 90bc8e5: fix: OpenAPI doc incorrectly generated for PoolStatsGroupDto
+
 ## 3.1.0
 
 ### Minor Changes
