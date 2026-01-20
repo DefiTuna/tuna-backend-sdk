@@ -1,2 +1,5 @@
 dist/
 src/gen/
+!src/client/caseTransforms.ts
+src/client/
+openapi.camel.yaml
