@@ -51,15 +51,39 @@ paths:
           minimum: 0
       responses:
         '200':
-          description: Leaderboard page
+          description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericHttpResponseWithMeta_Vec_LeaderboardItemDto_PaginationMeta'
+                type: object
+                required:
+                - data
+                - meta
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/LeaderboardItemDto'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
         '400':
-          description: Bad request
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeaderboardError400Error'
+        '422':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorCodeErrorBody'
         '500':
-          description: Internal error
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeaderboardError500Error'
   /v1/markets:
     get:
       tags:
@@ -68,13 +92,24 @@ paths:
       operationId: get_markets
       responses:
         '200':
-          description: List of markets
+          description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericHttpResponse_Vec_MarketDto'
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MarketDto'
         '500':
-          description: Internal error
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorCodeErrorBody'
   /v1/markets/{market_address}:
     get:
       tags:
@@ -87,20 +122,43 @@ paths:
         description: Market address (base58)
         required: true
         schema:
-          type: string
+          $ref: '#/components/schemas/PubkeyDto'
       responses:
         '200':
-          description: Market data
+          description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericHttpResponse_MarketDto'
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    $ref: '#/components/schemas/MarketDto'
         '400':
-          description: Invalid market address
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorCodeErrorBody'
         '404':
-          description: Market not found
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MarketError404Error'
+        '422':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorCodeErrorBody'
         '500':
-          description: Internal error
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MarketError500Error'
   /v1/mints:
     get:
       tags:
@@ -109,13 +167,24 @@ paths:
       operationId: get_mints
       responses:
         '200':
-          description: List of mints
+          description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericHttpResponse_Vec_MintDto'
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MintDto'
         '500':
-          description: Internal error
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorCodeErrorBody'
   /v1/mints/{mint_address}:
     get:
       tags:
@@ -128,20 +197,43 @@ paths:
         description: Mint address (base58)
         required: true
         schema:
-          type: string
+          $ref: '#/components/schemas/PubkeyDto'
       responses:
         '200':
-          description: Mint data
+          description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericHttpResponse_MintDto'
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    $ref: '#/components/schemas/MintDto'
         '400':
-          description: Invalid mint address
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorCodeErrorBody'
         '404':
-          description: Mint not found
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MintError404Error'
+        '422':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorCodeErrorBody'
         '500':
-          description: Internal error
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MintError500Error'
   /v1/oracle-prices:
     get:
       tags:
@@ -150,13 +242,24 @@ paths:
       operationId: get_oracle_prices
       responses:
         '200':
-          description: List of Oracle prices
+          description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericHttpResponse_Vec_OraclePriceDto'
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/OraclePriceDto'
         '500':
-          description: Internal error
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorCodeErrorBody'
   /v1/oracle-prices/{mint_address}:
     get:
       tags:
@@ -169,20 +272,43 @@ paths:
         description: Mint address (base58)
         required: true
         schema:
-          type: string
+          $ref: '#/components/schemas/PubkeyDto'
       responses:
         '200':
-          description: Oracle price for mint
+          description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericHttpResponse_OraclePriceDto'
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    $ref: '#/components/schemas/OraclePriceDto'
         '400':
-          description: Invalid mint address
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorCodeErrorBody'
         '404':
-          description: Oracle price not found
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OraclePriceError404Error'
+        '422':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorCodeErrorBody'
         '500':
-          description: Internal error
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OraclePriceError500Error'
   /v1/pools:
     get:
       tags:
@@ -197,13 +323,36 @@ paths:
           type: string
       responses:
         '200':
-          description: List of pools
+          description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericHttpResponse_Vec_PoolDto'
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PoolDto'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorCodeErrorBody'
+        '422':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorCodeErrorBody'
         '500':
-          description: Internal error
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorCodeErrorBody'
   /v1/pools/{pool_address}:
     get:
       tags:
@@ -216,20 +365,43 @@ paths:
         description: Pool address (base58)
         required: true
         schema:
-          type: string
+          $ref: '#/components/schemas/PubkeyDto'
       responses:
         '200':
-          description: Pool data
+          description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericHttpResponse_PoolDto'
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    $ref: '#/components/schemas/PoolDto'
         '400':
-          description: Invalid pool address
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PoolsError400Error'
         '404':
-          description: Pool not found
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PoolsError404Error'
+        '422':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorCodeErrorBody'
         '500':
-          description: Internal error
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PoolsError500Error'
   /v1/pools/{pool_address}/candles:
     get:
       tags:
@@ -242,7 +414,7 @@ paths:
         description: Pool address (base58)
         required: true
         schema:
-          type: string
+          $ref: '#/components/schemas/PubkeyDto'
       - name: from
         in: query
         required: true
@@ -269,15 +441,42 @@ paths:
           type: string
       responses:
         '200':
-          description: Pool order book
+          description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericHttpResponse_Vec_PoolPriceCandleDto'
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PoolPriceCandleDto'
         '400':
-          description: Invalid pool address or query params
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PoolsError400Error'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PoolsError404Error'
+        '422':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorCodeErrorBody'
         '500':
-          description: Internal error
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PoolsError500Error'
   /v1/pools/{pool_address}/order-book:
     get:
       tags:
@@ -290,7 +489,7 @@ paths:
         description: Pool address (base58)
         required: true
         schema:
-          type: string
+          $ref: '#/components/schemas/PubkeyDto'
       - name: price_step
         in: query
         required: true
@@ -304,17 +503,40 @@ paths:
           type: boolean
       responses:
         '200':
-          description: Pool order book
+          description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericHttpResponse_OrderBookDto'
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    $ref: '#/components/schemas/OrderBookDto'
         '400':
-          description: Invalid pool address
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PoolsError400Error'
         '404':
-          description: Pool not found
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PoolsError404Error'
+        '422':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorCodeErrorBody'
         '500':
-          description: Internal error
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PoolsError500Error'
   /v1/pools/{pool_address}/swaps:
     get:
       tags:
@@ -327,20 +549,45 @@ paths:
         description: Pool address (base58)
         required: true
         schema:
-          type: string
+          $ref: '#/components/schemas/PubkeyDto'
       responses:
         '200':
-          description: Pool swaps
+          description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericHttpResponse_Vec_PoolSwapDto'
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PoolSwapDto'
         '400':
-          description: Invalid pool address
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PoolsError400Error'
         '404':
-          description: Pool not found
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PoolsError404Error'
+        '422':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorCodeErrorBody'
         '500':
-          description: Internal error
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PoolsError500Error'
   /v1/pools/{pool_address}/ticks:
     get:
       tags:
@@ -353,20 +600,43 @@ paths:
         description: Pool address (base58)
         required: true
         schema:
-          type: string
+          $ref: '#/components/schemas/PubkeyDto'
       responses:
         '200':
-          description: Pool ticks
+          description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericHttpResponse_PoolTicksDto'
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    $ref: '#/components/schemas/PoolTicksDto'
         '400':
-          description: Invalid pool address
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PoolsError400Error'
         '404':
-          description: Pool not found
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PoolsError404Error'
+        '422':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorCodeErrorBody'
         '500':
-          description: Internal error
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PoolsError500Error'
   /v1/quotes/close-spot-position:
     get:
       tags:
@@ -409,27 +679,44 @@ paths:
           minimum: 0
       - name: position_amount
         in: query
-        required: false
+        required: true
         schema:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
       - name: position_debt
         in: query
-        required: false
+        required: true
         schema:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
       responses:
         '200':
-          description: Close spot position quote
+          description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericHttpResponse_CloseSpotPositionQuoteDto'
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    $ref: '#/components/schemas/CloseSpotPositionQuoteDto'
         '400':
-          description: Bad request
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorCodeErrorBody'
+        '422':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorCodeErrorBody'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorCodeErrorBody'
   /v1/quotes/decrease-spot-position:
     get:
       tags:
@@ -444,11 +731,9 @@ paths:
           $ref: '#/components/schemas/PubkeyDto'
       - name: decrease_amount
         in: query
-        required: false
+        required: true
         schema:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
       - name: collateral_token
         in: query
         required: true
@@ -483,27 +768,44 @@ paths:
           minimum: 0
       - name: position_amount
         in: query
-        required: false
+        required: true
         schema:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
       - name: position_debt
         in: query
-        required: false
+        required: true
         schema:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
       responses:
         '200':
-          description: Decrease spot position quote
+          description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericHttpResponse_DecreaseSpotPositionQuoteDto'
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    $ref: '#/components/schemas/DecreaseSpotPositionQuoteDto'
         '400':
-          description: Bad request
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorCodeErrorBody'
+        '422':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorCodeErrorBody'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorCodeErrorBody'
   /v1/quotes/increase-spot-position:
     get:
       tags:
@@ -518,11 +820,9 @@ paths:
           $ref: '#/components/schemas/PubkeyDto'
       - name: increase_amount
         in: query
-        required: false
+        required: true
         schema:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
       - name: collateral_token
         in: query
         required: true
@@ -554,25 +854,42 @@ paths:
         in: query
         required: false
         schema:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
       - name: position_debt
         in: query
         required: false
         schema:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
       responses:
         '200':
-          description: Increase spot position quote
+          description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericHttpResponse_IncreaseSpotPositionQuoteDto'
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    $ref: '#/components/schemas/IncreaseSpotPositionQuoteDto'
         '400':
-          description: Bad request
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorCodeErrorBody'
+        '422':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorCodeErrorBody'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorCodeErrorBody'
   /v1/quotes/limit-order-by-input:
     get:
       tags:
@@ -587,11 +904,9 @@ paths:
           $ref: '#/components/schemas/PubkeyDto'
       - name: amount_in
         in: query
-        required: false
+        required: true
         schema:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
       - name: a_to_b
         in: query
         required: true
@@ -647,11 +962,9 @@ paths:
           $ref: '#/components/schemas/PubkeyDto'
       - name: amount_out
         in: query
-        required: false
+        required: true
         schema:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
       - name: a_to_b
         in: query
         required: true
@@ -665,13 +978,34 @@ paths:
           format: int32
       responses:
         '200':
-          description: Limit order quote
+          description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericHttpResponse_LimitOrderQuoteByOutputDto'
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    $ref: '#/components/schemas/LimitOrderQuoteByOutputDto'
         '400':
-          description: Bad request
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorCodeErrorBody'
+        '422':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorCodeErrorBody'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorCodeErrorBody'
   /v1/quotes/swap-by-input:
     get:
       tags:
@@ -686,11 +1020,9 @@ paths:
           $ref: '#/components/schemas/PubkeyDto'
       - name: amount_in
         in: query
-        required: false
+        required: true
         schema:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
       - name: a_to_b
         in: query
         required: true
@@ -705,13 +1037,34 @@ paths:
           minimum: 0
       responses:
         '200':
-          description: Swap quote
+          description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericHttpResponse_SwapQuoteByInputDto'
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    $ref: '#/components/schemas/SwapQuoteByInputDto'
         '400':
-          description: Bad request
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorCodeErrorBody'
+        '422':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorCodeErrorBody'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorCodeErrorBody'
   /v1/quotes/swap-by-output:
     get:
       tags:
@@ -726,11 +1079,9 @@ paths:
           $ref: '#/components/schemas/PubkeyDto'
       - name: amount_out
         in: query
-        required: false
+        required: true
         schema:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
       - name: a_to_b
         in: query
         required: true
@@ -745,13 +1096,34 @@ paths:
           minimum: 0
       responses:
         '200':
-          description: Swap quote
+          description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericHttpResponse_SwapQuoteByOutputDto'
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    $ref: '#/components/schemas/SwapQuoteByOutputDto'
         '400':
-          description: Bad request
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorCodeErrorBody'
+        '422':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorCodeErrorBody'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorCodeErrorBody'
   /v1/quotes/tradable-amount:
     get:
       tags:
@@ -773,11 +1145,9 @@ paths:
           minimum: 0
       - name: available_balance
         in: query
-        required: false
+        required: true
         schema:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
       - name: leverage
         in: query
         required: true
@@ -793,11 +1163,9 @@ paths:
           minimum: 0
       - name: position_amount
         in: query
-        required: false
+        required: true
         schema:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
       - name: increase
         in: query
         required: true
@@ -805,13 +1173,34 @@ paths:
           type: boolean
       responses:
         '200':
-          description: Tradeable amount
+          description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericHttpResponse_TradableAmountDto'
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    $ref: '#/components/schemas/TradableAmountDto'
         '400':
-          description: Bad request
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorCodeErrorBody'
+        '422':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorCodeErrorBody'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorCodeErrorBody'
   /v1/staking/leaderboard:
     get:
       tags:
@@ -840,15 +1229,39 @@ paths:
           type: string
       responses:
         '200':
-          description: Leaderboard page
+          description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericHttpResponseWithMeta_Vec_StakingLeaderboardPositionDto_PaginationMeta'
+                type: object
+                required:
+                - data
+                - meta
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/StakingLeaderboardPositionDto'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
         '400':
-          description: Bad request
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StakingError400Error'
+        '422':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorCodeErrorBody'
         '500':
-          description: Internal error
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StakingError500Error'
   /v1/staking/treasury:
     get:
       tags:
@@ -857,13 +1270,22 @@ paths:
       operationId: get_staking_treasury
       responses:
         '200':
-          description: Treasury data
+          description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericHttpResponse_TreasuryDto'
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    $ref: '#/components/schemas/TreasuryDto'
         '500':
-          description: Internal error
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorCodeErrorBody'
   /v1/stats/fees:
     get:
       tags:
@@ -890,15 +1312,36 @@ paths:
           type: string
       responses:
         '200':
-          description: Fees daily stats
+          description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericHttpResponse_Vec_FeesStatsGroupDto'
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/FeesStatsGroupDto'
         '400':
-          description: Bad request
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatsError400Error'
+        '422':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorCodeErrorBody'
         '500':
-          description: Internal server error
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatsError500Error'
   /v1/stats/fusion-fees:
     get:
       tags:
@@ -925,15 +1368,36 @@ paths:
           type: string
       responses:
         '200':
-          description: Fees daily stats
+          description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericHttpResponse_Vec_FusionFeesStatsGroupDto'
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/FusionFeesStatsGroupDto'
         '400':
-          description: Bad request
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatsError400Error'
+        '422':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorCodeErrorBody'
         '500':
-          description: Internal server error
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatsError500Error'
   /v1/stats/positions:
     get:
       tags:
@@ -964,15 +1428,36 @@ paths:
           type: string
       responses:
         '200':
-          description: LP positions daily stats
+          description: ''
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/TunaLpPositionsStats'
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TunaLpPositionsStats'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorCodeErrorBody'
+        '422':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorCodeErrorBody'
         '500':
-          description: Internal server error
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorCodeErrorBody'
   /v1/stats/positions/total:
     get:
       tags:
@@ -981,13 +1466,23 @@ paths:
       operationId: get_positions_total
       responses:
         '200':
-          description: LP positions total count
+          description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericHttpResponse_i64'
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    type: integer
+                    format: int64
         '500':
-          description: Internal server error
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorCodeErrorBody'
   /v1/stats/staking/revenue:
     get:
       tags:
@@ -1007,15 +1502,36 @@ paths:
           type: string
       responses:
         '200':
-          description: LP positions total count
+          description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericHttpResponse_Vec_StakingDepositsStatsDto'
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/StakingDepositsStatsDto'
         '400':
-          description: Bad request
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatsError400Error'
+        '422':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorCodeErrorBody'
         '500':
-          description: Internal server error
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatsError500Error'
   /v1/streams/sse:
     get:
       tags:
@@ -1028,7 +1544,7 @@ paths:
           content:
             text/event-stream:
               schema:
-                $ref: '#/components/schemas/GenericHttpResponse_SseResponse'
+                $ref: '#/components/schemas/SseResponse'
         '500':
           description: Internal error
   /v1/streams/{stream_id}/subscription:
@@ -1040,10 +1556,10 @@ paths:
       parameters:
       - name: stream_id
         in: path
-        description: Stream id
         required: true
         schema:
           type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -1052,15 +1568,40 @@ paths:
         required: true
       responses:
         '200':
-          description: Subscription update successful
+          description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericHttpResponse_HttpStatusData'
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    $ref: '#/components/schemas/HttpStatusData'
         '400':
-          description: Bad request
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorCodeErrorBody'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateStreamSubscriptionError404Error'
+        '422':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorCodeErrorBody'
         '500':
-          description: Internal error
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateStreamSubscriptionError500Error'
   /v1/users/{user_address}/lending-positions:
     get:
       tags:
@@ -1073,18 +1614,39 @@ paths:
         description: Authority address (base58)
         required: true
         schema:
-          type: string
+          $ref: '#/components/schemas/PubkeyDto'
       responses:
         '200':
-          description: List of lending positions
+          description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericHttpResponse_Vec_LendingPositionDto'
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/LendingPositionDto'
         '400':
-          description: Invalid user address
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorCodeErrorBody'
+        '422':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorCodeErrorBody'
         '500':
-          description: Internal error
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorCodeErrorBody'
   /v1/users/{user_address}/lending-positions/{lending_position_address}:
     get:
       tags:
@@ -1097,24 +1659,45 @@ paths:
         description: Authority address (base58)
         required: true
         schema:
-          type: string
+          $ref: '#/components/schemas/PubkeyDto'
       - name: lending_position_address
         in: path
         description: Lending position address (base58)
         required: true
         schema:
-          type: string
+          $ref: '#/components/schemas/PubkeyDto'
       responses:
         '200':
-          description: Lending position found
+          description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericHttpResponse_Option_LendingPositionDto'
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    oneOf:
+                    - type: 'null'
+                    - $ref: '#/components/schemas/LendingPositionDto'
         '400':
-          description: Invalid position address
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorCodeErrorBody'
+        '422':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorCodeErrorBody'
         '500':
-          description: Internal error
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorCodeErrorBody'
   /v1/users/{user_address}/limit-orders:
     get:
       tags:
@@ -1127,7 +1710,7 @@ paths:
         description: Authority address (base58)
         required: true
         schema:
-          type: string
+          $ref: '#/components/schemas/PubkeyDto'
       - name: pool
         in: query
         description: List of pool public keys to filter by
@@ -1185,15 +1768,36 @@ paths:
           minimum: 0
       responses:
         '200':
-          description: List of lending positions
+          description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericHttpResponse_Vec_LimitOrderDto'
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/LimitOrderDto'
         '400':
-          description: Invalid user address
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorCodeErrorBody'
+        '422':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorCodeErrorBody'
         '500':
-          description: Internal error
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorCodeErrorBody'
   /v1/users/{user_address}/limit-orders/{limit_order_address}:
     get:
       tags:
@@ -1261,7 +1865,7 @@ paths:
         description: Authority address (base58)
         required: true
         schema:
-          type: string
+          $ref: '#/components/schemas/PubkeyDto'
       - name: liquidity_pool
         in: query
         description: Filter by pool
@@ -1299,15 +1903,36 @@ paths:
           minimum: 0
       responses:
         '200':
-          description: LP position found
+          description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericHttpResponse_Vec_TunaLpPositionDto'
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TunaLpPositionDto'
         '400':
-          description: Invalid position address or query parameters
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LpPositionsError400Error'
+        '422':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorCodeErrorBody'
         '500':
-          description: Internal error
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LpPositionsError500Error'
   /v1/users/{user_address}/lp-positions-history/{position_address}/actions:
     get:
       tags:
@@ -1320,24 +1945,45 @@ paths:
         description: Authority address (base58)
         required: true
         schema:
-          type: string
+          $ref: '#/components/schemas/PubkeyDto'
       - name: position_address
         in: path
         description: LP position address (base58)
         required: true
         schema:
-          type: string
+          $ref: '#/components/schemas/PubkeyDto'
       responses:
         '200':
-          description: LP position found
+          description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericHttpResponse_Vec_TunaLpPositionActionDto'
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TunaLpPositionActionDto'
         '400':
-          description: Invalid user or position address
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LpPositionsError400Error'
+        '422':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorCodeErrorBody'
         '500':
-          description: Internal error
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LpPositionsError500Error'
   /v1/users/{user_address}/order-history:
     get:
       tags:
@@ -1350,7 +1996,7 @@ paths:
         description: Authority address (base58)
         required: true
         schema:
-          type: string
+          $ref: '#/components/schemas/PubkeyDto'
       - name: pool
         in: query
         required: false
@@ -1422,15 +2068,36 @@ paths:
           minimum: 0
       responses:
         '200':
-          description: List of order history entries
+          description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericHttpResponse_Vec_OrderHistoryEntryDto'
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/OrderHistoryEntryDto'
         '400':
-          description: Invalid user address
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorCodeErrorBody'
+        '422':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorCodeErrorBody'
         '500':
-          description: Internal error
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorCodeErrorBody'
   /v1/users/{user_address}/spot-positions:
     get:
       tags:
@@ -1443,19 +2110,40 @@ paths:
         description: Authority address (base58)
         required: true
         schema:
-          type: string
+          $ref: '#/components/schemas/PubkeyDto'
       responses:
         '200':
-          description: List of spot positions
+          description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericHttpResponse_Vec_TunaSpotPositionDto'
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TunaSpotPositionDto'
         '400':
-          description: Invalid user address
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorCodeErrorBody'
+        '422':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorCodeErrorBody'
         '500':
-          description: Internal error
-  /v1/users/{user_address}/spot-positions/{spot_position_address}:
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorCodeErrorBody'
+  /v1/users/{user_address}/spot-positions/{position_address}:
     get:
       tags:
       - SpotPositions
@@ -1467,31 +2155,49 @@ paths:
         description: Authority address (base58)
         required: true
         schema:
-          type: string
-      - name: spot_position_address
+          $ref: '#/components/schemas/PubkeyDto'
+      - name: position_address
         in: path
         description: Spot position address (base58)
         required: true
         schema:
-          type: string
-      - name: tuna_spot_position_address
-        in: path
-        required: true
-        schema:
-          type: string
+          $ref: '#/components/schemas/PubkeyDto'
       responses:
         '200':
-          description: Spot position found
+          description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericHttpResponse_TunaSpotPositionDto'
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    $ref: '#/components/schemas/TunaSpotPositionDto'
         '400':
-          description: Invalid position address
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorCodeErrorBody'
         '404':
-          description: Position not found
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpotPositionError404Error'
+        '422':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorCodeErrorBody'
         '500':
-          description: Internal error
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpotPositionError500Error'
   /v1/users/{user_address}/staking-position:
     get:
       tags:
@@ -1504,18 +2210,37 @@ paths:
         description: Authority address (base58)
         required: true
         schema:
-          type: string
+          $ref: '#/components/schemas/PubkeyDto'
       responses:
         '200':
-          description: Staking position found
+          description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericHttpResponse_StakingPositionDto'
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    $ref: '#/components/schemas/StakingPositionDto'
         '400':
-          description: Invalid user address
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorCodeErrorBody'
+        '422':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorCodeErrorBody'
         '500':
-          description: Internal error
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorCodeErrorBody'
   /v1/users/{user_address}/staking-position/history:
     get:
       tags:
@@ -1528,18 +2253,39 @@ paths:
         description: Authority address (base58)
         required: true
         schema:
-          type: string
+          $ref: '#/components/schemas/PubkeyDto'
       responses:
         '200':
-          description: Staking position found
+          description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericHttpResponse_Vec_StakingPositionActionDto'
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/StakingPositionActionDto'
         '400':
-          description: Invalid user address
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorCodeErrorBody'
+        '422':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorCodeErrorBody'
         '500':
-          description: Internal error
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorCodeErrorBody'
   /v1/users/{user_address}/trade-history:
     get:
       tags:
@@ -1552,7 +2298,7 @@ paths:
         description: Authority address (base58)
         required: true
         schema:
-          type: string
+          $ref: '#/components/schemas/PubkeyDto'
       - name: pool
         in: query
         required: false
@@ -1624,15 +2370,36 @@ paths:
           minimum: 0
       responses:
         '200':
-          description: List of trade history entries
+          description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericHttpResponse_Vec_TradeHistoryEntryDto'
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TradeHistoryEntryDto'
         '400':
-          description: Invalid user address
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorCodeErrorBody'
+        '422':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorCodeErrorBody'
         '500':
-          description: Internal error
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorCodeErrorBody'
   /v1/users/{user_address}/tuna-positions:
     get:
       tags:
@@ -1645,18 +2412,39 @@ paths:
         description: Authority address (base58)
         required: true
         schema:
-          type: string
+          $ref: '#/components/schemas/PubkeyDto'
       responses:
         '200':
-          description: List of LP positions
+          description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericHttpResponse_Vec_TunaPositionDto'
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TunaPositionDto'
         '400':
-          description: Invalid user address
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorCodeErrorBody'
+        '422':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorCodeErrorBody'
         '500':
-          description: Internal error
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorCodeErrorBody'
   /v1/users/{user_address}/tuna-positions/{position_address}:
     get:
       tags:
@@ -1669,29 +2457,45 @@ paths:
         description: Authority address (base58)
         required: true
         schema:
-          type: string
+          $ref: '#/components/schemas/PubkeyDto'
       - name: position_address
         in: path
         description: LP position address (base58)
         required: true
         schema:
-          type: string
-      - name: tuna_position_address
-        in: path
-        required: true
-        schema:
-          type: string
+          $ref: '#/components/schemas/PubkeyDto'
       responses:
         '200':
-          description: LP position found
+          description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericHttpResponse_Option_TunaPositionDto'
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    oneOf:
+                    - type: 'null'
+                    - $ref: '#/components/schemas/TunaPositionDto'
         '400':
-          description: Invalid position address
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorCodeErrorBody'
+        '422':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorCodeErrorBody'
         '500':
-          description: Internal error
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorCodeErrorBody'
   /v1/vaults:
     get:
       tags:
@@ -1700,13 +2504,24 @@ paths:
       operationId: get_vaults
       responses:
         '200':
-          description: List of vaults
+          description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericHttpResponse_Vec_VaultDto'
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/VaultDto'
         '500':
-          description: Internal error
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorCodeErrorBody'
   /v1/vaults/{vault_address}:
     get:
       tags:
@@ -1719,20 +2534,43 @@ paths:
         description: Vault address (base58)
         required: true
         schema:
-          type: string
+          $ref: '#/components/schemas/PubkeyDto'
       responses:
         '200':
-          description: Vault data
+          description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericHttpResponse_VaultDto'
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    $ref: '#/components/schemas/VaultDto'
         '400':
-          description: Invalid vault address
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VaultError400Error'
         '404':
-          description: Vault not found
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VaultError404Error'
+        '422':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorCodeErrorBody'
         '500':
-          description: Internal error
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VaultError500Error'
   /v1/vaults/{vault_address}/history:
     get:
       tags:
@@ -1745,7 +2583,7 @@ paths:
         description: Vault address (base58)
         required: true
         schema:
-          type: string
+          $ref: '#/components/schemas/PubkeyDto'
       - name: from
         in: query
         required: true
@@ -1758,17 +2596,42 @@ paths:
           type: string
       responses:
         '200':
-          description: Vault stats
+          description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericHttpResponse_Vec_VaultStatsDto'
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/VaultStatsDto'
         '400':
-          description: Invalid vault address
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VaultError400Error'
         '404':
-          description: Vault not found
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VaultError404Error'
+        '422':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorCodeErrorBody'
         '500':
-          description: Internal error
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VaultError500Error'
 components:
   schemas:
     BadRequestErrorCodeErrorBody:
@@ -2034,2388 +2897,6 @@ components:
         total_collected_fees:
           type: number
           format: double
-    GenericHttpResponseWithMeta_Vec_LeaderboardItemDto_PaginationMeta:
-      type: object
-      required:
-      - data
-      - meta
-      properties:
-        data:
-          type: array
-          items:
-            type: object
-            required:
-            - authority
-            - rank
-            - lp_positions_count
-            - lp_base_value_usd
-            - lp_period_pnl_usd
-            - lp_period_pnl_percent
-            - spot_positions_count
-            - spot_base_value_usd
-            - spot_period_pnl_usd
-            - spot_period_pnl_percent
-            - total_period_pnl_usd
-            - total_period_pnl_percent
-            properties:
-              authority:
-                type: string
-                format: pubkey
-                description: Solana public key (base58)
-              lp_base_value_usd:
-                type: number
-                format: double
-              lp_period_pnl_percent:
-                type: number
-                format: double
-              lp_period_pnl_usd:
-                type: number
-                format: double
-              lp_positions_count:
-                type: integer
-                minimum: 0
-              rank:
-                type: integer
-                minimum: 0
-              spot_base_value_usd:
-                type: number
-                format: double
-              spot_period_pnl_percent:
-                type: number
-                format: double
-              spot_period_pnl_usd:
-                type: number
-                format: double
-              spot_positions_count:
-                type: integer
-                minimum: 0
-              total_period_pnl_percent:
-                type: number
-                format: double
-              total_period_pnl_usd:
-                type: number
-                format: double
-        meta:
-          type: object
-          required:
-          - total
-          properties:
-            total:
-              type: integer
-              format: int64
-    GenericHttpResponseWithMeta_Vec_StakingLeaderboardPositionDto_PaginationMeta:
-      type: object
-      required:
-      - data
-      - meta
-      properties:
-        data:
-          type: array
-          items:
-            type: object
-            required:
-            - rank
-            - address
-            - owner
-            - staked
-            properties:
-              address:
-                type: string
-                format: pubkey
-                description: Solana public key (base58)
-              owner:
-                type: string
-                format: pubkey
-                description: Solana public key (base58)
-              rank:
-                type: integer
-                format: int32
-                minimum: 0
-              staked:
-                $ref: '#/components/schemas/TokenAmountWithUsd'
-        meta:
-          type: object
-          required:
-          - total
-          properties:
-            total:
-              type: integer
-              format: int64
-    GenericHttpResponse_CloseSpotPositionQuoteDto:
-      type: object
-      required:
-      - data
-      properties:
-        data:
-          type: object
-          required:
-          - decrease_percent
-          - required_swap_amount
-          - estimated_withdrawn_collateral
-          - price_impact
-          properties:
-            decrease_percent:
-              type: number
-              format: double
-              description: Confirmed position decrease percentage (100% = 1.0)
-            estimated_withdrawn_collateral:
-              type: string
-              format: uint64
-              description: Unsigned 64-bit integer encoded as a decimal string
-            price_impact:
-              type: number
-              format: double
-              description: Price impact in percents (100% = 1.0)
-            required_swap_amount:
-              type: string
-              format: uint64
-              description: Unsigned 64-bit integer encoded as a decimal string
-    GenericHttpResponse_DecreaseSpotPositionQuoteDto:
-      type: object
-      required:
-      - data
-      properties:
-        data:
-          type: object
-          required:
-          - decrease_percent
-          - required_swap_amount
-          - estimated_amount
-          - estimated_withdrawn_collateral
-          - price_impact
-          - liquidation_price
-          properties:
-            decrease_percent:
-              type: number
-              format: double
-              description: Position decrease percentage
-            estimated_amount:
-              type: string
-              format: uint64
-              description: Unsigned 64-bit integer encoded as a decimal string
-            estimated_withdrawn_collateral:
-              type: string
-              format: uint64
-              description: Unsigned 64-bit integer encoded as a decimal string
-            liquidation_price:
-              type: number
-              format: double
-              description: Liquidation price
-            price_impact:
-              type: number
-              format: double
-              description: Price impact in percents (100% = 1.0)
-            required_swap_amount:
-              type: string
-              format: uint64
-              description: Unsigned 64-bit integer encoded as a decimal string
-    GenericHttpResponse_HttpStatusData:
-      type: object
-      required:
-      - data
-      properties:
-        data:
-          type: object
-          required:
-          - status
-          properties:
-            status:
-              type: string
-    GenericHttpResponse_IncreaseSpotPositionQuoteDto:
-      type: object
-      required:
-      - data
-      properties:
-        data:
-          type: object
-          required:
-          - collateral_amount
-          - borrow_amount
-          - estimated_amount
-          - swap_input_amount
-          - min_swap_output_amount
-          - protocol_fee_a
-          - protocol_fee_b
-          - price_impact
-          - liquidation_price
-          properties:
-            borrow_amount:
-              type: string
-              format: uint64
-              description: Unsigned 64-bit integer encoded as a decimal string
-            collateral_amount:
-              type: string
-              format: uint64
-              description: Unsigned 64-bit integer encoded as a decimal string
-            estimated_amount:
-              type: string
-              format: uint64
-              description: Unsigned 64-bit integer encoded as a decimal string
-            liquidation_price:
-              type: number
-              format: double
-              description: Liquidation price
-            min_swap_output_amount:
-              type: string
-              format: uint64
-              description: Unsigned 64-bit integer encoded as a decimal string
-            price_impact:
-              type: number
-              format: double
-              description: Price impact in percents
-            protocol_fee_a:
-              type: string
-              format: uint64
-              description: Unsigned 64-bit integer encoded as a decimal string
-            protocol_fee_b:
-              type: string
-              format: uint64
-              description: Unsigned 64-bit integer encoded as a decimal string
-            swap_input_amount:
-              type: string
-              format: uint64
-              description: Unsigned 64-bit integer encoded as a decimal string
-    GenericHttpResponse_LimitOrderQuoteByOutputDto:
-      type: object
-      required:
-      - data
-      properties:
-        data:
-          type: object
-          required:
-          - amount_in
-          properties:
-            amount_in:
-              type: string
-              format: uint64
-              description: Unsigned 64-bit integer encoded as a decimal string
-    GenericHttpResponse_MarketDto:
-      type: object
-      required:
-      - data
-      properties:
-        data:
-          type: object
-          required:
-          - address
-          - address_lookup_table
-          - max_leverage
-          - max_swap_slippage
-          - protocol_fee
-          - protocol_fee_on_collateral
-          - liquidation_fee
-          - liquidation_threshold
-          - oracle_price_deviation_threshold
-          - rebalance_protocol_fee
-          - borrowed_funds_a
-          - borrowed_funds_b
-          - borrow_limit_a
-          - borrow_limit_b
-          - max_spot_position_size_a
-          - max_spot_position_size_b
-          - pool
-          - disabled
-          - created_at
-          properties:
-            address:
-              type: string
-              format: pubkey
-              description: Solana public key (base58)
-            address_lookup_table:
-              type: string
-              format: pubkey
-              description: Solana public key (base58)
-            borrow_limit_a:
-              $ref: '#/components/schemas/TokenAmountWithUsd'
-            borrow_limit_b:
-              $ref: '#/components/schemas/TokenAmountWithUsd'
-            borrowed_funds_a:
-              $ref: '#/components/schemas/TokenAmountWithUsd'
-            borrowed_funds_b:
-              $ref: '#/components/schemas/TokenAmountWithUsd'
-            created_at:
-              type: string
-              format: date-time
-            disabled:
-              type: boolean
-            liquidation_fee:
-              type: integer
-              format: int32
-              minimum: 0
-            liquidation_threshold:
-              type: integer
-              format: int32
-              minimum: 0
-            max_leverage:
-              type: integer
-              format: int32
-              minimum: 0
-            max_spot_position_size_a:
-              $ref: '#/components/schemas/TokenAmountWithUsd'
-            max_spot_position_size_b:
-              $ref: '#/components/schemas/TokenAmountWithUsd'
-            max_swap_slippage:
-              type: integer
-              format: int32
-              minimum: 0
-            oracle_price_deviation_threshold:
-              type: integer
-              format: int32
-              minimum: 0
-            pool:
-              $ref: '#/components/schemas/PoolDto'
-            protocol_fee:
-              type: integer
-              format: int32
-              minimum: 0
-            protocol_fee_on_collateral:
-              type: integer
-              format: int32
-              minimum: 0
-            rebalance_protocol_fee:
-              type: integer
-              format: int32
-              minimum: 0
-    GenericHttpResponse_MintDto:
-      type: object
-      required:
-      - data
-      properties:
-        data:
-          type: object
-          required:
-          - address
-          - symbol
-          - name
-          - logo
-          - decimals
-          properties:
-            address:
-              type: string
-              format: pubkey
-              description: Solana public key (base58)
-            decimals:
-              type: integer
-              format: int32
-            logo:
-              type: string
-            name:
-              type: string
-            symbol:
-              type: string
-    GenericHttpResponse_Option_LendingPositionDto:
-      type: object
-      required:
-      - data
-      properties:
-        data:
-          oneOf:
-          - type: 'null'
-          - type: object
-            required:
-            - address
-            - authority
-            - shares
-            - funds
-            - earned
-            - mint
-            - vault
-            - updated_at_slot
-            properties:
-              address:
-                type: string
-                format: pubkey
-                description: Solana public key (base58)
-              authority:
-                type: string
-                format: pubkey
-                description: Solana public key (base58)
-              earned:
-                $ref: '#/components/schemas/TokenAmountWithUsd'
-              funds:
-                $ref: '#/components/schemas/TokenAmountWithUsd'
-              mint:
-                type: string
-                format: pubkey
-                description: Solana public key (base58)
-              shares:
-                type: string
-                format: uint64
-                description: Unsigned 64-bit integer encoded as a decimal string
-              updated_at_slot:
-                type: string
-                format: uint64
-                description: Unsigned 64-bit integer encoded as a decimal string
-              vault:
-                type: string
-                format: pubkey
-                description: Solana public key (base58)
-    GenericHttpResponse_Option_TunaPositionDto:
-      type: object
-      required:
-      - data
-      properties:
-        data:
-          oneOf:
-          - type: 'null'
-          - type: object
-            required:
-            - address
-            - authority
-            - version
-            - state
-            - position_mint
-            - liquidity
-            - tick_lower_index
-            - tick_upper_index
-            - lower_limit_order_price
-            - upper_limit_order_price
-            - entry_price
-            - flags
-            - pool
-            - market_maker
-            - deposited_collateral_a
-            - deposited_collateral_b
-            - leverage
-            - max_leverage
-            - liquidation_price_lower
-            - liquidation_price_upper
-            - initial_debt_a
-            - initial_debt_b
-            - current_debt_a
-            - current_debt_b
-            - leftovers_a
-            - leftovers_b
-            - yield_a
-            - yield_b
-            - compounded_yield_a
-            - compounded_yield_b
-            - total_a
-            - total_b
-            - pnl_a
-            - pnl_b
-            - pnl_usd
-            - opened_at
-            properties:
-              address:
-                type: string
-                format: pubkey
-                description: Solana public key (base58)
-              authority:
-                type: string
-                format: pubkey
-                description: Solana public key (base58)
-              closed_at:
-                type:
-                - string
-                - 'null'
-                format: date-time
-              compounded_yield_a:
-                $ref: '#/components/schemas/TokenAmountWithUsd'
-              compounded_yield_b:
-                $ref: '#/components/schemas/TokenAmountWithUsd'
-              current_debt_a:
-                $ref: '#/components/schemas/TokenAmountWithUsd'
-              current_debt_b:
-                $ref: '#/components/schemas/TokenAmountWithUsd'
-              deposited_collateral_a:
-                $ref: '#/components/schemas/TunaPositionTokenDepositedCollateral'
-              deposited_collateral_b:
-                $ref: '#/components/schemas/TunaPositionTokenDepositedCollateral'
-              entry_price:
-                type: number
-                format: double
-              flags:
-                $ref: '#/components/schemas/TunaLpPositionFlags'
-              initial_debt_a:
-                $ref: '#/components/schemas/TokenAmountWithUsd'
-              initial_debt_b:
-                $ref: '#/components/schemas/TokenAmountWithUsd'
-              leftovers_a:
-                $ref: '#/components/schemas/TokenAmountWithUsd'
-              leftovers_b:
-                $ref: '#/components/schemas/TokenAmountWithUsd'
-              leverage:
-                type: number
-                format: double
-              liquidation_price_lower:
-                type: number
-                format: double
-              liquidation_price_upper:
-                type: number
-                format: double
-              liquidity:
-                type: string
-                format: uint128
-                description: Unsigned 128-bit integer encoded as a decimal string
-              lower_limit_order_price:
-                type: number
-                format: double
-              market_maker:
-                $ref: '#/components/schemas/TunaPositionMarketMaker'
-              max_leverage:
-                type: number
-                format: double
-              opened_at:
-                type: string
-                format: date-time
-              pnl_a:
-                $ref: '#/components/schemas/TunaPositionTokenPnl'
-                description: Total PnL denominated/expressed in token A
-              pnl_b:
-                $ref: '#/components/schemas/TunaPositionTokenPnl'
-                description: Total PnL denominated/expressed in token B
-              pnl_usd:
-                $ref: '#/components/schemas/TunaPositionUsdPnl'
-              pool:
-                $ref: '#/components/schemas/PoolDto'
-              position_mint:
-                type: string
-                format: pubkey
-                description: Solana public key (base58)
-              state:
-                $ref: '#/components/schemas/TunaPositionDtoState'
-              tick_lower_index:
-                type: integer
-                format: int32
-              tick_upper_index:
-                type: integer
-                format: int32
-              total_a:
-                $ref: '#/components/schemas/TokenAmountWithUsd'
-              total_b:
-                $ref: '#/components/schemas/TokenAmountWithUsd'
-              upper_limit_order_price:
-                type: number
-                format: double
-              version:
-                type: integer
-                format: int32
-                minimum: 0
-              yield_a:
-                $ref: '#/components/schemas/TokenAmountWithUsd'
-              yield_b:
-                $ref: '#/components/schemas/TokenAmountWithUsd'
-    GenericHttpResponse_OraclePriceDto:
-      type: object
-      required:
-      - data
-      properties:
-        data:
-          type: object
-          required:
-          - mint
-          - price
-          - time
-          - decimals
-          properties:
-            decimals:
-              type: integer
-              format: int32
-            mint:
-              type: string
-              format: pubkey
-              description: Solana public key (base58)
-            price:
-              type: string
-              format: uint64
-              description: Unsigned 64-bit integer encoded as a decimal string
-            time:
-              type: string
-              format: date-time
-    GenericHttpResponse_OrderBookDto:
-      type: object
-      required:
-      - data
-      properties:
-        data:
-          type: object
-          required:
-          - pool_address
-          - entries
-          - pool_price
-          properties:
-            entries:
-              type: array
-              items:
-                $ref: '#/components/schemas/OrderBookEntryDto'
-            pool_address:
-              type: string
-              format: pubkey
-              description: Solana public key (base58)
-            pool_price:
-              type: number
-              format: double
-    GenericHttpResponse_PoolDto:
-      type: object
-      required:
-      - data
-      properties:
-        data:
-          type: object
-          required:
-          - address
-          - provider
-          - mint_a
-          - mint_b
-          - token_a_vault
-          - token_b_vault
-          - tick_spacing
-          - fee_rate
-          - protocol_fee_rate
-          - liquidity
-          - sqrt_price
-          - price
-          - tick_current_index
-          properties:
-            address:
-              type: string
-              format: pubkey
-              description: Solana public key (base58)
-            fee_rate:
-              type: integer
-              format: int32
-              minimum: 0
-            liquidity:
-              type: string
-              format: uint128
-              description: Unsigned 128-bit integer encoded as a decimal string
-            mint_a:
-              $ref: '#/components/schemas/MintDto'
-            mint_b:
-              $ref: '#/components/schemas/MintDto'
-            olp_fee_rate:
-              type:
-              - integer
-              - 'null'
-              format: int32
-            price:
-              type: number
-              format: double
-            protocol_fee_rate:
-              type: integer
-              format: int32
-              minimum: 0
-            provider:
-              $ref: '#/components/schemas/PoolProvider'
-            sqrt_price:
-              type: string
-              format: uint128
-              description: Unsigned 128-bit integer encoded as a decimal string
-            stats:
-              oneOf:
-              - type: 'null'
-              - $ref: '#/components/schemas/PoolStatsDto'
-            tick_current_index:
-              type: integer
-              format: int32
-            tick_spacing:
-              type: integer
-              format: int32
-              minimum: 0
-            token_a_vault:
-              type: string
-              format: pubkey
-              description: Solana public key (base58)
-            token_b_vault:
-              type: string
-              format: pubkey
-              description: Solana public key (base58)
-    GenericHttpResponse_PoolTicksDto:
-      type: object
-      required:
-      - data
-      properties:
-        data:
-          type: object
-          required:
-          - tick_spacing
-          - ticks
-          properties:
-            tick_spacing:
-              type: integer
-              format: int32
-              minimum: 0
-            ticks:
-              type: array
-              items:
-                $ref: '#/components/schemas/TickDto'
-    GenericHttpResponse_SseResponse:
-      type: object
-      required:
-      - data
-      properties:
-        data:
-          oneOf:
-          - $ref: '#/components/schemas/StreamInitalMessage'
-          - $ref: '#/components/schemas/NotificationDto_PoolSwapDto'
-          - $ref: '#/components/schemas/NotificationDto_StakingPositionDto'
-          - $ref: '#/components/schemas/NotificationDto_LendingPositionDto'
-          - $ref: '#/components/schemas/NotificationDto_TradeHistoryEntryDto'
-          - $ref: '#/components/schemas/NotificationDto_OrderHistoryEntryDto'
-          - $ref: '#/components/schemas/SnapshotContainer'
-          discriminator:
-            propertyName: entity
-    GenericHttpResponse_StakingPositionDto:
-      type: object
-      required:
-      - data
-      properties:
-        data:
-          type: object
-          required:
-          - address
-          - owner
-          - staked
-          - unclaimed_reward
-          - claimed_reward
-          - unstaked
-          - vesting
-          properties:
-            address:
-              type: string
-              format: pubkey
-              description: Solana public key (base58)
-            claimed_reward:
-              $ref: '#/components/schemas/TokenAmountWithUsd'
-            last_unstaked_at:
-              type:
-              - string
-              - 'null'
-              format: date-time
-            owner:
-              type: string
-              format: pubkey
-              description: Solana public key (base58)
-            rank:
-              type:
-              - integer
-              - 'null'
-              format: int32
-              minimum: 0
-            staked:
-              $ref: '#/components/schemas/TokenAmountWithUsd'
-            unclaimed_reward:
-              $ref: '#/components/schemas/TokenAmountWithUsd'
-            unstaked:
-              $ref: '#/components/schemas/TokenAmountWithUsd'
-            vesting:
-              $ref: '#/components/schemas/VestingDto'
-            withdraw_available_at:
-              type:
-              - string
-              - 'null'
-              format: date-time
-    GenericHttpResponse_SwapQuoteByInputDto:
-      type: object
-      required:
-      - data
-      properties:
-        data:
-          type: object
-          required:
-          - estimated_amount_out
-          - min_amount_out
-          - fee_amount
-          - fee_usd
-          - price_impact
-          properties:
-            estimated_amount_out:
-              type: string
-              format: uint64
-              description: Unsigned 64-bit integer encoded as a decimal string
-            fee_amount:
-              type: string
-              format: uint64
-              description: Unsigned 64-bit integer encoded as a decimal string
-            fee_usd:
-              type: number
-              format: double
-            min_amount_out:
-              type: string
-              format: uint64
-              description: Unsigned 64-bit integer encoded as a decimal string
-            price_impact:
-              type: number
-              format: double
-              description: Price impact in percents
-    GenericHttpResponse_SwapQuoteByOutputDto:
-      type: object
-      required:
-      - data
-      properties:
-        data:
-          type: object
-          required:
-          - estimated_amount_in
-          - max_amount_in
-          - fee_amount
-          - fee_usd
-          - price_impact
-          properties:
-            estimated_amount_in:
-              type: string
-              format: uint64
-              description: Unsigned 64-bit integer encoded as a decimal string
-            fee_amount:
-              type: string
-              format: uint64
-              description: Unsigned 64-bit integer encoded as a decimal string
-            fee_usd:
-              type: number
-              format: double
-            max_amount_in:
-              type: string
-              format: uint64
-              description: Unsigned 64-bit integer encoded as a decimal string
-            price_impact:
-              type: number
-              format: double
-              description: Price impact in percents
-    GenericHttpResponse_TradableAmountDto:
-      type: object
-      required:
-      - data
-      properties:
-        data:
-          type: object
-          required:
-          - amount
-          - usd
-          properties:
-            amount:
-              type: string
-              format: uint64
-              description: Unsigned 64-bit integer encoded as a decimal string
-            usd:
-              type: number
-              format: double
-    GenericHttpResponse_TreasuryDto:
-      type: object
-      required:
-      - data
-      properties:
-        data:
-          type: object
-          required:
-          - address
-          - staked_token_mint
-          - reward_token_mint
-          - apy
-          - unique_stakers
-          - total_staked
-          - total_reward
-          - unstake_cooldown_seconds
-          - is_staking_enabled
-          - is_unstaking_enabled
-          - is_withdraw_enabled
-          properties:
-            address:
-              type: string
-              format: pubkey
-              description: Solana public key (base58)
-            apy:
-              type: number
-              format: double
-            is_staking_enabled:
-              type: boolean
-            is_unstaking_enabled:
-              type: boolean
-            is_withdraw_enabled:
-              type: boolean
-            reward_token_mint:
-              type: string
-              format: pubkey
-              description: Solana public key (base58)
-            staked_token_mint:
-              type: string
-              format: pubkey
-              description: Solana public key (base58)
-            total_reward:
-              $ref: '#/components/schemas/TokenAmountWithUsd'
-            total_staked:
-              $ref: '#/components/schemas/TokenAmountWithUsd'
-            unique_stakers:
-              type: integer
-              format: int32
-              minimum: 0
-            unstake_cooldown_seconds:
-              type: integer
-              format: int32
-              description: The minimum required interval in seconds between the last staking and a possible withdrawal.
-              minimum: 0
-    GenericHttpResponse_TunaSpotPositionDto:
-      type: object
-      required:
-      - data
-      properties:
-        data:
-          type: object
-          required:
-          - address
-          - authority
-          - version
-          - state
-          - lower_limit_order_price
-          - upper_limit_order_price
-          - entry_price
-          - pool
-          - position_token
-          - collateral_token
-          - market_maker
-          - deposited_collateral
-          - initial_debt
-          - current_debt
-          - total
-          - leverage
-          - max_leverage
-          - liquidation_price
-          - pnl_usd
-          - opened_at
-          properties:
-            address:
-              type: string
-              format: pubkey
-              description: Solana public key (base58)
-            authority:
-              type: string
-              format: pubkey
-              description: Solana public key (base58)
-            closed_at:
-              type:
-              - string
-              - 'null'
-              format: date-time
-            collateral_token:
-              $ref: '#/components/schemas/TunaPositionPoolToken'
-            current_debt:
-              $ref: '#/components/schemas/TokenAmountWithUsd'
-            deposited_collateral:
-              $ref: '#/components/schemas/TokenAmountWithUsd'
-            entry_price:
-              type: number
-              format: double
-            initial_debt:
-              $ref: '#/components/schemas/TokenAmountWithUsd'
-            leverage:
-              type: number
-              format: double
-            liquidation_price:
-              type: number
-              format: double
-            lower_limit_order_price:
-              type: number
-              format: double
-            market_maker:
-              $ref: '#/components/schemas/TunaPositionMarketMaker'
-            max_leverage:
-              type: number
-              format: double
-            opened_at:
-              type: string
-              format: date-time
-            pnl_usd:
-              $ref: '#/components/schemas/TunaPositionUsdPnl'
-            pool:
-              $ref: '#/components/schemas/PoolDto'
-            position_token:
-              $ref: '#/components/schemas/TunaPositionPoolToken'
-            state:
-              $ref: '#/components/schemas/TunaSpotPositionDtoState'
-            total:
-              $ref: '#/components/schemas/TokenAmountWithUsd'
-            upper_limit_order_price:
-              type: number
-              format: double
-            version:
-              type: integer
-              format: int32
-              minimum: 0
-    GenericHttpResponse_VaultDto:
-      type: object
-      required:
-      - data
-      properties:
-        data:
-          type: object
-          required:
-          - address
-          - mint
-          - deposited_funds
-          - borrowed_funds
-          - supply_limit
-          - borrowed_shares
-          - deposited_shares
-          - interest_rate
-          - utilization
-          - supply_apy
-          - borrow_apy
-          - pyth_oracle_feed_id
-          - pyth_oracle_price_update
-          properties:
-            address:
-              type: string
-              format: pubkey
-              description: Solana public key (base58)
-            borrow_apy:
-              type: number
-              format: double
-            borrowed_funds:
-              $ref: '#/components/schemas/TokenAmountWithUsd'
-            borrowed_shares:
-              type: string
-              format: uint64
-              description: Unsigned 64-bit integer encoded as a decimal string
-            deposited_funds:
-              $ref: '#/components/schemas/TokenAmountWithUsd'
-            deposited_shares:
-              type: string
-              format: uint64
-              description: Unsigned 64-bit integer encoded as a decimal string
-            interest_rate:
-              type: string
-              format: uint64
-              description: Unsigned 64-bit integer encoded as a decimal string
-            mint:
-              type: string
-              format: pubkey
-              description: Solana public key (base58)
-            pyth_oracle_feed_id:
-              type: string
-              format: pubkey
-              description: Solana public key (base58)
-            pyth_oracle_price_update:
-              type: string
-              format: pubkey
-              description: Solana public key (base58)
-            supply_apy:
-              type: number
-              format: double
-            supply_limit:
-              $ref: '#/components/schemas/TokenAmountWithUsd'
-            utilization:
-              type: number
-              format: double
-    GenericHttpResponse_Vec_FeesStatsGroupDto:
-      type: object
-      required:
-      - data
-      properties:
-        data:
-          type: array
-          items:
-            type: object
-            required:
-            - time
-            - add_liquidity_fees
-            - limit_order_fees
-            - yield_compounding_fees
-            - liquidation_fees
-            - rebalance_fees
-            - total_liquidations_network_fees
-            - total_rebalance_network_fees
-            - total_limit_orders_network_fees
-            - total_yield_compounding_network_fees
-            - failed_network_fees
-            - processed_network_fees
-            - total_collected_fees
-            - total_fusion_fees
-            - total_network_fees
-            - jito_liquidation_fees
-            - jito_rebalance_fees
-            - jito_limit_order_fees
-            - jito_yield_compounding_fees
-            - running_add_liquidity_fees
-            - running_limit_order_fees
-            - running_yield_compounding_fees
-            - running_liquidation_fees
-            - running_rebalance_fees
-            - running_total_liquidations_network_fees
-            - running_total_limit_orders_network_fees
-            - running_total_yield_compounding_network_fees
-            - running_failed_network_fees
-            - running_processed_network_fees
-            - running_jito_liquidation_fees
-            - running_jito_rebalance_fees
-            - running_jito_limit_order_fees
-            - running_jito_yield_compounding_fees
-            - running_total_collected_fees
-            - running_total_fusion_fees
-            - running_total_network_fees
-            properties:
-              add_liquidity_fees:
-                type: number
-                format: double
-              failed_network_fees:
-                type: number
-                format: double
-              jito_limit_order_fees:
-                type: number
-                format: double
-              jito_liquidation_fees:
-                type: number
-                format: double
-              jito_rebalance_fees:
-                type: number
-                format: double
-              jito_yield_compounding_fees:
-                type: number
-                format: double
-              limit_order_fees:
-                type: number
-                format: double
-              liquidation_fees:
-                type: number
-                format: double
-              processed_network_fees:
-                type: number
-                format: double
-              rebalance_fees:
-                type: number
-                format: double
-              running_add_liquidity_fees:
-                type: number
-                format: double
-              running_failed_network_fees:
-                type: number
-                format: double
-              running_jito_limit_order_fees:
-                type: number
-                format: double
-              running_jito_liquidation_fees:
-                type: number
-                format: double
-              running_jito_rebalance_fees:
-                type: number
-                format: double
-              running_jito_yield_compounding_fees:
-                type: number
-                format: double
-              running_limit_order_fees:
-                type: number
-                format: double
-              running_liquidation_fees:
-                type: number
-                format: double
-              running_processed_network_fees:
-                type: number
-                format: double
-              running_rebalance_fees:
-                type: number
-                format: double
-              running_total_collected_fees:
-                type: number
-                format: double
-              running_total_fusion_fees:
-                type: number
-                format: double
-              running_total_limit_orders_network_fees:
-                type: number
-                format: double
-              running_total_liquidations_network_fees:
-                type: number
-                format: double
-              running_total_network_fees:
-                type: number
-                format: double
-              running_total_yield_compounding_network_fees:
-                type: number
-                format: double
-              running_yield_compounding_fees:
-                type: number
-                format: double
-              time:
-                type: string
-                format: date-time
-              total_collected_fees:
-                type: number
-                format: double
-              total_fusion_fees:
-                type: number
-                format: double
-              total_limit_orders_network_fees:
-                type: number
-                format: double
-              total_liquidations_network_fees:
-                type: number
-                format: double
-              total_network_fees:
-                type: number
-                format: double
-              total_rebalance_network_fees:
-                type: number
-                format: double
-              total_yield_compounding_network_fees:
-                type: number
-                format: double
-              yield_compounding_fees:
-                type: number
-                format: double
-    GenericHttpResponse_Vec_FusionFeesStatsGroupDto:
-      type: object
-      required:
-      - data
-      properties:
-        data:
-          type: array
-          items:
-            type: object
-            required:
-            - time
-            - pool
-            - total_collected_fees
-            - running_total_collected_fees
-            properties:
-              pool:
-                type: string
-                format: pubkey
-                description: Solana public key (base58)
-              running_total_collected_fees:
-                type: number
-                format: double
-              time:
-                type: string
-                format: date-time
-              total_collected_fees:
-                type: number
-                format: double
-    GenericHttpResponse_Vec_LendingPositionDto:
-      type: object
-      required:
-      - data
-      properties:
-        data:
-          type: array
-          items:
-            type: object
-            required:
-            - address
-            - authority
-            - shares
-            - funds
-            - earned
-            - mint
-            - vault
-            - updated_at_slot
-            properties:
-              address:
-                type: string
-                format: pubkey
-                description: Solana public key (base58)
-              authority:
-                type: string
-                format: pubkey
-                description: Solana public key (base58)
-              earned:
-                $ref: '#/components/schemas/TokenAmountWithUsd'
-              funds:
-                $ref: '#/components/schemas/TokenAmountWithUsd'
-              mint:
-                type: string
-                format: pubkey
-                description: Solana public key (base58)
-              shares:
-                type: string
-                format: uint64
-                description: Unsigned 64-bit integer encoded as a decimal string
-              updated_at_slot:
-                type: string
-                format: uint64
-                description: Unsigned 64-bit integer encoded as a decimal string
-              vault:
-                type: string
-                format: pubkey
-                description: Solana public key (base58)
-    GenericHttpResponse_Vec_LimitOrderDto:
-      type: object
-      required:
-      - data
-      properties:
-        data:
-          type: array
-          items:
-            type: object
-            required:
-            - id
-            - address
-            - order_mint
-            - authority
-            - pool
-            - state
-            - fill_ratio
-            - a_to_b
-            - tick_index
-            - open_tx_signature
-            - amount_in
-            - amount_out
-            - opened_at
-            properties:
-              a_to_b:
-                type: boolean
-              address:
-                type: string
-                format: pubkey
-                description: Solana public key (base58)
-              amount_in:
-                $ref: '#/components/schemas/TokenAmountWithUsd'
-              amount_out:
-                $ref: '#/components/schemas/TokenAmountWithUsd'
-              authority:
-                type: string
-                format: pubkey
-                description: Solana public key (base58)
-              close_tx_signature:
-                type:
-                - string
-                - 'null'
-              closed_at:
-                type:
-                - string
-                - 'null'
-                format: date-time
-              fill_ratio:
-                type: number
-                format: double
-              id:
-                type: string
-              open_tx_signature:
-                type: string
-              opened_at:
-                type: string
-                format: date-time
-              order_mint:
-                type: string
-                format: pubkey
-                description: Solana public key (base58)
-              pool:
-                $ref: '#/components/schemas/PoolDto'
-              state:
-                $ref: '#/components/schemas/LimitOrderStatus'
-              tick_index:
-                type: integer
-                format: int32
-    GenericHttpResponse_Vec_MarketDto:
-      type: object
-      required:
-      - data
-      properties:
-        data:
-          type: array
-          items:
-            type: object
-            required:
-            - address
-            - address_lookup_table
-            - max_leverage
-            - max_swap_slippage
-            - protocol_fee
-            - protocol_fee_on_collateral
-            - liquidation_fee
-            - liquidation_threshold
-            - oracle_price_deviation_threshold
-            - rebalance_protocol_fee
-            - borrowed_funds_a
-            - borrowed_funds_b
-            - borrow_limit_a
-            - borrow_limit_b
-            - max_spot_position_size_a
-            - max_spot_position_size_b
-            - pool
-            - disabled
-            - created_at
-            properties:
-              address:
-                type: string
-                format: pubkey
-                description: Solana public key (base58)
-              address_lookup_table:
-                type: string
-                format: pubkey
-                description: Solana public key (base58)
-              borrow_limit_a:
-                $ref: '#/components/schemas/TokenAmountWithUsd'
-              borrow_limit_b:
-                $ref: '#/components/schemas/TokenAmountWithUsd'
-              borrowed_funds_a:
-                $ref: '#/components/schemas/TokenAmountWithUsd'
-              borrowed_funds_b:
-                $ref: '#/components/schemas/TokenAmountWithUsd'
-              created_at:
-                type: string
-                format: date-time
-              disabled:
-                type: boolean
-              liquidation_fee:
-                type: integer
-                format: int32
-                minimum: 0
-              liquidation_threshold:
-                type: integer
-                format: int32
-                minimum: 0
-              max_leverage:
-                type: integer
-                format: int32
-                minimum: 0
-              max_spot_position_size_a:
-                $ref: '#/components/schemas/TokenAmountWithUsd'
-              max_spot_position_size_b:
-                $ref: '#/components/schemas/TokenAmountWithUsd'
-              max_swap_slippage:
-                type: integer
-                format: int32
-                minimum: 0
-              oracle_price_deviation_threshold:
-                type: integer
-                format: int32
-                minimum: 0
-              pool:
-                $ref: '#/components/schemas/PoolDto'
-              protocol_fee:
-                type: integer
-                format: int32
-                minimum: 0
-              protocol_fee_on_collateral:
-                type: integer
-                format: int32
-                minimum: 0
-              rebalance_protocol_fee:
-                type: integer
-                format: int32
-                minimum: 0
-    GenericHttpResponse_Vec_MintDto:
-      type: object
-      required:
-      - data
-      properties:
-        data:
-          type: array
-          items:
-            type: object
-            required:
-            - address
-            - symbol
-            - name
-            - logo
-            - decimals
-            properties:
-              address:
-                type: string
-                format: pubkey
-                description: Solana public key (base58)
-              decimals:
-                type: integer
-                format: int32
-              logo:
-                type: string
-              name:
-                type: string
-              symbol:
-                type: string
-    GenericHttpResponse_Vec_OraclePriceDto:
-      type: object
-      required:
-      - data
-      properties:
-        data:
-          type: array
-          items:
-            type: object
-            required:
-            - mint
-            - price
-            - time
-            - decimals
-            properties:
-              decimals:
-                type: integer
-                format: int32
-              mint:
-                type: string
-                format: pubkey
-                description: Solana public key (base58)
-              price:
-                type: string
-                format: uint64
-                description: Unsigned 64-bit integer encoded as a decimal string
-              time:
-                type: string
-                format: date-time
-    GenericHttpResponse_Vec_OrderHistoryEntryDto:
-      type: object
-      required:
-      - data
-      properties:
-        data:
-          type: array
-          items:
-            type: object
-            required:
-            - id
-            - ts
-            - slot
-            - pool
-            - authority
-            - order_type
-            - is_reduce_only
-            - a_to_b
-            - ui_direction
-            - status
-            - base_token
-            - quote_token
-            properties:
-              a_to_b:
-                type: boolean
-                description: |-
-                  Mints (Tokens) Pair direction in pool
-                  When TRUE  - Base token is Mint A, Quote token is Mint B
-                  WHEN FALSE - Base token is Mint B, Quote token is MInt A
-              authority:
-                type: string
-                format: pubkey
-                description: Solana public key (base58)
-              base_token:
-                $ref: '#/components/schemas/TokenAmountWithUsd'
-              base_token_consumed_amount:
-                oneOf:
-                - type: 'null'
-                - $ref: '#/components/schemas/TokenAmountWithUsd'
-                  description: Filled only for limit orders (consumed_amount_in)
-              id:
-                type: string
-                format: uuid
-              is_reduce_only:
-                type: boolean
-              ix_index:
-                type:
-                - integer
-                - 'null'
-                format: int32
-                description: |-
-                  Filled for swaps (spot)
-                  Flatten transaction instruction index
-              order_type:
-                $ref: '#/components/schemas/OrderHistoryType'
-              pool:
-                $ref: '#/components/schemas/PoolDto'
-              position_address:
-                type: string
-                format: pubkey
-                description: Solana public key (base58)
-              quote_token:
-                $ref: '#/components/schemas/TokenAmountWithUsd'
-              quote_token_filled_amount:
-                oneOf:
-                - type: 'null'
-                - $ref: '#/components/schemas/TokenAmountWithUsd'
-                  description: Filled only for limit orders (filled_amount_out)
-              slot:
-                type: string
-                format: uint64
-                description: Unsigned 64-bit integer encoded as a decimal string
-              status:
-                $ref: '#/components/schemas/OrderHistoryStatus'
-              ts:
-                type: string
-                format: date-time
-                description: Block time of slot this entry was create from
-              tx_signature:
-                type:
-                - string
-                - 'null'
-                description: Filled for swaps (spot) and margin positions
-              ui_direction:
-                $ref: '#/components/schemas/OrderHistoryUIDirection'
-              ui_execution_price:
-                type:
-                - number
-                - 'null'
-                format: double
-                description: |-
-                  A decimal price based on the action.
-                  For market (swaps + margin) orders, displays average execution price for the order excluding the fee
-              ui_price:
-                type:
-                - number
-                - 'null'
-                format: double
-                description: |-
-                  A decimal price based on the action.
-                  Only for limit orders & trigger actions.
-
-                  * For limit order fills - price derived from order tick_index
-                  * For take profit / stop loss / liquidation - trigger price
-    GenericHttpResponse_Vec_PoolDto:
-      type: object
-      required:
-      - data
-      properties:
-        data:
-          type: array
-          items:
-            type: object
-            required:
-            - address
-            - provider
-            - mint_a
-            - mint_b
-            - token_a_vault
-            - token_b_vault
-            - tick_spacing
-            - fee_rate
-            - protocol_fee_rate
-            - liquidity
-            - sqrt_price
-            - price
-            - tick_current_index
-            properties:
-              address:
-                type: string
-                format: pubkey
-                description: Solana public key (base58)
-              fee_rate:
-                type: integer
-                format: int32
-                minimum: 0
-              liquidity:
-                type: string
-                format: uint128
-                description: Unsigned 128-bit integer encoded as a decimal string
-              mint_a:
-                $ref: '#/components/schemas/MintDto'
-              mint_b:
-                $ref: '#/components/schemas/MintDto'
-              olp_fee_rate:
-                type:
-                - integer
-                - 'null'
-                format: int32
-              price:
-                type: number
-                format: double
-              protocol_fee_rate:
-                type: integer
-                format: int32
-                minimum: 0
-              provider:
-                $ref: '#/components/schemas/PoolProvider'
-              sqrt_price:
-                type: string
-                format: uint128
-                description: Unsigned 128-bit integer encoded as a decimal string
-              stats:
-                oneOf:
-                - type: 'null'
-                - $ref: '#/components/schemas/PoolStatsDto'
-              tick_current_index:
-                type: integer
-                format: int32
-              tick_spacing:
-                type: integer
-                format: int32
-                minimum: 0
-              token_a_vault:
-                type: string
-                format: pubkey
-                description: Solana public key (base58)
-              token_b_vault:
-                type: string
-                format: pubkey
-                description: Solana public key (base58)
-    GenericHttpResponse_Vec_PoolPriceCandleDto:
-      type: object
-      required:
-      - data
-      properties:
-        data:
-          type: array
-          items:
-            type: object
-            required:
-            - time
-            - high
-            - low
-            - open
-            - close
-            - volume
-            properties:
-              close:
-                type: number
-                format: double
-              high:
-                type: number
-                format: double
-              low:
-                type: number
-                format: double
-              open:
-                type: number
-                format: double
-              time:
-                type: integer
-                format: int32
-              volume:
-                type: number
-                format: double
-    GenericHttpResponse_Vec_PoolSwapDto:
-      type: object
-      required:
-      - data
-      properties:
-        data:
-          type: array
-          items:
-            type: object
-            required:
-            - id
-            - amount_in
-            - amount_out
-            - amount_usd
-            - a_to_b
-            - pool
-            - time
-            - tx_signature
-            properties:
-              a_to_b:
-                type: boolean
-              amount_in:
-                type: string
-                format: uint64
-                description: Unsigned 64-bit integer encoded as a decimal string
-              amount_out:
-                type: string
-                format: uint64
-                description: Unsigned 64-bit integer encoded as a decimal string
-              amount_usd:
-                type: number
-                format: double
-              id:
-                type: string
-              pool:
-                type: string
-                format: pubkey
-                description: Solana public key (base58)
-              time:
-                type: string
-                format: date-time
-              tx_signature:
-                type: string
-    GenericHttpResponse_Vec_StakingDepositsStatsDto:
-      type: object
-      required:
-      - data
-      properties:
-        data:
-          type: array
-          items:
-            type: object
-            required:
-            - time
-            - total_deposits_usd
-            - total_deposits_sol
-            - running_total_deposits_usd
-            - running_total_deposits_sol
-            properties:
-              running_total_deposits_sol:
-                type: string
-                format: uint64
-                description: Unsigned 64-bit integer encoded as a decimal string
-              running_total_deposits_usd:
-                type: number
-                format: double
-              time:
-                type: string
-                format: date-time
-              total_deposits_sol:
-                type: string
-                format: uint64
-                description: Unsigned 64-bit integer encoded as a decimal string
-              total_deposits_usd:
-                type: number
-                format: double
-    GenericHttpResponse_Vec_StakingPositionActionDto:
-      type: object
-      required:
-      - data
-      properties:
-        data:
-          type: array
-          items:
-            type: object
-            required:
-            - position
-            - action
-            - amount
-            - time
-            - tx_signature
-            properties:
-              action:
-                $ref: '#/components/schemas/StakingPositionActionType'
-              amount:
-                type: string
-                format: uint64
-                description: Unsigned 64-bit integer encoded as a decimal string
-              position:
-                type: string
-                format: pubkey
-                description: Solana public key (base58)
-              time:
-                type: string
-                format: date-time
-              tx_signature:
-                type: string
-    GenericHttpResponse_Vec_TradeHistoryEntryDto:
-      type: object
-      required:
-      - data
-      properties:
-        data:
-          type: array
-          items:
-            type: object
-            required:
-            - id
-            - ts
-            - slot
-            - pool
-            - authority
-            - a_to_b
-            - action
-            - ui_direction
-            - ui_price
-            - base_token
-            - quote_token
-            - fee
-            properties:
-              a_to_b:
-                type: boolean
-                description: |-
-                  Mints (Tokens) Pair direction in pool
-                  When TRUE  - Base token is Mint A, Quote token is Mint B
-                  WHEN FALSE - Base token is Mint B, Quote token is MInt A
-              action:
-                $ref: '#/components/schemas/TradeHistoryAction'
-              authority:
-                type: string
-                format: pubkey
-                description: Solana public key (base58)
-              base_token:
-                $ref: '#/components/schemas/TokenAmountWithUsd'
-              fee:
-                $ref: '#/components/schemas/FeeAmountWithUsd'
-                description: |-
-                  Positive for taker trades (swaps + spot) and negative for maker trades (limit orders)
-                  Measured in quote tokens for limit orders
-              id:
-                type: string
-                format: uuid
-              ix_index:
-                type:
-                - integer
-                - 'null'
-                format: int32
-                description: |-
-                  Filled for swaps (spot)
-                  Flatten transaction instruction index
-              pnl:
-                oneOf:
-                - type: 'null'
-                - $ref: '#/components/schemas/TradeHistoryEntryPnlUsd'
-                  description: |-
-                    Only for margin positions,
-                    will be calculated based on the price of collateral when opening a position
-                    and the position value on decrease/close.
-              pool:
-                $ref: '#/components/schemas/PoolDto'
-              position_address:
-                type: string
-                format: pubkey
-                description: Solana public key (base58)
-              quote_token:
-                $ref: '#/components/schemas/TokenAmountWithUsd'
-              slot:
-                type: string
-                format: uint64
-                description: Unsigned 64-bit integer encoded as a decimal string
-              ts:
-                type: string
-                format: date-time
-              tx_signature:
-                type:
-                - string
-                - 'null'
-                description: Filled for swaps (spot) and margin positions
-              ui_direction:
-                $ref: '#/components/schemas/TradeHistoryUIDirection'
-              ui_price:
-                type: number
-                format: double
-                description: |-
-                  A decimal price based on the action.
-
-                  * For spot and margin positions - average execution price excluding the fee.
-                  * For limit order fills - price derived from order tick_index.
-    GenericHttpResponse_Vec_TunaLpPositionActionDto:
-      type: object
-      required:
-      - data
-      properties:
-        data:
-          type: array
-          items:
-            type: object
-            required:
-            - action
-            - tx_signature
-            - tx_timestamp
-            - data
-            properties:
-              action:
-                $ref: '#/components/schemas/TunaLpPositionsActionType'
-              data:
-                $ref: '#/components/schemas/TunaLpPositionActionComposite'
-              tx_signature:
-                type: string
-              tx_timestamp:
-                type: string
-                format: date-time
-    GenericHttpResponse_Vec_TunaLpPositionDto:
-      type: object
-      required:
-      - data
-      properties:
-        data:
-          type: array
-          items:
-            type: object
-            required:
-            - position_address
-            - authority
-            - pool
-            - state
-            - lower_price
-            - upper_price
-            - market_maker
-            - opened_at
-            - updated_at
-            - total_value_usd
-            - leverage
-            - initial_leverage
-            - total_deposit_usd
-            - total_withdrawn_usd
-            - fees_sum_usd
-            - closed_pnl_sum_usd
-            - entry_price
-            properties:
-              authority:
-                type: string
-                format: pubkey
-                description: Solana public key (base58)
-              closed_at:
-                type:
-                - string
-                - 'null'
-                format: date-time
-              closed_pnl_sum_usd:
-                type: number
-                format: double
-              entry_price:
-                type: number
-                format: double
-              exit_price:
-                type:
-                - number
-                - 'null'
-                format: double
-              fees_sum_usd:
-                type: number
-                format: double
-              initial_leverage:
-                type: number
-                format: double
-              leverage:
-                type: number
-                format: double
-              lower_limit_order:
-                type:
-                - number
-                - 'null'
-                format: double
-              lower_price:
-                type: number
-                format: double
-              market_maker:
-                $ref: '#/components/schemas/PoolProvider'
-              opened_at:
-                type: string
-                format: date-time
-              pool:
-                $ref: '#/components/schemas/PoolDto'
-              position_address:
-                type: string
-                format: pubkey
-                description: Solana public key (base58)
-              state:
-                $ref: '#/components/schemas/TunaPositionDtoState'
-              total_deposit_usd:
-                type: number
-                format: double
-              total_value_usd:
-                type: number
-                format: double
-              total_withdrawn_usd:
-                type: number
-                format: double
-              updated_at:
-                type: string
-                format: date-time
-              upper_limit_order:
-                type:
-                - number
-                - 'null'
-                format: double
-              upper_price:
-                type: number
-                format: double
-    GenericHttpResponse_Vec_TunaPositionDto:
-      type: object
-      required:
-      - data
-      properties:
-        data:
-          type: array
-          items:
-            type: object
-            required:
-            - address
-            - authority
-            - version
-            - state
-            - position_mint
-            - liquidity
-            - tick_lower_index
-            - tick_upper_index
-            - lower_limit_order_price
-            - upper_limit_order_price
-            - entry_price
-            - flags
-            - pool
-            - market_maker
-            - deposited_collateral_a
-            - deposited_collateral_b
-            - leverage
-            - max_leverage
-            - liquidation_price_lower
-            - liquidation_price_upper
-            - initial_debt_a
-            - initial_debt_b
-            - current_debt_a
-            - current_debt_b
-            - leftovers_a
-            - leftovers_b
-            - yield_a
-            - yield_b
-            - compounded_yield_a
-            - compounded_yield_b
-            - total_a
-            - total_b
-            - pnl_a
-            - pnl_b
-            - pnl_usd
-            - opened_at
-            properties:
-              address:
-                type: string
-                format: pubkey
-                description: Solana public key (base58)
-              authority:
-                type: string
-                format: pubkey
-                description: Solana public key (base58)
-              closed_at:
-                type:
-                - string
-                - 'null'
-                format: date-time
-              compounded_yield_a:
-                $ref: '#/components/schemas/TokenAmountWithUsd'
-              compounded_yield_b:
-                $ref: '#/components/schemas/TokenAmountWithUsd'
-              current_debt_a:
-                $ref: '#/components/schemas/TokenAmountWithUsd'
-              current_debt_b:
-                $ref: '#/components/schemas/TokenAmountWithUsd'
-              deposited_collateral_a:
-                $ref: '#/components/schemas/TunaPositionTokenDepositedCollateral'
-              deposited_collateral_b:
-                $ref: '#/components/schemas/TunaPositionTokenDepositedCollateral'
-              entry_price:
-                type: number
-                format: double
-              flags:
-                $ref: '#/components/schemas/TunaLpPositionFlags'
-              initial_debt_a:
-                $ref: '#/components/schemas/TokenAmountWithUsd'
-              initial_debt_b:
-                $ref: '#/components/schemas/TokenAmountWithUsd'
-              leftovers_a:
-                $ref: '#/components/schemas/TokenAmountWithUsd'
-              leftovers_b:
-                $ref: '#/components/schemas/TokenAmountWithUsd'
-              leverage:
-                type: number
-                format: double
-              liquidation_price_lower:
-                type: number
-                format: double
-              liquidation_price_upper:
-                type: number
-                format: double
-              liquidity:
-                type: string
-                format: uint128
-                description: Unsigned 128-bit integer encoded as a decimal string
-              lower_limit_order_price:
-                type: number
-                format: double
-              market_maker:
-                $ref: '#/components/schemas/TunaPositionMarketMaker'
-              max_leverage:
-                type: number
-                format: double
-              opened_at:
-                type: string
-                format: date-time
-              pnl_a:
-                $ref: '#/components/schemas/TunaPositionTokenPnl'
-                description: Total PnL denominated/expressed in token A
-              pnl_b:
-                $ref: '#/components/schemas/TunaPositionTokenPnl'
-                description: Total PnL denominated/expressed in token B
-              pnl_usd:
-                $ref: '#/components/schemas/TunaPositionUsdPnl'
-              pool:
-                $ref: '#/components/schemas/PoolDto'
-              position_mint:
-                type: string
-                format: pubkey
-                description: Solana public key (base58)
-              state:
-                $ref: '#/components/schemas/TunaPositionDtoState'
-              tick_lower_index:
-                type: integer
-                format: int32
-              tick_upper_index:
-                type: integer
-                format: int32
-              total_a:
-                $ref: '#/components/schemas/TokenAmountWithUsd'
-              total_b:
-                $ref: '#/components/schemas/TokenAmountWithUsd'
-              upper_limit_order_price:
-                type: number
-                format: double
-              version:
-                type: integer
-                format: int32
-                minimum: 0
-              yield_a:
-                $ref: '#/components/schemas/TokenAmountWithUsd'
-              yield_b:
-                $ref: '#/components/schemas/TokenAmountWithUsd'
-    GenericHttpResponse_Vec_TunaSpotPositionDto:
-      type: object
-      required:
-      - data
-      properties:
-        data:
-          type: array
-          items:
-            type: object
-            required:
-            - address
-            - authority
-            - version
-            - state
-            - lower_limit_order_price
-            - upper_limit_order_price
-            - entry_price
-            - pool
-            - position_token
-            - collateral_token
-            - market_maker
-            - deposited_collateral
-            - initial_debt
-            - current_debt
-            - total
-            - leverage
-            - max_leverage
-            - liquidation_price
-            - pnl_usd
-            - opened_at
-            properties:
-              address:
-                type: string
-                format: pubkey
-                description: Solana public key (base58)
-              authority:
-                type: string
-                format: pubkey
-                description: Solana public key (base58)
-              closed_at:
-                type:
-                - string
-                - 'null'
-                format: date-time
-              collateral_token:
-                $ref: '#/components/schemas/TunaPositionPoolToken'
-              current_debt:
-                $ref: '#/components/schemas/TokenAmountWithUsd'
-              deposited_collateral:
-                $ref: '#/components/schemas/TokenAmountWithUsd'
-              entry_price:
-                type: number
-                format: double
-              initial_debt:
-                $ref: '#/components/schemas/TokenAmountWithUsd'
-              leverage:
-                type: number
-                format: double
-              liquidation_price:
-                type: number
-                format: double
-              lower_limit_order_price:
-                type: number
-                format: double
-              market_maker:
-                $ref: '#/components/schemas/TunaPositionMarketMaker'
-              max_leverage:
-                type: number
-                format: double
-              opened_at:
-                type: string
-                format: date-time
-              pnl_usd:
-                $ref: '#/components/schemas/TunaPositionUsdPnl'
-              pool:
-                $ref: '#/components/schemas/PoolDto'
-              position_token:
-                $ref: '#/components/schemas/TunaPositionPoolToken'
-              state:
-                $ref: '#/components/schemas/TunaSpotPositionDtoState'
-              total:
-                $ref: '#/components/schemas/TokenAmountWithUsd'
-              upper_limit_order_price:
-                type: number
-                format: double
-              version:
-                type: integer
-                format: int32
-                minimum: 0
-    GenericHttpResponse_Vec_VaultDto:
-      type: object
-      required:
-      - data
-      properties:
-        data:
-          type: array
-          items:
-            type: object
-            required:
-            - address
-            - mint
-            - deposited_funds
-            - borrowed_funds
-            - supply_limit
-            - borrowed_shares
-            - deposited_shares
-            - interest_rate
-            - utilization
-            - supply_apy
-            - borrow_apy
-            - pyth_oracle_feed_id
-            - pyth_oracle_price_update
-            properties:
-              address:
-                type: string
-                format: pubkey
-                description: Solana public key (base58)
-              borrow_apy:
-                type: number
-                format: double
-              borrowed_funds:
-                $ref: '#/components/schemas/TokenAmountWithUsd'
-              borrowed_shares:
-                type: string
-                format: uint64
-                description: Unsigned 64-bit integer encoded as a decimal string
-              deposited_funds:
-                $ref: '#/components/schemas/TokenAmountWithUsd'
-              deposited_shares:
-                type: string
-                format: uint64
-                description: Unsigned 64-bit integer encoded as a decimal string
-              interest_rate:
-                type: string
-                format: uint64
-                description: Unsigned 64-bit integer encoded as a decimal string
-              mint:
-                type: string
-                format: pubkey
-                description: Solana public key (base58)
-              pyth_oracle_feed_id:
-                type: string
-                format: pubkey
-                description: Solana public key (base58)
-              pyth_oracle_price_update:
-                type: string
-                format: pubkey
-                description: Solana public key (base58)
-              supply_apy:
-                type: number
-                format: double
-              supply_limit:
-                $ref: '#/components/schemas/TokenAmountWithUsd'
-              utilization:
-                type: number
-                format: double
-    GenericHttpResponse_Vec_VaultStatsDto:
-      type: object
-      required:
-      - data
-      properties:
-        data:
-          type: array
-          items:
-            type: object
-            required:
-            - date
-            - supply
-            - borrow
-            - supply_apy
-            - borrow_apr
-            properties:
-              borrow:
-                $ref: '#/components/schemas/TokenAmountWithUsd'
-              borrow_apr:
-                type: number
-                format: double
-              date:
-                type: string
-                format: date
-              supply:
-                $ref: '#/components/schemas/TokenAmountWithUsd'
-              supply_apy:
-                type: number
-                format: double
-    GenericHttpResponse_i64:
-      type: object
-      required:
-      - data
-      properties:
-        data:
-          type: integer
-          format: int64
     GetLimitOrderError404Error:
       type: object
       required:
@@ -4461,6 +2942,16 @@ components:
       properties:
         status:
           type: string
+    I128Dto:
+      type: string
+      format: int128
+      description: Signed 128-bit integer represented as decimal string in JSON and OpenAPI.
+      example: '-1'
+    I64Dto:
+      type: string
+      format: int64
+      description: Signed 64-bit integer represented as decimal string in JSON and OpenAPI.
+      example: '-1'
     IncreaseSpotPositionQuoteDto:
       type: object
       required:
@@ -4511,6 +3002,36 @@ components:
           format: uint64
           description: Unsigned 64-bit integer encoded as a decimal string
     InternalErrorCodeErrorBody:
+      type: object
+      required:
+      - code
+      properties:
+        code:
+          type: string
+          enum:
+          - internal_error
+    LeaderboardError400BadRequest:
+      type: object
+      required:
+      - code
+      properties:
+        code:
+          type: string
+          enum:
+          - bad_request
+    LeaderboardError400Error:
+      oneOf:
+      - $ref: '#/components/schemas/LeaderboardError400BadRequest'
+      - $ref: '#/components/schemas/BadRequestErrorCodeErrorBody'
+      type: object
+      discriminator:
+        propertyName: code
+        mapping:
+          bad_request: '#/components/schemas/LeaderboardError400BadRequest'
+          invalid_body: '#/components/schemas/BadRequestErrorCodeErrorBody'
+          invalid_path: '#/components/schemas/BadRequestErrorCodeErrorBody'
+          invalid_query: '#/components/schemas/BadRequestErrorCodeErrorBody'
+    LeaderboardError500Error:
       type: object
       required:
       - code
@@ -4708,6 +3229,36 @@ components:
       - filled
       - complete
       - cancelled
+    LpPositionsError400BadRequest:
+      type: object
+      required:
+      - code
+      properties:
+        code:
+          type: string
+          enum:
+          - bad_request
+    LpPositionsError400Error:
+      oneOf:
+      - $ref: '#/components/schemas/LpPositionsError400BadRequest'
+      - $ref: '#/components/schemas/BadRequestErrorCodeErrorBody'
+      type: object
+      discriminator:
+        propertyName: code
+        mapping:
+          bad_request: '#/components/schemas/LpPositionsError400BadRequest'
+          invalid_body: '#/components/schemas/BadRequestErrorCodeErrorBody'
+          invalid_path: '#/components/schemas/BadRequestErrorCodeErrorBody'
+          invalid_query: '#/components/schemas/BadRequestErrorCodeErrorBody'
+    LpPositionsError500Error:
+      type: object
+      required:
+      - code
+      properties:
+        code:
+          type: string
+          enum:
+          - internal_error
     MarketDto:
       type: object
       required:
@@ -4790,6 +3341,24 @@ components:
           type: integer
           format: int32
           minimum: 0
+    MarketError404Error:
+      type: object
+      required:
+      - code
+      properties:
+        code:
+          type: string
+          enum:
+          - not_found
+    MarketError500Error:
+      type: object
+      required:
+      - code
+      properties:
+        code:
+          type: string
+          enum:
+          - internal_error
     MintDto:
       type: object
       required:
@@ -4812,6 +3381,24 @@ components:
           type: string
         symbol:
           type: string
+    MintError404Error:
+      type: object
+      required:
+      - code
+      properties:
+        code:
+          type: string
+          enum:
+          - not_found
+    MintError500Error:
+      type: object
+      required:
+      - code
+      properties:
+        code:
+          type: string
+          enum:
+          - internal_error
     NotificationAction:
       type: string
       enum:
@@ -5247,6 +3834,24 @@ components:
         time:
           type: string
           format: date-time
+    OraclePriceError404Error:
+      type: object
+      required:
+      - code
+      properties:
+        code:
+          type: string
+          enum:
+          - not_found
+    OraclePriceError500Error:
+      type: object
+      required:
+      - code
+      properties:
+        code:
+          type: string
+          enum:
+          - internal_error
     OrderBookDto:
       type: object
       required:
@@ -5643,6 +4248,45 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TickDto'
+    PoolsError400BadRequest:
+      type: object
+      required:
+      - code
+      properties:
+        code:
+          type: string
+          enum:
+          - bad_request
+    PoolsError400Error:
+      oneOf:
+      - $ref: '#/components/schemas/PoolsError400BadRequest'
+      - $ref: '#/components/schemas/BadRequestErrorCodeErrorBody'
+      type: object
+      discriminator:
+        propertyName: code
+        mapping:
+          bad_request: '#/components/schemas/PoolsError400BadRequest'
+          invalid_body: '#/components/schemas/BadRequestErrorCodeErrorBody'
+          invalid_path: '#/components/schemas/BadRequestErrorCodeErrorBody'
+          invalid_query: '#/components/schemas/BadRequestErrorCodeErrorBody'
+    PoolsError404Error:
+      type: object
+      required:
+      - code
+      properties:
+        code:
+          type: string
+          enum:
+          - not_found
+    PoolsError500Error:
+      type: object
+      required:
+      - code
+      properties:
+        code:
+          type: string
+          enum:
+          - internal_error
     PubkeyDto:
       type: string
       format: pubkey
@@ -5720,6 +4364,24 @@ components:
           type: string
         id:
           type: string
+    SpotPositionError404Error:
+      type: object
+      required:
+      - code
+      properties:
+        code:
+          type: string
+          enum:
+          - not_found
+    SpotPositionError500Error:
+      type: object
+      required:
+      - code
+      properties:
+        code:
+          type: string
+          enum:
+          - internal_error
     SseResponse:
       oneOf:
       - $ref: '#/components/schemas/StreamInitalMessage'
@@ -5757,6 +4419,36 @@ components:
         total_deposits_usd:
           type: number
           format: double
+    StakingError400BadRequest:
+      type: object
+      required:
+      - code
+      properties:
+        code:
+          type: string
+          enum:
+          - bad_request
+    StakingError400Error:
+      oneOf:
+      - $ref: '#/components/schemas/StakingError400BadRequest'
+      - $ref: '#/components/schemas/BadRequestErrorCodeErrorBody'
+      type: object
+      discriminator:
+        propertyName: code
+        mapping:
+          bad_request: '#/components/schemas/StakingError400BadRequest'
+          invalid_body: '#/components/schemas/BadRequestErrorCodeErrorBody'
+          invalid_path: '#/components/schemas/BadRequestErrorCodeErrorBody'
+          invalid_query: '#/components/schemas/BadRequestErrorCodeErrorBody'
+    StakingError500Error:
+      type: object
+      required:
+      - code
+      properties:
+        code:
+          type: string
+          enum:
+          - internal_error
     StakingLeaderboardPositionDto:
       type: object
       required:
@@ -5856,6 +4548,36 @@ components:
           - string
           - 'null'
           format: date-time
+    StatsError400BadRequest:
+      type: object
+      required:
+      - code
+      properties:
+        code:
+          type: string
+          enum:
+          - bad_request
+    StatsError400Error:
+      oneOf:
+      - $ref: '#/components/schemas/StatsError400BadRequest'
+      - $ref: '#/components/schemas/BadRequestErrorCodeErrorBody'
+      type: object
+      discriminator:
+        propertyName: code
+        mapping:
+          bad_request: '#/components/schemas/StatsError400BadRequest'
+          invalid_body: '#/components/schemas/BadRequestErrorCodeErrorBody'
+          invalid_path: '#/components/schemas/BadRequestErrorCodeErrorBody'
+          invalid_query: '#/components/schemas/BadRequestErrorCodeErrorBody'
+    StatsError500Error:
+      type: object
+      required:
+      - code
+      properties:
+        code:
+          type: string
+          enum:
+          - internal_error
     StreamInitalMessage:
       type: object
       description: First message sent to the client containing stream id for subscription updates
@@ -6832,6 +5554,34 @@ components:
       enum:
       - open
       - closed
+    U128Dto:
+      type: string
+      format: uint128
+      description: Unsigned 128-bit integer represented as decimal string in JSON and OpenAPI.
+      example: '0'
+    U64Dto:
+      type: string
+      format: uint64
+      description: Unsigned 64-bit integer represented as decimal string in JSON and OpenAPI.
+      example: '0'
+    UpdateStreamSubscriptionError404Error:
+      type: object
+      required:
+      - code
+      properties:
+        code:
+          type: string
+          enum:
+          - not_found
+    UpdateStreamSubscriptionError500Error:
+      type: object
+      required:
+      - code
+      properties:
+        code:
+          type: string
+          enum:
+          - internal_error
     ValidationErrorCodeErrorBody:
       type: object
       required:
@@ -6928,6 +5678,45 @@ components:
         utilization:
           type: number
           format: double
+    VaultError400BadRequest:
+      type: object
+      required:
+      - code
+      properties:
+        code:
+          type: string
+          enum:
+          - bad_request
+    VaultError400Error:
+      oneOf:
+      - $ref: '#/components/schemas/VaultError400BadRequest'
+      - $ref: '#/components/schemas/BadRequestErrorCodeErrorBody'
+      type: object
+      discriminator:
+        propertyName: code
+        mapping:
+          bad_request: '#/components/schemas/VaultError400BadRequest'
+          invalid_body: '#/components/schemas/BadRequestErrorCodeErrorBody'
+          invalid_path: '#/components/schemas/BadRequestErrorCodeErrorBody'
+          invalid_query: '#/components/schemas/BadRequestErrorCodeErrorBody'
+    VaultError404Error:
+      type: object
+      required:
+      - code
+      properties:
+        code:
+          type: string
+          enum:
+          - not_found
+    VaultError500Error:
+      type: object
+      required:
+      - code
+      properties:
+        code:
+          type: string
+          enum:
+          - internal_error
     VaultStatsDto:
       type: object
       required:
