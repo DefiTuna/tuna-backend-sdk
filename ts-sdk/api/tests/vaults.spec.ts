@@ -47,8 +47,10 @@ describe("Single Vault", async () => {
     to: new Date(2025, 5, 1).toISOString().slice(0, 10),
   });
   expect(response_history.status).toBe(200);
-  expect(response_history.data?.data).toBeDefined();
-  const history = response_history.data!.data!;
+  if (response_history.status !== 200) {
+    throw new Error(`Expected 200 from getVaultHistory, got ${response_history.status}`);
+  }
+  const history = response_history.data.data;
 
   it("Returns vault data", () => {
     expect(vault.address).toBe(SOL_LENDING_VAULT);
