@@ -2915,26 +2915,6 @@ components:
           type: string
           enum:
           - internal_error
-    HashMap:
-      type: object
-      additionalProperties:
-        type: object
-        required:
-        - volume_usd
-        - fees_usd
-        - price_change
-        properties:
-          fees_usd:
-            type: number
-            format: double
-          price_change:
-            type: number
-            format: double
-          volume_usd:
-            type: number
-            format: double
-      propertyNames:
-        type: string
     HttpStatusData:
       type: object
       required:
@@ -4167,8 +4147,30 @@ components:
       - groups
       properties:
         groups:
-          $ref: '#/components/schemas/HashMap'
+          $ref: '#/components/schemas/PoolStatsGroupDto'
         tvl_usd:
+          type: number
+          format: double
+    PoolStatsGroupDto:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/PoolStatsGroupEntryDto'
+      propertyNames:
+        type: string
+    PoolStatsGroupEntryDto:
+      type: object
+      required:
+      - volume_usd
+      - fees_usd
+      - price_change
+      properties:
+        fees_usd:
+          type: number
+          format: double
+        price_change:
+          type: number
+          format: double
+        volume_usd:
           type: number
           format: double
     PoolSubscription:
