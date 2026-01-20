@@ -4395,6 +4395,14 @@ components:
       - $ref: '#/components/schemas/SnapshotContainer'
       discriminator:
         propertyName: entity
+        mapping:
+          initial_message: '#/components/schemas/StreamInitalMessage'
+          lending_position: '#/components/schemas/NotificationDto_LendingPositionDto'
+          order_history_entry: '#/components/schemas/NotificationDto_OrderHistoryEntryDto'
+          pool_swap: '#/components/schemas/NotificationDto_PoolSwapDto'
+          staking_position: '#/components/schemas/NotificationDto_StakingPositionDto'
+          state_snapshot: '#/components/schemas/SnapshotContainer'
+          trade_history_entry: '#/components/schemas/NotificationDto_TradeHistoryEntryDto'
     StakingDepositsStatsDto:
       type: object
       required:
