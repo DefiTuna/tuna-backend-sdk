@@ -1,13 +1,15 @@
-const snakeToCamel = (value: string) => value.replace(/_([a-z0-9])/g, (_, c: string) => c.toUpperCase());
+const snakeToCamel = (value: string) =>
+  value.replace(/_([a-z0-9])/g, (_, c: string) => c.toUpperCase());
 
-const camelToSnake = (value: string) => value.replace(/[A-Z]/g, c => `_${c.toLowerCase()}`);
+const camelToSnake = (value: string) =>
+  value.replace(/[A-Z]/g, (c) => `_${c.toLowerCase()}`);
 
 const isPlainObject = (value: unknown): value is Record<string, unknown> =>
   !!value && typeof value === "object" && Object.getPrototypeOf(value) === Object.prototype;
 
 const mapKeysDeep = (value: unknown, mapKey: (key: string) => string): unknown => {
   if (Array.isArray(value)) {
-    return value.map(item => mapKeysDeep(item, mapKey));
+    return value.map((item) => mapKeysDeep(item, mapKey));
   }
 
   if (isPlainObject(value)) {
