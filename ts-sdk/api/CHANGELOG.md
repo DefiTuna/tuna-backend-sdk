@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 3.1.0
+
+### Minor Changes
+
+- 04cbb74: feat: Use new OpenAPI doc (refactored, more strong typed variant)
+
 ## 3.0.4
 
 ### Patch Changes
