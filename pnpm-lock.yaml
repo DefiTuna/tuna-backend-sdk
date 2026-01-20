@@ -87,6 +87,9 @@ importers:
       yaml:
         specifier: ^2.8.2
         version: 2.8.2
+      zod:
+        specifier: 4.4.0-canary.20251231T055727
+        version: 4.4.0-canary.20251231T055727
 
 packages:
 
@@ -4031,6 +4034,9 @@ packages:
   yocto-queue@0.1.0:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
+
+  zod@4.4.0-canary.20251231T055727:
+    resolution: {integrity: sha512-DA8MD4aEoqk6bUns1eLDyG9k36RraJLlLyhfzsjYY5RDFaTfFSO0iBifX7oSSxiFq0R64KIMzskvVdzGtPXriw==}
 
 snapshots:
 
@@ -8558,3 +8564,5 @@ snapshots:
       yargs-parser: 21.1.1
 
   yocto-queue@0.1.0: {}
+
+  zod@4.4.0-canary.20251231T055727: {}

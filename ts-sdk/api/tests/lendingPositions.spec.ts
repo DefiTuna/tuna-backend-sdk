@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import { getLendingPosition, getLendingPositions, setTunaBaseUrl, unwrap } from "../src";
+import { TunaBackendSdk } from "../src";
+import { createClient } from "../src/client/client";
 
 import {
   SOL_LENDING_POSITION,
@@ -12,10 +13,21 @@ import {
 
 import "dotenv/config";
 
-setTunaBaseUrl(process.env.API_BASE_URL!);
+const sdk = new TunaBackendSdk({
+  client: createClient({
+    baseUrl: process.env.API_BASE_URL!,
+  }),
+});
+// setTunaBaseUrl(process.env.API_BASE_URL!);
 
 describe("All lending positions", async () => {
-  const data = await unwrap(getLendingPositions(TEST_WALLET_ADDRESS));
+  const data = (
+    await sdk.getLendingPositions({
+      path: {
+        userAddress: TEST_WALLET_ADDRESS,
+      },
+    })
+  ).data!.data;
 
   it("Has two test positions", () => {
     expect(data.length).toBeGreaterThanOrEqual(2);
@@ -25,7 +37,14 @@ describe("All lending positions", async () => {
 });
 
 describe("Single lending position", async () => {
-  const data = await unwrap(getLendingPosition(TEST_WALLET_ADDRESS, SOL_LENDING_POSITION));
+  const data = (
+    await sdk.getLendingPosition({
+      path: {
+        userAddress: TEST_WALLET_ADDRESS,
+        lendingPositionAddress: SOL_LENDING_POSITION,
+      },
+    })
+  ).data!.data;
 
   it("Poistion found", () => {
     expect(data).toBeDefined();

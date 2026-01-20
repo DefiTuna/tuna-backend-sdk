@@ -37,12 +37,27 @@ export default defineConfig({
         },
       ],
     },
-    // To automatically transform response data in your SDKs, set sdk.transformer to true.
+    // https://heyapi.dev/openapi-ts/plugins/zod
+    {
+      name: "zod",
+      types: {
+        infer: false, // by default, no `z.infer` types
+      },
+      responses: {
+        types: {
+          infer: true, // `z.infer` types only for response schemas
+        },
+      },
+    },
     {
       name: "@hey-api/sdk",
+      // To automatically transform response data in your SDKs, set sdk.transformer to true.
       transformer: true,
+      // To add data validators to your SDKs, set sdk.validator to true.
+      validator: true,
       operations: {
         strategy: "single",
+        containerName: "TunaBackendSdk",
       },
     },
   ],
