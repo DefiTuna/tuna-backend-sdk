@@ -91,8 +91,8 @@ describe("Limit orders filter by time", async () => {
         userAddress: TEST_WALLET_ADDRESS,
       },
       query: {
-        openedAtFrom: 1759968000000n,
-        openedAtTo: 1760054400000n,
+        openedAtFrom: 1759968000000,
+        openedAtTo: 1760054400000,
       },
     }),
   );

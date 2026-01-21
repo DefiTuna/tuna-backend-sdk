@@ -104,7 +104,6 @@ describe("Single trade history item", async () => {
       path: {
         userAddress: TEST_WALLET_ADDRESS,
       },
-      responseValidator: undefined,
     }),
   );
   const data = allData.filter(item => item.positionAddress === COMPLETED_LIMIT_ORDER)[0] || undefined;

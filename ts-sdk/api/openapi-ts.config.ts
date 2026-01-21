@@ -37,7 +37,7 @@ export default defineConfig({
     {
       name: "@hey-api/transformers",
       dates: true,
-      bigInt: true,
+      bigInt: false, // We use own transformer to bigint
       transformers: [stringIntToBigInt],
       typeTransformers: [
         ({ schema }) => {
