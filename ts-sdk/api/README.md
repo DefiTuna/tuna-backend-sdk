@@ -20,7 +20,9 @@ pnpm add @crypticdot/defituna-api
 ```ts
 import { TunaBackendSdk, createClient, unwrap } from "@crypticdot/defituna-api";
 
-const client = createClient({ baseUrl: "https://api.defituna.com/api" });
+const client = createClient({
+  baseUrl: "https://api.defituna.com/api",
+});
 const sdk = new TunaBackendSdk({ client });
 
 const positions = await unwrap(
@@ -51,14 +53,58 @@ const positions = await unwrap(
 SSE response transforms are maintained manually in `src/sseTransforms.ts`. The upstream transformer plugin does not handle the SSE union schema, so any changes to SSE payloads must be reflected here.
 
 If you add or modify SSE event types in `openapi.yaml`:
-1) Update the SSE schemas and discriminator mapping.
-2) Regenerate the SDK (`pnpm generate`).
-3) Update `src/sseTransforms.ts` to apply the correct transforms for the new event type.
+
+1. Update the SSE schemas and discriminator mapping.
+2. Regenerate the SDK (`pnpm generate`).
+3. Update `src/sseTransforms.ts` to apply the correct transforms for the new event type.
 
 ## Maintenance workflow
 
-1) Update `openapi.yaml`.
-2) Run `pnpm generate` (or `pnpm openapi-ts`).
-3) Verify generated output and postprocess changes.
-4) Update `src/sseTransforms.ts` if SSE payloads changed.
-5) Run `pnpm run lint` and `pnpm run test`.
+1. Update `openapi.yaml`.
+2. Run `pnpm generate` (or `pnpm openapi-ts`).
+3. Verify generated output and postprocess changes.
+4. Update `src/sseTransforms.ts` if SSE payloads changed.
+5. Run `pnpm run lint` and `pnpm run test`.
+
+## Global error behavior
+
+To throw on non-2xx responses for all SDK calls, set `throwOnError: true` on the client instance
+and attach the built-in interceptor that wraps errors as `TunaSdkError`:
+
+```ts
+import { TunaBackendSdk, createClient, tunaSdkErrorInterceptor } from "@crypticdot/defituna-api";
+
+const client = createClient({
+  baseUrl: "https://api.defituna.com/api",
+  throwOnError: true,
+});
+client.interceptors.error.use(tunaSdkErrorInterceptor);
+
+const sdk = new TunaBackendSdk({ client });
+```
+
+`TunaSdkError` includes the HTTP status and the original error payload in `cause`.
+
+If you already have a client, you can also enable it later:
+
+```ts
+import { client, tunaSdkErrorInterceptor } from "@crypticdot/defituna-api";
+
+client.setConfig({ throwOnError: true });
+client.interceptors.error.use(tunaSdkErrorInterceptor);
+```
+
+When `responseStyle` is set to `"data"`, SDK calls return only the response payload
+(no `{ data, error, request, response }` wrapper). This is useful for simpler call sites:
+
+```ts
+import { TunaBackendSdk, createClient } from "@crypticdot/defituna-api";
+
+const client = createClient({
+  baseUrl: "https://api.defituna.com/api",
+  responseStyle: "data",
+});
+
+const sdk = new TunaBackendSdk({ client });
+const vaults = await sdk.getVaults();
+```

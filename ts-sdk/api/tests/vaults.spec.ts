@@ -70,19 +70,19 @@ describe("Single Vault", async () => {
   });
 
   it("Returns 404 for unsaved vault", async () => {
-    const response = await sdk.getVault({
+    const { response } = await sdk.getVault({
       path: {
         vaultAddress: unsavedVaultAddress,
       },
     });
-    expect(response.response.status).toBe(404);
+    expect(response.status).toBe(404);
   });
   it("Returns 400 for invalid vault", async () => {
-    const response = await sdk.getVault({
+    const { response } = await sdk.getVault({
       path: {
         vaultAddress: "123",
       },
     });
-    expect(response.response.status).toBe(400);
+    expect(response.status).toBe(400);
   });
 });

@@ -43,19 +43,19 @@ describe("Single Market", async () => {
   });
 
   it("Returns 404 for unsaved market", async () => {
-    const response = await sdk.getMarket({
+    const { response } = await sdk.getMarket({
       path: {
         marketAddress: unsavedMarketAddress,
       },
     });
-    expect(response.response.status).toBe(404);
+    expect(response.status).toBe(404);
   });
   it("Returns 400 for invalid market", async () => {
-    const response = await sdk.getMarket({
+    const { response } = await sdk.getMarket({
       path: {
         marketAddress: "123",
       },
     });
-    expect(response.response.status).toBe(400);
+    expect(response.status).toBe(400);
   });
 });

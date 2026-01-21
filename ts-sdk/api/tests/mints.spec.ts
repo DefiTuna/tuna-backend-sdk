@@ -38,19 +38,19 @@ describe("Single Mint", async () => {
   });
 
   it("Returns 404 for unsaved mint", async () => {
-    const response = await sdk.getMint({
+    const { response } = await sdk.getMint({
       path: {
         mintAddress: unsavedMintAddress,
       },
     });
-    expect(response.response.status).toBe(404);
+    expect(response.status).toBe(404);
   });
   it("Returns 400 for invalid mint", async () => {
-    const response = await sdk.getMint({
+    const { response } = await sdk.getMint({
       path: {
         mintAddress: "123",
       },
     });
-    expect(response.response.status).toBe(400);
+    expect(response.status).toBe(400);
   });
 });

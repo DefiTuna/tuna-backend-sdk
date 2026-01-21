@@ -27,20 +27,20 @@ describe("Single Pool", async () => {
   });
 
   it("Returns 404 for unsaved pool", async () => {
-    const response = await sdk.getPool({
+    const { response } = await sdk.getPool({
       path: {
         poolAddress: unsavedPoolAddress,
       },
     });
-    expect(response.response.status).toBe(404);
+    expect(response.status).toBe(404);
   });
   it("Returns 400 for invalid pool", async () => {
-    const response = await sdk.getPool({
+    const { response } = await sdk.getPool({
       path: {
         poolAddress: "123",
       },
     });
-    expect(response.response.status).toBe(400);
+    expect(response.status).toBe(400);
   });
 });
 
