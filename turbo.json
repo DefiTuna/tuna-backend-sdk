@@ -3,7 +3,8 @@
   "tasks": {
     "build": {
       "dependsOn": [
-        "^build"
+        "^build",
+        "generate"
       ],
       "inputs": [
         "$TURBO_DEFAULT$",
@@ -11,6 +12,12 @@
       ],
       "outputs": [
         "dist/**"
+      ]
+    },
+    "generate": {
+      "outputs": [
+        "src/client/**",
+        "openapi.camel.yaml"
       ]
     },
     "lint": {},

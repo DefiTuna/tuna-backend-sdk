@@ -15,7 +15,8 @@
     "README.md"
   ],
   "scripts": {
-    "build": "pnpm build:dist && pnpm openapi-ts",
+    "generate": "pnpm openapi-ts",
+    "build": "pnpm build:dist",
     "openapi-ts": "node scripts/camelize-openapi.mjs && openapi-ts && node scripts/postprocess-openapi-ts.mjs",
     "build:dist": "tsup src/index.ts --format cjs,esm --dts",
     "eslint": "eslint \"**/*.ts\"",
