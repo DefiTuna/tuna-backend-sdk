@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 4.0.0
+
+### Major Changes
+
+- 7b62809: feat: New API SDK implementation based on hey-api
+
 ## 3.1.2
 
 ### Patch Changes
