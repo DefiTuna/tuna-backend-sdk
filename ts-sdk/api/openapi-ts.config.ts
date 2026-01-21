@@ -29,6 +29,10 @@ export default defineConfig({
   },
   plugins: [
     {
+      name: "@hey-api/client-fetch",
+      runtimeConfigPath: "../hey-api.ts",
+    },
+    {
       enums: "javascript",
       name: "@hey-api/typescript",
     },
@@ -65,6 +69,9 @@ export default defineConfig({
       transformer: true,
       // To add data validators to your SDKs, set sdk.validator to true.
       validator: true,
+      // Specify parameters by name without segmentation, i.e.:
+      // not {path: {userWallet: "123"}}, but a: {userWallet: 123}
+      paramsStructure: "flat",
       operations: {
         strategy: "single",
         containerName: "TunaBackendSdk",

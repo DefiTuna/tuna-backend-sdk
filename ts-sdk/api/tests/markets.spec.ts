@@ -31,9 +31,7 @@ describe("Single Market", async () => {
   const unsavedMarketAddress = "FeR8VBqNRSUD5NtXAj2n3j1dAHkZHfyDktKuLXD4pump";
   const market = await unwrap(
     sdk.getMarket({
-      path: {
-        marketAddress: sampleMarketAddress,
-      },
+      marketAddress: sampleMarketAddress,
     }),
   );
 
@@ -44,17 +42,13 @@ describe("Single Market", async () => {
 
   it("Returns 404 for unsaved market", async () => {
     const { response } = await sdk.getMarket({
-      path: {
-        marketAddress: unsavedMarketAddress,
-      },
+      marketAddress: unsavedMarketAddress,
     });
     expect(response.status).toBe(404);
   });
   it("Returns 400 for invalid market", async () => {
     const { response } = await sdk.getMarket({
-      path: {
-        marketAddress: "123",
-      },
+      marketAddress: "123",
     });
     expect(response.status).toBe(400);
   });

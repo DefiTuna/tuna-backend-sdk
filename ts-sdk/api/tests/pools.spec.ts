@@ -15,9 +15,7 @@ describe("Single Pool", async () => {
   const unsavedPoolAddress = "FeR8VBqNRSUD5NtXAj2n3j1dAHkZHfyDktKuLXD4pump";
   const pool = await unwrap(
     sdk.getPool({
-      path: {
-        poolAddress: samplePoolAddress,
-      },
+      poolAddress: samplePoolAddress,
     }),
   );
 
@@ -28,17 +26,13 @@ describe("Single Pool", async () => {
 
   it("Returns 404 for unsaved pool", async () => {
     const { response } = await sdk.getPool({
-      path: {
-        poolAddress: unsavedPoolAddress,
-      },
+      poolAddress: unsavedPoolAddress,
     });
     expect(response.status).toBe(404);
   });
   it("Returns 400 for invalid pool", async () => {
     const { response } = await sdk.getPool({
-      path: {
-        poolAddress: "123",
-      },
+      poolAddress: "123",
     });
     expect(response.status).toBe(400);
   });
@@ -47,9 +41,7 @@ describe("Single Pool", async () => {
 describe("Pool Ticks", async () => {
   const poolTicks = await unwrap(
     sdk.getPoolTicks({
-      path: {
-        poolAddress: "FwewVm8u6tFPGewAyHmWAqad9hmF7mvqxK4mJ7iNqqGC",
-      },
+      poolAddress: "FwewVm8u6tFPGewAyHmWAqad9hmF7mvqxK4mJ7iNqqGC",
     }),
   );
 
@@ -65,9 +57,7 @@ describe("Pool swaps", async () => {
   const nowTimestampSeconds = Date.now() / 1000;
   const poolSwaps = await unwrap(
     sdk.getPoolSwaps({
-      path: {
-        poolAddress: SOL_USDC_ORCA_POOL_ADDRESS,
-      },
+      poolAddress: SOL_USDC_ORCA_POOL_ADDRESS,
     }),
   );
 

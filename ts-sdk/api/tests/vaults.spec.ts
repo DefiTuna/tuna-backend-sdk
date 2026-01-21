@@ -40,19 +40,13 @@ describe("Single Vault", async () => {
   const unsavedVaultAddress = "FeR8VBqNRSUD5NtXAj2n3j1dAHkZHfyDktKuLXD4pump";
   const vault = await unwrap(
     sdk.getVault({
-      path: {
-        vaultAddress: SOL_LENDING_VAULT,
-      },
+      vaultAddress: SOL_LENDING_VAULT,
     }),
   );
   const responseHistory = await sdk.getVaultHistory({
-    path: {
-      vaultAddress: SOL_LENDING_VAULT,
-    },
-    query: {
-      from: new Date(2025, 3, 1).toISOString().slice(0, 10),
-      to: new Date(2025, 5, 1).toISOString().slice(0, 10),
-    },
+    vaultAddress: SOL_LENDING_VAULT,
+    from: new Date(2025, 3, 1).toISOString().slice(0, 10),
+    to: new Date(2025, 5, 1).toISOString().slice(0, 10),
   });
   expect(responseHistory.response.status).toBe(200);
   if (responseHistory.response.status !== 200) {
@@ -71,17 +65,13 @@ describe("Single Vault", async () => {
 
   it("Returns 404 for unsaved vault", async () => {
     const { response } = await sdk.getVault({
-      path: {
-        vaultAddress: unsavedVaultAddress,
-      },
+      vaultAddress: unsavedVaultAddress,
     });
     expect(response.status).toBe(404);
   });
   it("Returns 400 for invalid vault", async () => {
     const { response } = await sdk.getVault({
-      path: {
-        vaultAddress: "123",
-      },
+      vaultAddress: "123",
     });
     expect(response.status).toBe(400);
   });

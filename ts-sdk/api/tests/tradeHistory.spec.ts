@@ -14,9 +14,7 @@ import { sdk } from "./sdk";
 describe("All trade history events", async () => {
   const data = await unwrap(
     sdk.getTradeHistory({
-      path: {
-        userAddress: TEST_WALLET_ADDRESS,
-      },
+      userAddress: TEST_WALLET_ADDRESS,
     }),
   );
 
@@ -32,12 +30,8 @@ describe("All trade history events", async () => {
 describe("Trade history filter by pool", async () => {
   const data = await unwrap(
     sdk.getTradeHistory({
-      path: {
-        userAddress: TEST_WALLET_ADDRESS,
-      },
-      query: {
-        pool: [SOL_USDC_FUSION_POOL_ADDRESS],
-      },
+      userAddress: TEST_WALLET_ADDRESS,
+      pool: [SOL_USDC_FUSION_POOL_ADDRESS],
     }),
   );
   it("Can filter by pool", () => {
@@ -49,12 +43,8 @@ describe("Trade history filter by pool", async () => {
 describe("Trade history filter by two pools", async () => {
   const data = await unwrap(
     sdk.getTradeHistory({
-      path: {
-        userAddress: TEST_WALLET_ADDRESS,
-      },
-      query: {
-        pool: [SOL_USDC_FUSION_POOL_ADDRESS, TUNA_USDC_FUSION_POOL_ADDRESS],
-      },
+      userAddress: TEST_WALLET_ADDRESS,
+      pool: [SOL_USDC_FUSION_POOL_ADDRESS, TUNA_USDC_FUSION_POOL_ADDRESS],
     }),
   );
   it("Can filter by two pools", () => {
@@ -67,12 +57,8 @@ describe("Trade history filter by two pools", async () => {
 describe("Trade history filter by action type", async () => {
   const data = await unwrap(
     sdk.getTradeHistory({
-      path: {
-        userAddress: TEST_WALLET_ADDRESS,
-      },
-      query: {
-        action: [TradeHistoryAction.LIMIT_ORDER_FILL],
-      },
+      userAddress: TEST_WALLET_ADDRESS,
+      action: [TradeHistoryAction.LIMIT_ORDER_FILL],
     }),
   );
   it("Can filter by action type", () => {
@@ -84,12 +70,8 @@ describe("Trade history filter by action type", async () => {
 describe("Trade history filter by ui direction", async () => {
   const data = await unwrap(
     sdk.getTradeHistory({
-      path: {
-        userAddress: TEST_WALLET_ADDRESS,
-      },
-      query: {
-        uiDirection: [TradeHistoryUiDirection.BUY],
-      },
+      userAddress: TEST_WALLET_ADDRESS,
+      uiDirection: [TradeHistoryUiDirection.BUY],
     }),
   );
   it("Can filter by ui direction", () => {
@@ -101,9 +83,7 @@ describe("Trade history filter by ui direction", async () => {
 describe("Single trade history item", async () => {
   const allData = await unwrap(
     sdk.getTradeHistory({
-      path: {
-        userAddress: TEST_WALLET_ADDRESS,
-      },
+      userAddress: TEST_WALLET_ADDRESS,
     }),
   );
   const data = allData.filter(item => item.positionAddress === COMPLETED_LIMIT_ORDER)[0] || undefined;

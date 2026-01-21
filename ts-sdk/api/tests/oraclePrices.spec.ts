@@ -53,9 +53,7 @@ describe("Single Oracle Price", async () => {
   const nowTimestampSeconds = Date.now() / 1000;
   const oraclePrice = await unwrap(
     sdk.getOraclePrice({
-      path: {
-        mintAddress: SOL_MINT,
-      },
+      mintAddress: SOL_MINT,
     }),
   );
 
@@ -70,17 +68,13 @@ describe("Single Oracle Price", async () => {
   });
   it("Returns 404 for unsaved mint", async () => {
     const { response } = await sdk.getOraclePrice({
-      path: {
-        mintAddress: unsavedMintAddress,
-      },
+      mintAddress: unsavedMintAddress,
     });
     expect(response.status).toBe(404);
   });
   it("Returns 400 for invalid mint", async () => {
     const { response } = await sdk.getOraclePrice({
-      path: {
-        mintAddress: "123",
-      },
+      mintAddress: "123",
     });
     expect(response.status).toBe(400);
   });

@@ -14,9 +14,7 @@ import { sdk } from "./sdk";
 describe("All lending positions", async () => {
   const data = await unwrap(
     sdk.getLendingPositions({
-      path: {
-        userAddress: TEST_WALLET_ADDRESS,
-      },
+      userAddress: TEST_WALLET_ADDRESS,
     }),
   );
 
@@ -30,10 +28,8 @@ describe("All lending positions", async () => {
 describe("Single lending position", async () => {
   const data = await unwrap(
     sdk.getLendingPosition({
-      path: {
-        userAddress: TEST_WALLET_ADDRESS,
-        lendingPositionAddress: SOL_LENDING_POSITION,
-      },
+      userAddress: TEST_WALLET_ADDRESS,
+      lendingPositionAddress: SOL_LENDING_POSITION,
     }),
   );
 

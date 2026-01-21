@@ -21,9 +21,7 @@ import { sdk } from "./sdk";
 describe("All LP positions", async () => {
   const data = await unwrap(
     sdk.getTunaPositions({
-      path: {
-        userAddress: TEST_WALLET_ADDRESS,
-      },
+      userAddress: TEST_WALLET_ADDRESS,
     }),
   );
 
@@ -37,10 +35,8 @@ describe("All LP positions", async () => {
 describe("Single LP position", async () => {
   const data = await unwrap(
     sdk.getTunaPosition({
-      path: {
-        userAddress: TEST_WALLET_ADDRESS,
-        positionAddress: LP_POSITION_WITHOUT_LEVERAGE,
-      },
+      userAddress: TEST_WALLET_ADDRESS,
+      positionAddress: LP_POSITION_WITHOUT_LEVERAGE,
     }),
   );
 
@@ -96,9 +92,7 @@ describe("Single LP position", async () => {
 describe("All historical LP positions", async () => {
   const data = await unwrap(
     sdk.getLpPositions({
-      path: {
-        userAddress: TEST_WALLET_ADDRESS,
-      },
+      userAddress: TEST_WALLET_ADDRESS,
     }),
   );
 
@@ -112,12 +106,8 @@ describe("All historical LP positions", async () => {
 describe("Historical LP positions by open state", async () => {
   const data = await unwrap(
     sdk.getLpPositions({
-      path: {
-        userAddress: TEST_WALLET_ADDRESS,
-      },
-      query: {
-        state: [TunaPositionDtoState.OPEN],
-      },
+      userAddress: TEST_WALLET_ADDRESS,
+      state: [TunaPositionDtoState.OPEN],
     }),
   );
   it("Can filter by state", () => {
@@ -128,12 +118,8 @@ describe("Historical LP positions by open state", async () => {
 describe("Historical LP positions by non-existing states", async () => {
   const data = await unwrap(
     sdk.getLpPositions({
-      path: {
-        userAddress: TEST_WALLET_ADDRESS,
-      },
-      query: {
-        state: [TunaPositionDtoState.LIQUIDATED, TunaPositionDtoState.CLOSED_BY_LIMIT_ORDER],
-      },
+      userAddress: TEST_WALLET_ADDRESS,
+      state: [TunaPositionDtoState.LIQUIDATED, TunaPositionDtoState.CLOSED_BY_LIMIT_ORDER],
     }),
   );
   it("Can filter by state", () => {
@@ -144,12 +130,8 @@ describe("Historical LP positions by non-existing states", async () => {
 describe("Historical LP positions by pool", async () => {
   const data = await unwrap(
     sdk.getLpPositions({
-      path: {
-        userAddress: TEST_WALLET_ADDRESS,
-      },
-      query: {
-        liquidityPool: [SOL_USDC_ORCA_POOL_ADDRESS],
-      },
+      userAddress: TEST_WALLET_ADDRESS,
+      liquidityPool: [SOL_USDC_ORCA_POOL_ADDRESS],
     }),
   );
   it("Can filter by pool", () => {
@@ -160,10 +142,8 @@ describe("Historical LP positions by pool", async () => {
 describe("List LP positions actions", async () => {
   const data = await unwrap(
     sdk.getLpPositionActions({
-      path: {
-        userAddress: TEST_WALLET_ADDRESS,
-        positionAddress: LP_POSITION_WITHOUT_LEVERAGE,
-      },
+      userAddress: TEST_WALLET_ADDRESS,
+      positionAddress: LP_POSITION_WITHOUT_LEVERAGE,
     }),
   );
 
@@ -177,10 +157,8 @@ describe("List LP positions actions", async () => {
 describe("Open position action", async () => {
   const allData = await unwrap(
     sdk.getLpPositionActions({
-      path: {
-        userAddress: TEST_WALLET_ADDRESS,
-        positionAddress: LP_POSITION_WITH_LEVERAGE,
-      },
+      userAddress: TEST_WALLET_ADDRESS,
+      positionAddress: LP_POSITION_WITH_LEVERAGE,
     }),
   );
 
@@ -217,10 +195,8 @@ describe("Open position action", async () => {
 describe("Increase liquidity action", async () => {
   const allData = await unwrap(
     sdk.getLpPositionActions({
-      path: {
-        userAddress: TEST_WALLET_ADDRESS,
-        positionAddress: LP_POSITION_WITH_LEVERAGE,
-      },
+      userAddress: TEST_WALLET_ADDRESS,
+      positionAddress: LP_POSITION_WITH_LEVERAGE,
     }),
   );
 

@@ -1,8 +1,8 @@
-export class TunaSdkError extends Error {
-  cause?: unknown;
+export class TunaBackendSdkError<TCause = unknown> extends Error {
+  cause?: TCause;
   status: number;
 
-  constructor(message: string, status: number, cause?: unknown) {
+  constructor(message: string, status: number, cause?: TCause) {
     super(message);
     this.name = "TunaSdkError";
     this.status = status;
@@ -16,5 +16,8 @@ export class TunaSdkError extends Error {
 export const tunaSdkErrorInterceptor = (error: unknown, response?: Response) => {
   const status = response?.status ?? 0;
   const message = status ? `HTTP ${status}` : "Network error";
-  return new TunaSdkError(message, status, error);
+  return new TunaBackendSdkError(message, status, error);
 };
+
+export const isTunaSdkError = <TCause = unknown>(error: unknown): error is TunaBackendSdkError<TCause> =>
+  error instanceof TunaBackendSdkError;

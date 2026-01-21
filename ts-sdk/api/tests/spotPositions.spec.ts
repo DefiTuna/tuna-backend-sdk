@@ -8,9 +8,7 @@ import { sdk } from "./sdk";
 describe("All spot positions", async () => {
   const data = await unwrap(
     sdk.getSpotPositions({
-      path: {
-        userAddress: TEST_WALLET_ADDRESS,
-      },
+      userAddress: TEST_WALLET_ADDRESS,
     }),
   );
 

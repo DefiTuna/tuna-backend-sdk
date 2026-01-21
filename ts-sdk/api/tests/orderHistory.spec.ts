@@ -15,9 +15,7 @@ import { sdk } from "./sdk";
 describe("All order history", async () => {
   const data = await unwrap(
     sdk.getOrderHistory({
-      path: {
-        userAddress: TEST_WALLET_ADDRESS,
-      },
+      userAddress: TEST_WALLET_ADDRESS,
     }),
   );
 
@@ -32,12 +30,8 @@ describe("All order history", async () => {
 describe("Order history filter by pool", async () => {
   const data = await unwrap(
     sdk.getOrderHistory({
-      path: {
-        userAddress: TEST_WALLET_ADDRESS,
-      },
-      query: {
-        pool: [SOL_USDC_FUSION_POOL_ADDRESS],
-      },
+      userAddress: TEST_WALLET_ADDRESS,
+      pool: [SOL_USDC_FUSION_POOL_ADDRESS],
     }),
   );
   it("Can filter by pool", () => {
@@ -49,12 +43,8 @@ describe("Order history filter by pool", async () => {
 describe("Order history filter by two pools", async () => {
   const data = await unwrap(
     sdk.getOrderHistory({
-      path: {
-        userAddress: TEST_WALLET_ADDRESS,
-      },
-      query: {
-        pool: [SOL_USDC_FUSION_POOL_ADDRESS, TUNA_USDC_FUSION_POOL_ADDRESS],
-      },
+      userAddress: TEST_WALLET_ADDRESS,
+      pool: [SOL_USDC_FUSION_POOL_ADDRESS, TUNA_USDC_FUSION_POOL_ADDRESS],
     }),
   );
   it("Can filter by two pools", () => {
@@ -67,12 +57,8 @@ describe("Order history filter by two pools", async () => {
 describe("Order history filter by order type", async () => {
   const data = await unwrap(
     sdk.getOrderHistory({
-      path: {
-        userAddress: TEST_WALLET_ADDRESS,
-      },
-      query: {
-        orderType: [OrderHistoryType.LIMIT],
-      },
+      userAddress: TEST_WALLET_ADDRESS,
+      orderType: [OrderHistoryType.LIMIT],
     }),
   );
   it("Can filter by order type", () => {
@@ -84,12 +70,8 @@ describe("Order history filter by order type", async () => {
 describe("Order history filter by ui direction", async () => {
   const data = await unwrap(
     sdk.getOrderHistory({
-      path: {
-        userAddress: TEST_WALLET_ADDRESS,
-      },
-      query: {
-        uiDirection: [OrderHistoryUiDirection.BUY],
-      },
+      userAddress: TEST_WALLET_ADDRESS,
+      uiDirection: [OrderHistoryUiDirection.BUY],
     }),
   );
   it("Can filter by ui direction", () => {
@@ -101,9 +83,7 @@ describe("Order history filter by ui direction", async () => {
 describe("Single order history item", async () => {
   const allData = await unwrap(
     sdk.getOrderHistory({
-      path: {
-        userAddress: TEST_WALLET_ADDRESS,
-      },
+      userAddress: TEST_WALLET_ADDRESS,
     }),
   );
   const data = allData.filter(item => item.positionAddress === COMPLETED_LIMIT_ORDER)[0] || undefined;

@@ -59,8 +59,7 @@ const nextEvent = async (signal: AbortSignal, stream: AsyncGenerator<SseResponse
 describe("Pool swaps stream", { timeout: 30000 }, async () => {
   it("Receives swap", async ({ signal }) => {
     const stream = await createStream(signal);
-
-    const firstEvent = await nextEvent(signal, stream);
+    const firstEvent = await stream.next();
     const rawData = firstEvent.value;
     let streamId: string | undefined;
     if (eventIsInitialMessage(rawData)) {
@@ -82,8 +81,8 @@ describe("Pool swaps stream", { timeout: 30000 }, async () => {
     };
     await unwrap(
       sdk.updateStreamSubscription({
-        path: { streamId: streamId! },
-        body: subscription,
+        streamId: streamId!,
+        subscriptionOptions: subscription,
       }),
     );
     let poolSwapFound = false;
@@ -131,8 +130,8 @@ describe("Order book stream", { timeout: 30000 }, async () => {
     };
     await unwrap(
       sdk.updateStreamSubscription({
-        path: { streamId: streamId! },
-        body: subscription,
+        streamId: streamId!,
+        subscriptionOptions: subscription,
       }),
     );
     let orderBookFound = false;

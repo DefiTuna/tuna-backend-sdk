@@ -1,4 +1,4 @@
-import { TunaSdkError } from "./error";
+import { TunaBackendSdkError } from "./error";
 
 type SdkSuccess<TData = unknown> = {
   data: TData;
@@ -42,7 +42,7 @@ export async function unwrap<T>(promise: Promise<T>): Promise<UnwrapReturn<T>> {
     const sdkRes = res as SdkResponse;
 
     if ("error" in sdkRes && sdkRes.error !== undefined) {
-      throw new TunaSdkError(String(sdkRes.error), sdkRes.response?.status ?? 0, sdkRes.error);
+      throw new TunaBackendSdkError(String(sdkRes.error), sdkRes.response?.status ?? 0, sdkRes.error);
     }
 
     if ("data" in sdkRes) {

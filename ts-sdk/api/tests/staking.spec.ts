@@ -9,16 +9,12 @@ describe("Staking", async () => {
   const treasury = await unwrap(sdk.getStakingTreasury());
   const position = await unwrap(
     sdk.getUserStakingPosition({
-      path: {
-        userAddress: TEST_WALLET_ADDRESS,
-      },
+      userAddress: TEST_WALLET_ADDRESS,
     }),
   );
   const history = await unwrap(
     sdk.getUserStakingPositionHistory({
-      path: {
-        userAddress: TEST_WALLET_ADDRESS,
-      },
+      userAddress: TEST_WALLET_ADDRESS,
     }),
   );
 
@@ -38,17 +34,21 @@ describe("Staking", async () => {
 describe("Staking leaderboard", async () => {
   const firstPage = await unwrap(
     sdk.getStakingLeaderboard({
-      query: { page: 1, pageSize: 10 },
+      page: 1,
+      pageSize: 10,
     }),
   );
   const secondPage = await unwrap(
     sdk.getStakingLeaderboard({
-      query: { page: 2, pageSize: 20 },
+      page: 2,
+      pageSize: 20,
     }),
   );
   const searchPage = await unwrap(
     sdk.getStakingLeaderboard({
-      query: { page: 1, pageSize: 20, search: "c31" },
+      page: 1,
+      pageSize: 20,
+      search: "c31",
     }),
   );
 
@@ -72,10 +72,8 @@ describe("Staking leaderboard", async () => {
 describe("Staking Revenue", async () => {
   const stats = await unwrap(
     sdk.getStakingRevenueStats({
-      query: {
-        from: new Date("2025-01-01").toISOString().slice(0, 10),
-        to: new Date("2025-07-30").toISOString().slice(0, 10),
-      },
+      from: new Date("2025-01-01").toISOString().slice(0, 10),
+      to: new Date("2025-07-30").toISOString().slice(0, 10),
     }),
   );
 

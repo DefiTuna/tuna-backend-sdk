@@ -1,7 +1,7 @@
 {
     "extends": "@crypticdot/typescript-config/base.json",
     "include": ["src", "tests", "openapi-ts.config.ts"],
-    "exclude": ["node_modules"],
+    "exclude": ["node_modules", "src/client"],
     "compilerOptions": {
       "baseUrl": ".",
       "paths": {}

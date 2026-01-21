@@ -8,9 +8,7 @@ import { sdk } from "./sdk";
 describe("Staking position", async () => {
   const data = await unwrap(
     sdk.getUserStakingPosition({
-      path: {
-        userAddress: TEST_WALLET_ADDRESS,
-      },
+      userAddress: TEST_WALLET_ADDRESS,
     }),
   );
 
@@ -43,9 +41,7 @@ describe("Staking position", async () => {
 describe("Staking position history", async () => {
   const data = await unwrap(
     sdk.getUserStakingPositionHistory({
-      path: {
-        userAddress: TEST_WALLET_ADDRESS,
-      },
+      userAddress: TEST_WALLET_ADDRESS,
     }),
   );
 
