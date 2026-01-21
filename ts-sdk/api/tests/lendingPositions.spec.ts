@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { TunaBackendSdk } from "../src";
-import { createClient } from "../src/client/client";
+import { unwrap } from "../src";
 
 import {
   SOL_LENDING_POSITION,
@@ -10,24 +9,16 @@ import {
   TEST_WALLET_ADDRESS,
   USDC_LENDING_POSITION,
 } from "./consts";
-
-import "dotenv/config";
-
-const sdk = new TunaBackendSdk({
-  client: createClient({
-    baseUrl: process.env.API_BASE_URL!,
-  }),
-});
-// setTunaBaseUrl(process.env.API_BASE_URL!);
+import { sdk } from "./sdk";
 
 describe("All lending positions", async () => {
-  const data = (
-    await sdk.getLendingPositions({
+  const data = await unwrap(
+    sdk.getLendingPositions({
       path: {
         userAddress: TEST_WALLET_ADDRESS,
       },
-    })
-  ).data!.data;
+    }),
+  );
 
   it("Has two test positions", () => {
     expect(data.length).toBeGreaterThanOrEqual(2);
@@ -37,14 +28,14 @@ describe("All lending positions", async () => {
 });
 
 describe("Single lending position", async () => {
-  const data = (
-    await sdk.getLendingPosition({
+  const data = await unwrap(
+    sdk.getLendingPosition({
       path: {
         userAddress: TEST_WALLET_ADDRESS,
         lendingPositionAddress: SOL_LENDING_POSITION,
       },
-    })
-  ).data!.data;
+    }),
+  );
 
   it("Poistion found", () => {
     expect(data).toBeDefined();

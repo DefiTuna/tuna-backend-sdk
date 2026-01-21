@@ -1,21 +1,18 @@
 import { describe, expect, it } from "vitest";
 
-import {
-  getUserStakingPosition,
-  getUserStakingPositionHistory,
-  setTunaBaseUrl,
-  StakingPositionActionType,
-  unwrap,
-} from "../src";
+import { StakingPositionActionType, unwrap } from "../src";
 
 import { TEST_WALLET_ADDRESS } from "./consts";
-
-import "dotenv/config";
-
-setTunaBaseUrl(process.env.API_BASE_URL!);
+import { sdk } from "./sdk";
 
 describe("Staking position", async () => {
-  const data = await unwrap(getUserStakingPosition(TEST_WALLET_ADDRESS));
+  const data = await unwrap(
+    sdk.getUserStakingPosition({
+      path: {
+        userAddress: TEST_WALLET_ADDRESS,
+      },
+    }),
+  );
 
   it("Correct addresses", () => {
     expect(data.owner).toBe(TEST_WALLET_ADDRESS);
@@ -44,7 +41,13 @@ describe("Staking position", async () => {
 });
 
 describe("Staking position history", async () => {
-  const data = await unwrap(getUserStakingPositionHistory(TEST_WALLET_ADDRESS));
+  const data = await unwrap(
+    sdk.getUserStakingPositionHistory({
+      path: {
+        userAddress: TEST_WALLET_ADDRESS,
+      },
+    }),
+  );
 
   it("Has one history record", () => {
     expect(data.length).toBe(1);
@@ -52,7 +55,7 @@ describe("Staking position history", async () => {
 
   it("Correct data", () => {
     expect(data[0].position).toBe("85nfr3udqu82EumQZh7bE5XKybH17qKQc7JEMyH9KEr4");
-    expect(data[0].action).toBe(StakingPositionActionType.stake);
+    expect(data[0].action).toBe(StakingPositionActionType.STAKE);
     expect(data[0].amount).toBe(10000000n);
     expect(data[0].time).toEqual(new Date("2025-08-21T23:03:11Z"));
     expect(data[0].txSignature).toBe(

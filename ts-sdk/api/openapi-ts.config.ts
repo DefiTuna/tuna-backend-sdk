@@ -3,16 +3,22 @@ import ts from "typescript";
 
 const stringIntFormats = new Set(["int64", "uint64", "int128", "uint128"]);
 
-const stringIntToBigInt = ({ schema, dataExpression }: any) => {
-  if (schema.type !== "string" || !stringIntFormats.has(schema.format)) return;
+type TransformerInput = {
+  schema: {
+    type?: string;
+    format?: string;
+  };
+  dataExpression?: Parameters<typeof $.expr>[0] | string;
+};
 
-  const bigIntCall =
-    dataExpression !== undefined ? $("BigInt").call($.expr(dataExpression).attr("toString").call()) : undefined;
+const stringIntToBigInt = ({ schema, dataExpression }: TransformerInput) => {
+  if (schema.type !== "string" || !schema.format || !stringIntFormats.has(schema.format)) return;
+  if (dataExpression === undefined) return;
 
-  if (bigIntCall) {
-    if (typeof dataExpression === "string") return [bigIntCall];
-    return [$.expr(dataExpression).assign(bigIntCall)];
-  }
+  const bigIntCall = $("BigInt").call($.expr(dataExpression).attr("toString").call());
+
+  if (typeof dataExpression === "string") return [bigIntCall];
+  return [$.expr(dataExpression).assign(bigIntCall)];
 };
 
 export default defineConfig({
@@ -22,6 +28,10 @@ export default defineConfig({
     path: "src/client",
   },
   plugins: [
+    {
+      enums: "javascript",
+      name: "@hey-api/typescript",
+    },
     // ...other plugins
     // In your configuration, add @hey-api/transformers to your plugins and you'll be ready to generate transformers.
     {
@@ -31,7 +41,7 @@ export default defineConfig({
       transformers: [stringIntToBigInt],
       typeTransformers: [
         ({ schema }) => {
-          if (schema.type === "string" && stringIntFormats.has(schema.format as string)) {
+          if (schema.type === "string" && schema.format && stringIntFormats.has(schema.format)) {
             return ts.factory.createKeywordTypeNode(ts.SyntaxKind.BigIntKeyword);
           }
         },

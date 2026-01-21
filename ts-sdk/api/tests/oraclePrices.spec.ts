@@ -1,19 +1,16 @@
 import Decimal from "decimal.js";
 import { describe, expect, it } from "vitest";
 
-import { getOraclePrice, getOraclePrices, setTunaBaseUrl, unwrap } from "../src";
+import { unwrap } from "../src";
 
 import { SOL_MINT, USDC_MINT } from "./consts";
 import { getVaultsFromRpc } from "./rpc";
-
-import "dotenv/config";
-
-setTunaBaseUrl(process.env.API_BASE_URL!);
+import { sdk } from "./sdk";
 
 describe("Oracle Prices", async () => {
   const rpcVaults = await getVaultsFromRpc();
   const nowTimestampSeconds = Date.now() / 1000;
-  const oraclePrices = await unwrap(getOraclePrices());
+  const oraclePrices = await unwrap(sdk.getOraclePrices());
 
   it("Length matches RPC vaults", () => {
     expect(oraclePrices.length).toBe(rpcVaults.length);
@@ -54,7 +51,13 @@ describe("Oracle Prices", async () => {
 describe("Single Oracle Price", async () => {
   const unsavedMintAddress = "FeR8VBqNRSUD5NtXAj2n3j1dAHkZHfyDktKuLXD4pump";
   const nowTimestampSeconds = Date.now() / 1000;
-  const oraclePrice = await unwrap(getOraclePrice(SOL_MINT));
+  const oraclePrice = await unwrap(
+    sdk.getOraclePrice({
+      path: {
+        mintAddress: SOL_MINT,
+      },
+    }),
+  );
 
   it("Returns oracle price", () => {
     expect(oraclePrice.price).toBeGreaterThan(0);
@@ -66,11 +69,19 @@ describe("Single Oracle Price", async () => {
     expect(priceTimestampSeconds).closeTo(nowTimestampSeconds, 120);
   });
   it("Returns 404 for unsaved mint", async () => {
-    const response = await getOraclePrice(unsavedMintAddress);
-    expect(response.status).toBe(404);
+    const response = await sdk.getOraclePrice({
+      path: {
+        mintAddress: unsavedMintAddress,
+      },
+    });
+    expect(response.response.status).toBe(404);
   });
   it("Returns 400 for invalid mint", async () => {
-    const response = await getOraclePrice("123");
-    expect(response.status).toBe(400);
+    const response = await sdk.getOraclePrice({
+      path: {
+        mintAddress: "123",
+      },
+    });
+    expect(response.response.status).toBe(400);
   });
 });

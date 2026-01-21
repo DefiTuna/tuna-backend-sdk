@@ -1,16 +1,13 @@
 import { describe, expect, it } from "vitest";
 
-import { getMint, getMints, setTunaBaseUrl, unwrap } from "../src";
+import { unwrap } from "../src";
 
 import { getVaultsFromRpc } from "./rpc";
-
-import "dotenv/config";
-
-setTunaBaseUrl(process.env.API_BASE_URL!);
+import { sdk } from "./sdk";
 
 describe("Mints", async () => {
   const rpcVaults = await getVaultsFromRpc();
-  const mints = await unwrap(getMints());
+  const mints = await unwrap(sdk.getMints());
 
   it("Length matches rpc", () => {
     expect(mints.length).toBe(rpcVaults.length);
@@ -27,7 +24,13 @@ describe("Single Mint", async () => {
   const rpcVaults = await getVaultsFromRpc();
   const sampleMintAddress = rpcVaults[0].data.mint;
   const unsavedMintAddress = "FeR8VBqNRSUD5NtXAj2n3j1dAHkZHfyDktKuLXD4pump";
-  const mint = await unwrap(getMint(sampleMintAddress));
+  const mint = await unwrap(
+    sdk.getMint({
+      path: {
+        mintAddress: sampleMintAddress,
+      },
+    }),
+  );
 
   it("Returns mint data", () => {
     expect(mint.address).toBe(sampleMintAddress);
@@ -35,11 +38,19 @@ describe("Single Mint", async () => {
   });
 
   it("Returns 404 for unsaved mint", async () => {
-    const response = await getMint(unsavedMintAddress);
-    expect(response.status).toBe(404);
+    const response = await sdk.getMint({
+      path: {
+        mintAddress: unsavedMintAddress,
+      },
+    });
+    expect(response.response.status).toBe(404);
   });
   it("Returns 400 for invalid mint", async () => {
-    const response = await getMint("123");
-    expect(response.status).toBe(400);
+    const response = await sdk.getMint({
+      path: {
+        mintAddress: "123",
+      },
+    });
+    expect(response.response.status).toBe(400);
   });
 });

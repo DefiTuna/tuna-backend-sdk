@@ -2,12 +2,13 @@ import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 const CLIENT_CORE_GEN_PATH = path.resolve("src/client/client/client.gen.ts");
+const CLIENT_SSE_GEN_PATH = path.resolve("src/client/core/serverSentEvents.gen.ts");
 const MARKER = "// case-transformer-patch";
 
 const patchClientCoreGen = async () => {
   const content = await readFile(CLIENT_CORE_GEN_PATH, "utf-8");
 
-  if (content.includes(MARKER)) {
+  if (content.includes(MARKER) && content.includes("applySseResponseTransforms")) {
     return;
   }
 
@@ -80,12 +81,12 @@ const patchClientCoreGen = async () => {
   const updatedResponseBlock = `      if (parseAs === 'json') {
         data = applyResponseCaseTransforms(data);
 
-        if (opts.responseTransformer) {
-          data = await opts.responseTransformer(data);
-        }
-
         if (opts.responseValidator) {
           await opts.responseValidator(data);
+        }
+
+        if (opts.responseTransformer) {
+          data = await opts.responseTransformer(data);
         }
       }
 `;
@@ -95,9 +96,75 @@ const patchClientCoreGen = async () => {
   }
 
   next = next.replace(responseBlock, updatedResponseBlock);
+  next = next.replace("    // @ts-expect-error\n", "");
 
   await writeFile(CLIENT_CORE_GEN_PATH, next, "utf-8");
   console.log(`Patched ${path.relative(process.cwd(), CLIENT_CORE_GEN_PATH)}`);
 };
 
 await patchClientCoreGen();
+
+const patchSseGen = async () => {
+  const content = await readFile(CLIENT_SSE_GEN_PATH, "utf-8");
+
+  if (content.includes(MARKER) && content.includes("applySseResponseTransforms")) {
+    return;
+  }
+
+  const importLine = "import type { Config } from './types.gen';";
+
+  if (!content.includes(importLine)) {
+    throw new Error("Unexpected serverSentEvents.gen.ts format: types import not found.");
+  }
+
+  let next = content;
+
+  if (!next.includes("applyResponseCaseTransforms")) {
+    next = next.replace(
+      importLine,
+      `${importLine}\nimport { applyResponseCaseTransforms } from '../../caseTransforms';\nimport { applySseResponseTransforms } from '../../sseTransforms';\n${MARKER}`,
+    );
+  } else if (!next.includes("applySseResponseTransforms")) {
+    next = next.replace(
+      "import { applyResponseCaseTransforms } from '../../caseTransforms';",
+      "import { applyResponseCaseTransforms } from '../../caseTransforms';\nimport { applySseResponseTransforms } from '../../sseTransforms';",
+    );
+  }
+
+  const responseBlock = `              if (parsedJson) {
+                if (responseValidator) {
+                  await responseValidator(data);
+                }
+
+                if (responseTransformer) {
+                  data = await responseTransformer(data);
+                }
+              }
+`;
+
+  const updatedResponseBlock = `              if (parsedJson) {
+                data = applyResponseCaseTransforms(data);
+
+                if (responseValidator) {
+                  await responseValidator(data);
+                }
+
+                data = await applySseResponseTransforms(data);
+
+                if (responseTransformer) {
+                  data = await responseTransformer(data);
+                }
+              }
+`;
+
+  if (next.includes(responseBlock)) {
+    next = next.replace(responseBlock, updatedResponseBlock);
+  } else if (!next.includes("applySseResponseTransforms")) {
+    throw new Error("Unexpected serverSentEvents.gen.ts format: response block not found.");
+  }
+
+  await writeFile(CLIENT_SSE_GEN_PATH, next, "utf-8");
+  console.log(`Patched ${path.relative(process.cwd(), CLIENT_SSE_GEN_PATH)}`);
+};
+
+await patchSseGen();

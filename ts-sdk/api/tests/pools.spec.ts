@@ -1,13 +1,10 @@
 import { describe, expect, it } from "vitest";
 
-import { getPool, getPoolSwaps, getPoolTicks, setTunaBaseUrl, unwrap } from "../src";
+import { unwrap } from "../src";
 
 import { SOL_USDC_FUSION_POOL_ADDRESS, SOL_USDC_ORCA_POOL_ADDRESS } from "./consts";
 import { getMarketsFromRpc } from "./rpc";
-
-import "dotenv/config";
-
-setTunaBaseUrl(process.env.API_BASE_URL!);
+import { sdk } from "./sdk";
 
 describe("Single Pool", async () => {
   const rpcMarkets = await getMarketsFromRpc();
@@ -16,7 +13,13 @@ describe("Single Pool", async () => {
 
   const samplePoolAddress = marketDst.data.pool;
   const unsavedPoolAddress = "FeR8VBqNRSUD5NtXAj2n3j1dAHkZHfyDktKuLXD4pump";
-  const pool = await unwrap(getPool(samplePoolAddress));
+  const pool = await unwrap(
+    sdk.getPool({
+      path: {
+        poolAddress: samplePoolAddress,
+      },
+    }),
+  );
 
   it("Returns pool data", () => {
     expect(pool.address).toBe(samplePoolAddress);
@@ -24,17 +27,31 @@ describe("Single Pool", async () => {
   });
 
   it("Returns 404 for unsaved pool", async () => {
-    const response = await getPool(unsavedPoolAddress);
-    expect(response.status).toBe(404);
+    const response = await sdk.getPool({
+      path: {
+        poolAddress: unsavedPoolAddress,
+      },
+    });
+    expect(response.response.status).toBe(404);
   });
   it("Returns 400 for invalid pool", async () => {
-    const response = await getPool("123");
-    expect(response.status).toBe(400);
+    const response = await sdk.getPool({
+      path: {
+        poolAddress: "123",
+      },
+    });
+    expect(response.response.status).toBe(400);
   });
 });
 
 describe("Pool Ticks", async () => {
-  const poolTicks = await unwrap(getPoolTicks("FwewVm8u6tFPGewAyHmWAqad9hmF7mvqxK4mJ7iNqqGC"));
+  const poolTicks = await unwrap(
+    sdk.getPoolTicks({
+      path: {
+        poolAddress: "FwewVm8u6tFPGewAyHmWAqad9hmF7mvqxK4mJ7iNqqGC",
+      },
+    }),
+  );
 
   it("Have tick spacing", () => {
     expect(poolTicks.tickSpacing > 0).toBe(true);
@@ -46,7 +63,13 @@ describe("Pool Ticks", async () => {
 
 describe("Pool swaps", async () => {
   const nowTimestampSeconds = Date.now() / 1000;
-  const poolSwaps = await unwrap(getPoolSwaps(SOL_USDC_ORCA_POOL_ADDRESS));
+  const poolSwaps = await unwrap(
+    sdk.getPoolSwaps({
+      path: {
+        poolAddress: SOL_USDC_ORCA_POOL_ADDRESS,
+      },
+    }),
+  );
 
   it("Returns correct data", () => {
     expect(poolSwaps.length).toBeGreaterThan(0);

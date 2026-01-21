@@ -1,25 +1,26 @@
 import { describe, expect, it } from "vitest";
 
-import {
-  getStakingLeaderboard,
-  getStakingRevenueStats,
-  getStakingTreasury,
-  getUserStakingPosition,
-  getUserStakingPositionHistory,
-  setTunaBaseUrl,
-  unwrap,
-} from "../src";
+import { unwrap } from "../src";
 
 import { TEST_WALLET_ADDRESS } from "./consts";
-
-import "dotenv/config";
-
-setTunaBaseUrl(process.env.API_BASE_URL!);
+import { sdk } from "./sdk";
 
 describe("Staking", async () => {
-  const treasury = await unwrap(getStakingTreasury());
-  const position = await unwrap(getUserStakingPosition(TEST_WALLET_ADDRESS));
-  const history = await unwrap(getUserStakingPositionHistory(TEST_WALLET_ADDRESS));
+  const treasury = await unwrap(sdk.getStakingTreasury());
+  const position = await unwrap(
+    sdk.getUserStakingPosition({
+      path: {
+        userAddress: TEST_WALLET_ADDRESS,
+      },
+    }),
+  );
+  const history = await unwrap(
+    sdk.getUserStakingPositionHistory({
+      path: {
+        userAddress: TEST_WALLET_ADDRESS,
+      },
+    }),
+  );
 
   it("Returns treasury", () => {
     expect(treasury.totalStaked.amount).toBeGreaterThan(0n);
@@ -35,9 +36,21 @@ describe("Staking", async () => {
 });
 
 describe("Staking leaderboard", async () => {
-  const firstPage = await unwrap(getStakingLeaderboard({ page: 1, pageSize: 10 }));
-  const secondPage = await unwrap(getStakingLeaderboard({ page: 2, pageSize: 20 }));
-  const searchPage = await unwrap(getStakingLeaderboard({ page: 1, pageSize: 20, search: "c31" }));
+  const firstPage = await unwrap(
+    sdk.getStakingLeaderboard({
+      query: { page: 1, pageSize: 10 },
+    }),
+  );
+  const secondPage = await unwrap(
+    sdk.getStakingLeaderboard({
+      query: { page: 2, pageSize: 20 },
+    }),
+  );
+  const searchPage = await unwrap(
+    sdk.getStakingLeaderboard({
+      query: { page: 1, pageSize: 20, search: "c31" },
+    }),
+  );
 
   it("Returns leaderboard", () => {
     expect(firstPage.data.length).toBeGreaterThan(0n);
@@ -58,9 +71,11 @@ describe("Staking leaderboard", async () => {
 
 describe("Staking Revenue", async () => {
   const stats = await unwrap(
-    getStakingRevenueStats({
-      from: new Date("2025-01-01").toISOString().slice(0, 10),
-      to: new Date("2025-07-30").toISOString().slice(0, 10),
+    sdk.getStakingRevenueStats({
+      query: {
+        from: new Date("2025-01-01").toISOString().slice(0, 10),
+        to: new Date("2025-07-30").toISOString().slice(0, 10),
+      },
     }),
   );
 

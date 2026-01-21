@@ -2,25 +2,11 @@ import { HUNDRED_PERCENT, PoolToken } from "@crypticdot/defituna-client";
 import { priceToTickIndex } from "@crypticdot/fusionamm-core";
 import { describe, expect, it } from "vitest";
 
-import {
-  getCloseSpotPositionQuote,
-  getDecreaseSpotPositionQuote,
-  getIncreaseSpotPositionQuote,
-  getLimitOrderQuoteByInput,
-  getLimitOrderQuoteByOutput,
-  getOraclePrices,
-  getSwapQuoteByInput,
-  getSwapQuoteByOutput,
-  setTunaBaseUrl,
-  unwrap,
-} from "../src";
+import { unwrap } from "../src";
 
 import { SOL_MINT, SOL_USDC_FUSION_MARKET_ADDRESS, SOL_USDC_FUSION_POOL_ADDRESS, USDC_MINT } from "./consts";
 import { bigintToNumber, numberToBigint } from "./rpc";
-
-import "dotenv/config";
-
-setTunaBaseUrl(process.env.API_BASE_URL!);
+import { sdk } from "./sdk";
 
 const SOL_DECIMALS = 9;
 const USDC_DECIMALS = 6;
@@ -32,11 +18,13 @@ describe("Limit Order Quotes", async () => {
     const tickIndex = priceToTickIndex(200, 0, 0);
     // Selling 1 SOL at ~200 USDC / SOL price
     const limitOrderQuoteByInput = await unwrap(
-      getLimitOrderQuoteByInput({
-        pool: SOL_USDC_FUSION_POOL_ADDRESS,
-        amountIn: solAmountIn,
-        aToB: true,
-        tickIndex,
+      sdk.getLimitOrderQuoteByInput({
+        query: {
+          pool: SOL_USDC_FUSION_POOL_ADDRESS,
+          amountIn: solAmountIn,
+          aToB: true,
+          tickIndex,
+        },
       }),
     );
     expect(limitOrderQuoteByInput.amountOut).toEqual(200053968277n);
@@ -48,11 +36,13 @@ describe("Limit Order Quotes", async () => {
     const tickIndex = priceToTickIndex(200, 0, 0);
     // Selling 1 SOL at ~200 USDC / SOL price
     const limitOrderQuoteByOutput = await unwrap(
-      getLimitOrderQuoteByOutput({
-        pool: SOL_USDC_FUSION_POOL_ADDRESS,
-        amountOut: usdcAmountOut,
-        aToB: true,
-        tickIndex,
+      sdk.getLimitOrderQuoteByOutput({
+        query: {
+          pool: SOL_USDC_FUSION_POOL_ADDRESS,
+          amountOut: usdcAmountOut,
+          aToB: true,
+          tickIndex,
+        },
       }),
     );
     expect(limitOrderQuoteByOutput.amountIn).toEqual(1000000000n);
@@ -61,7 +51,7 @@ describe("Limit Order Quotes", async () => {
 });
 
 describe("Quotes", async () => {
-  const oraclePrices = await unwrap(getOraclePrices());
+  const oraclePrices = await unwrap(sdk.getOraclePrices());
   const solOraclePrice = oraclePrices.find(oraclePrice => oraclePrice.mint == SOL_MINT)!;
   const usdcOraclePrice = oraclePrices.find(oraclePrice => oraclePrice.mint == USDC_MINT)!;
   const solPrice = bigintToNumber(solOraclePrice.price, solOraclePrice.decimals);
@@ -70,11 +60,13 @@ describe("Quotes", async () => {
   it("Calculates swap quote by input", async () => {
     const solAmountIn = numberToBigint(1, SOL_DECIMALS);
     const swapQuoteByInput = await unwrap(
-      getSwapQuoteByInput({
-        pool: SOL_USDC_FUSION_POOL_ADDRESS,
-        amountIn: solAmountIn,
-        aToB: true,
-        slippageTolerance: BPS_DENOMINATOR,
+      sdk.getSwapQuoteByInput({
+        query: {
+          pool: SOL_USDC_FUSION_POOL_ADDRESS,
+          amountIn: solAmountIn,
+          aToB: true,
+          slippageTolerance: BPS_DENOMINATOR,
+        },
       }),
     );
     const usdcAmountOut = bigintToNumber(swapQuoteByInput.estimatedAmountOut, USDC_DECIMALS);
@@ -88,11 +80,13 @@ describe("Quotes", async () => {
   it("Calculates swap quote by output", async () => {
     const solAmountOut = numberToBigint(1, SOL_DECIMALS);
     const swapQuoteByOutput = await unwrap(
-      getSwapQuoteByOutput({
-        pool: SOL_USDC_FUSION_POOL_ADDRESS,
-        amountOut: solAmountOut,
-        aToB: true,
-        slippageTolerance: BPS_DENOMINATOR,
+      sdk.getSwapQuoteByOutput({
+        query: {
+          pool: SOL_USDC_FUSION_POOL_ADDRESS,
+          amountOut: solAmountOut,
+          aToB: true,
+          slippageTolerance: BPS_DENOMINATOR,
+        },
       }),
     );
     const usdcAmountIn = bigintToNumber(swapQuoteByOutput.estimatedAmountIn, USDC_DECIMALS);
@@ -107,13 +101,15 @@ describe("Quotes", async () => {
     const usdcIncreaseAmount = numberToBigint(2, USDC_DECIMALS);
     const leverage = 2;
     const increaseSpotPositionQuote = await unwrap(
-      getIncreaseSpotPositionQuote({
-        market: SOL_USDC_FUSION_MARKET_ADDRESS,
-        increaseAmount: usdcIncreaseAmount,
-        collateralToken: PoolToken.B,
-        positionToken: PoolToken.A,
-        leverage,
-        slippageTolerance: BPS_DENOMINATOR,
+      sdk.getIncreaseSpotPositionQuote({
+        query: {
+          market: SOL_USDC_FUSION_MARKET_ADDRESS,
+          increaseAmount: usdcIncreaseAmount,
+          collateralToken: PoolToken.B,
+          positionToken: PoolToken.A,
+          leverage,
+          slippageTolerance: BPS_DENOMINATOR,
+        },
       }),
     );
 
@@ -128,15 +124,17 @@ describe("Quotes", async () => {
     const positionDebt = numberToBigint(150, USDC_DECIMALS);
     const leverage = 2;
     const increaseSpotPositionQuote = await unwrap(
-      getIncreaseSpotPositionQuote({
-        market: SOL_USDC_FUSION_MARKET_ADDRESS,
-        increaseAmount: usdcIncreaseAmount,
-        collateralToken: PoolToken.B,
-        positionToken: PoolToken.A,
-        leverage,
-        positionAmount: positionAmount,
-        positionDebt: positionDebt,
-        slippageTolerance: BPS_DENOMINATOR,
+      sdk.getIncreaseSpotPositionQuote({
+        query: {
+          market: SOL_USDC_FUSION_MARKET_ADDRESS,
+          increaseAmount: usdcIncreaseAmount,
+          collateralToken: PoolToken.B,
+          positionToken: PoolToken.A,
+          leverage,
+          positionAmount: positionAmount,
+          positionDebt: positionDebt,
+          slippageTolerance: BPS_DENOMINATOR,
+        },
       }),
     );
     expect(increaseSpotPositionQuote.borrowAmount).toEqual(usdcIncreaseAmount / BigInt(leverage));
@@ -150,15 +148,17 @@ describe("Quotes", async () => {
     const positionAmount = numberToBigint(10, SOL_DECIMALS);
     const positionDebt = numberToBigint(500, USDC_DECIMALS);
     const decreaseSpotPositionQuote = await unwrap(
-      getDecreaseSpotPositionQuote({
-        market: SOL_USDC_FUSION_MARKET_ADDRESS,
-        decreaseAmount: usdcDecreaseAmount,
-        collateralToken: PoolToken.B,
-        positionToken: PoolToken.A,
-        leverage,
-        positionAmount: positionAmount,
-        positionDebt: positionDebt,
-        slippageTolerance: BPS_DENOMINATOR,
+      sdk.getDecreaseSpotPositionQuote({
+        query: {
+          market: SOL_USDC_FUSION_MARKET_ADDRESS,
+          decreaseAmount: usdcDecreaseAmount,
+          collateralToken: PoolToken.B,
+          positionToken: PoolToken.A,
+          leverage,
+          positionAmount: positionAmount,
+          positionDebt: positionDebt,
+          slippageTolerance: BPS_DENOMINATOR,
+        },
       }),
     );
     expect(decreaseSpotPositionQuote.liquidationPrice).toBeGreaterThan(0);
@@ -168,14 +168,16 @@ describe("Quotes", async () => {
     const positionAmount = numberToBigint(10, SOL_DECIMALS);
     const positionDebt = numberToBigint(500, USDC_DECIMALS);
     const decreaseSpotPositionQuote = await unwrap(
-      getCloseSpotPositionQuote({
-        market: SOL_USDC_FUSION_MARKET_ADDRESS,
-        decreasePercent: HUNDRED_PERCENT,
-        collateralToken: PoolToken.B,
-        positionToken: PoolToken.A,
-        positionAmount: positionAmount,
-        positionDebt: positionDebt,
-        slippageTolerance: BPS_DENOMINATOR,
+      sdk.getCloseSpotPositionQuote({
+        query: {
+          market: SOL_USDC_FUSION_MARKET_ADDRESS,
+          decreasePercent: HUNDRED_PERCENT,
+          collateralToken: PoolToken.B,
+          positionToken: PoolToken.A,
+          positionAmount: positionAmount,
+          positionDebt: positionDebt,
+          slippageTolerance: BPS_DENOMINATOR,
+        },
       }),
     );
     expect(decreaseSpotPositionQuote.decreasePercent).toBe(1);

@@ -1,11 +1,6 @@
 import { describe, expect, it } from "vitest";
 
 import {
-  getLpPositionActions,
-  getLpPositions,
-  getTunaPosition,
-  getTunaPositions,
-  setTunaBaseUrl,
   TunaLpPositionAutoCompound,
   TunaLpPositionLimitOrderSwap,
   TunaLpPositionsActionType,
@@ -21,13 +16,16 @@ import {
   TEST_WALLET_ADDRESS,
   USDC_MINT,
 } from "./consts";
-
-import "dotenv/config";
-
-setTunaBaseUrl(process.env.API_BASE_URL!);
+import { sdk } from "./sdk";
 
 describe("All LP positions", async () => {
-  const data = await unwrap(getTunaPositions(TEST_WALLET_ADDRESS));
+  const data = await unwrap(
+    sdk.getTunaPositions({
+      path: {
+        userAddress: TEST_WALLET_ADDRESS,
+      },
+    }),
+  );
 
   it("Has two test positions", () => {
     expect(data.length).toBeGreaterThanOrEqual(2);
@@ -37,7 +35,14 @@ describe("All LP positions", async () => {
 });
 
 describe("Single LP position", async () => {
-  const data = await unwrap(getTunaPosition(TEST_WALLET_ADDRESS, LP_POSITION_WITHOUT_LEVERAGE));
+  const data = await unwrap(
+    sdk.getTunaPosition({
+      path: {
+        userAddress: TEST_WALLET_ADDRESS,
+        positionAddress: LP_POSITION_WITHOUT_LEVERAGE,
+      },
+    }),
+  );
 
   it("Poistion found", () => {
     expect(data).toBeDefined();
@@ -89,7 +94,13 @@ describe("Single LP position", async () => {
 });
 
 describe("All historical LP positions", async () => {
-  const data = await unwrap(getLpPositions(TEST_WALLET_ADDRESS));
+  const data = await unwrap(
+    sdk.getLpPositions({
+      path: {
+        userAddress: TEST_WALLET_ADDRESS,
+      },
+    }),
+  );
 
   it("Has two test positions", () => {
     expect(data.length).toBeGreaterThanOrEqual(2);
@@ -100,8 +111,13 @@ describe("All historical LP positions", async () => {
 
 describe("Historical LP positions by open state", async () => {
   const data = await unwrap(
-    getLpPositions(TEST_WALLET_ADDRESS, {
-      state: [TunaPositionDtoState.open],
+    sdk.getLpPositions({
+      path: {
+        userAddress: TEST_WALLET_ADDRESS,
+      },
+      query: {
+        state: [TunaPositionDtoState.OPEN],
+      },
     }),
   );
   it("Can filter by state", () => {
@@ -111,8 +127,13 @@ describe("Historical LP positions by open state", async () => {
 
 describe("Historical LP positions by non-existing states", async () => {
   const data = await unwrap(
-    getLpPositions(TEST_WALLET_ADDRESS, {
-      state: [TunaPositionDtoState.liquidated, TunaPositionDtoState.closedByLimitOrder],
+    sdk.getLpPositions({
+      path: {
+        userAddress: TEST_WALLET_ADDRESS,
+      },
+      query: {
+        state: [TunaPositionDtoState.LIQUIDATED, TunaPositionDtoState.CLOSED_BY_LIMIT_ORDER],
+      },
     }),
   );
   it("Can filter by state", () => {
@@ -122,8 +143,13 @@ describe("Historical LP positions by non-existing states", async () => {
 
 describe("Historical LP positions by pool", async () => {
   const data = await unwrap(
-    getLpPositions(TEST_WALLET_ADDRESS, {
-      liquidityPool: [SOL_USDC_ORCA_POOL_ADDRESS],
+    sdk.getLpPositions({
+      path: {
+        userAddress: TEST_WALLET_ADDRESS,
+      },
+      query: {
+        liquidityPool: [SOL_USDC_ORCA_POOL_ADDRESS],
+      },
     }),
   );
   it("Can filter by pool", () => {
@@ -132,17 +158,31 @@ describe("Historical LP positions by pool", async () => {
 });
 
 describe("List LP positions actions", async () => {
-  const data = await unwrap(getLpPositionActions(TEST_WALLET_ADDRESS, LP_POSITION_WITHOUT_LEVERAGE));
+  const data = await unwrap(
+    sdk.getLpPositionActions({
+      path: {
+        userAddress: TEST_WALLET_ADDRESS,
+        positionAddress: LP_POSITION_WITHOUT_LEVERAGE,
+      },
+    }),
+  );
 
   it("Has at least open and increase liquidity actions", () => {
     expect(data.length).toBeGreaterThanOrEqual(2);
-    expect(data.slice(-2)[1].action).toBe(TunaLpPositionsActionType.openPosition);
-    expect(data.slice(-2)[0].action).toBe(TunaLpPositionsActionType.increaseLiquidity);
+    expect(data.slice(-2)[1].action).toBe(TunaLpPositionsActionType.OPEN_POSITION);
+    expect(data.slice(-2)[0].action).toBe(TunaLpPositionsActionType.INCREASE_LIQUIDITY);
   });
 });
 
 describe("Open position action", async () => {
-  const allData = await unwrap(getLpPositionActions(TEST_WALLET_ADDRESS, LP_POSITION_WITH_LEVERAGE));
+  const allData = await unwrap(
+    sdk.getLpPositionActions({
+      path: {
+        userAddress: TEST_WALLET_ADDRESS,
+        positionAddress: LP_POSITION_WITH_LEVERAGE,
+      },
+    }),
+  );
 
   it("Has at least two events", () => {
     expect(allData.length).toBeGreaterThanOrEqual(2);
@@ -151,7 +191,7 @@ describe("Open position action", async () => {
   const data = allData.slice(-2)[1];
 
   it("Correct tx data", () => {
-    expect(data.action).toBe(TunaLpPositionsActionType.openPosition);
+    expect(data.action).toBe(TunaLpPositionsActionType.OPEN_POSITION);
     expect(data.txSignature).toBe(
       "w1yPPU73Te9oKSCx2qzXr8eBnXze76YWJXUUYhr9PqcXhvBuCtYucE9xMJtW63czYwRmCBvvvcdwG6P5mmKeMfp",
     );
@@ -167,15 +207,22 @@ describe("Open position action", async () => {
     expect(parameters.lowerPrice).toBe(139.97356627043357);
     expect(parameters.upperPrice).toBe(209.98441502144416);
     expect(parameters.lowerLimitOrder).toBeNull();
-    expect(parameters.lowerLimitOrderSwap).toBe(TunaLpPositionLimitOrderSwap.swapToTokenB);
+    expect(parameters.lowerLimitOrderSwap).toBe(TunaLpPositionLimitOrderSwap.SWAP_TO_TOKEN_B);
     expect(parameters.upperLimitOrder).toBeNull();
-    expect(parameters.upperLimitOrderSwap).toBe(TunaLpPositionLimitOrderSwap.swapToTokenA);
-    expect(parameters.autoCompound).toBe(TunaLpPositionAutoCompound.noAutoCompound);
+    expect(parameters.upperLimitOrderSwap).toBe(TunaLpPositionLimitOrderSwap.SWAP_TO_TOKEN_A);
+    expect(parameters.autoCompound).toBe(TunaLpPositionAutoCompound.NO_AUTO_COMPOUND);
   });
 });
 
 describe("Increase liquidity action", async () => {
-  const allData = await unwrap(getLpPositionActions(TEST_WALLET_ADDRESS, LP_POSITION_WITH_LEVERAGE));
+  const allData = await unwrap(
+    sdk.getLpPositionActions({
+      path: {
+        userAddress: TEST_WALLET_ADDRESS,
+        positionAddress: LP_POSITION_WITH_LEVERAGE,
+      },
+    }),
+  );
 
   it("Has at least two events", () => {
     expect(allData.length).toBeGreaterThanOrEqual(2);
@@ -184,7 +231,7 @@ describe("Increase liquidity action", async () => {
   const data = allData.slice(-2)[0];
 
   it("Correct tx data", () => {
-    expect(data.action).toBe(TunaLpPositionsActionType.increaseLiquidity);
+    expect(data.action).toBe(TunaLpPositionsActionType.INCREASE_LIQUIDITY);
     expect(data.txSignature).toBe(
       "w1yPPU73Te9oKSCx2qzXr8eBnXze76YWJXUUYhr9PqcXhvBuCtYucE9xMJtW63czYwRmCBvvvcdwG6P5mmKeMfp",
     );

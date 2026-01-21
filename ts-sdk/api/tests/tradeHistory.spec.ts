@@ -1,13 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import {
-  getTradeHistory,
-  OrderHistoryUIDirection,
-  setTunaBaseUrl,
-  TradeHistoryAction,
-  TradeHistoryUIDirection,
-  unwrap,
-} from "../src";
+import { OrderHistoryUiDirection, TradeHistoryAction, TradeHistoryUiDirection, unwrap } from "../src";
 
 import {
   COMPLETED_LIMIT_ORDER,
@@ -16,13 +9,16 @@ import {
   TEST_WALLET_ADDRESS,
   TUNA_USDC_FUSION_POOL_ADDRESS,
 } from "./consts";
-
-import "dotenv/config";
-
-setTunaBaseUrl(process.env.API_BASE_URL!);
+import { sdk } from "./sdk";
 
 describe("All trade history events", async () => {
-  const data = await unwrap(getTradeHistory(TEST_WALLET_ADDRESS));
+  const data = await unwrap(
+    sdk.getTradeHistory({
+      path: {
+        userAddress: TEST_WALLET_ADDRESS,
+      },
+    }),
+  );
 
   it("Has three orders", () => {
     expect(data.length).toBeGreaterThanOrEqual(3);
@@ -35,8 +31,13 @@ describe("All trade history events", async () => {
 
 describe("Trade history filter by pool", async () => {
   const data = await unwrap(
-    getTradeHistory(TEST_WALLET_ADDRESS, {
-      pool: [SOL_USDC_FUSION_POOL_ADDRESS],
+    sdk.getTradeHistory({
+      path: {
+        userAddress: TEST_WALLET_ADDRESS,
+      },
+      query: {
+        pool: [SOL_USDC_FUSION_POOL_ADDRESS],
+      },
     }),
   );
   it("Can filter by pool", () => {
@@ -47,8 +48,13 @@ describe("Trade history filter by pool", async () => {
 
 describe("Trade history filter by two pools", async () => {
   const data = await unwrap(
-    getTradeHistory(TEST_WALLET_ADDRESS, {
-      pool: [SOL_USDC_FUSION_POOL_ADDRESS, TUNA_USDC_FUSION_POOL_ADDRESS],
+    sdk.getTradeHistory({
+      path: {
+        userAddress: TEST_WALLET_ADDRESS,
+      },
+      query: {
+        pool: [SOL_USDC_FUSION_POOL_ADDRESS, TUNA_USDC_FUSION_POOL_ADDRESS],
+      },
     }),
   );
   it("Can filter by two pools", () => {
@@ -59,23 +65,48 @@ describe("Trade history filter by two pools", async () => {
 });
 
 describe("Trade history filter by action type", async () => {
-  const data = await unwrap(getTradeHistory(TEST_WALLET_ADDRESS, { action: [TradeHistoryAction.limitOrderFill] }));
+  const data = await unwrap(
+    sdk.getTradeHistory({
+      path: {
+        userAddress: TEST_WALLET_ADDRESS,
+      },
+      query: {
+        action: [TradeHistoryAction.LIMIT_ORDER_FILL],
+      },
+    }),
+  );
   it("Can filter by action type", () => {
     expect(data.length).toBeGreaterThan(0);
-    expect(data.every(item => item.action === TradeHistoryAction.limitOrderFill)).toBe(true);
+    expect(data.every(item => item.action === TradeHistoryAction.LIMIT_ORDER_FILL)).toBe(true);
   });
 });
 
 describe("Trade history filter by ui direction", async () => {
-  const data = await unwrap(getTradeHistory(TEST_WALLET_ADDRESS, { uiDirection: [TradeHistoryUIDirection.buy] }));
+  const data = await unwrap(
+    sdk.getTradeHistory({
+      path: {
+        userAddress: TEST_WALLET_ADDRESS,
+      },
+      query: {
+        uiDirection: [TradeHistoryUiDirection.BUY],
+      },
+    }),
+  );
   it("Can filter by ui direction", () => {
     expect(data.length).toBeGreaterThan(0);
-    expect(data.every(item => item.uiDirection === TradeHistoryUIDirection.buy)).toBe(true);
+    expect(data.every(item => item.uiDirection === TradeHistoryUiDirection.BUY)).toBe(true);
   });
 });
 
 describe("Single trade history item", async () => {
-  const allData = await unwrap(getTradeHistory(TEST_WALLET_ADDRESS));
+  const allData = await unwrap(
+    sdk.getTradeHistory({
+      path: {
+        userAddress: TEST_WALLET_ADDRESS,
+      },
+      responseValidator: undefined,
+    }),
+  );
   const data = allData.filter(item => item.positionAddress === COMPLETED_LIMIT_ORDER)[0] || undefined;
 
   it("Trade history item found", () => {
@@ -89,9 +120,9 @@ describe("Single trade history item", async () => {
   });
 
   it("Correct parameters", () => {
-    expect(data.action).toBe(TradeHistoryAction.limitOrderFill);
+    expect(data.action).toBe(TradeHistoryAction.LIMIT_ORDER_FILL);
     expect(data.aToB).toBe(true);
-    expect(data.uiDirection).toBe(OrderHistoryUIDirection.sell);
+    expect(data.uiDirection).toBe(OrderHistoryUiDirection.SELL);
   });
 
   it("Correct amounts", () => {

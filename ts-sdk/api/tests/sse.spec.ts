@@ -1,39 +1,67 @@
-import { once } from "node:events";
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import {
-  eventIsInitialMessage,
-  eventIsPoolSwap,
-  eventIsStateSnapshot,
-  getSseUpdatesStream,
-  normalizeResponseJson,
+  NotificationEntity,
   PoolSubscriptionTopic,
-  setTunaBaseUrl,
   SseResponse,
   SubscriptionOptions,
-  updateStreamSubscription,
+  unwrap,
+  WalletSubscriptionTopic,
 } from "../src";
 
-import { SOL_USDC_ORCA_POOL_ADDRESS } from "./consts";
+import { SOL_USDC_FUSION_MARKET_ADDRESS, SOL_USDC_ORCA_POOL_ADDRESS, TEST_WALLET_ADDRESS } from "./consts";
+import { sdk } from "./sdk";
 
-import "dotenv/config";
+const eventIsInitialMessage = (event: unknown): event is { entity: string; streamId: string } => {
+  if (!event || typeof event !== "object") return false;
+  return (event as { entity?: string }).entity === NotificationEntity.INITIAL_MESSAGE;
+};
 
-setTunaBaseUrl(process.env.API_BASE_URL!);
+const eventIsPoolSwap = (event: unknown): event is { entity: string; data: { amountIn: bigint } } => {
+  if (!event || typeof event !== "object") return false;
+  return (event as { entity?: string }).entity === NotificationEntity.POOL_SWAP;
+};
+
+const eventIsStateSnapshot = (event: unknown): event is { entity: string; data: { orderBooks?: unknown } } => {
+  if (!event || typeof event !== "object") return false;
+  return (event as { entity?: string }).entity === NotificationEntity.STATE_SNAPSHOT;
+};
+
+const createStream = async (signal: AbortSignal) => {
+  const result = await sdk.sse({
+    headers: { Accept: "text/event-stream" },
+    onSseError: error => {
+      process.stderr.write(`SSE error: ${String(error)}\n`);
+    },
+    signal,
+  });
+
+  return result.stream as AsyncGenerator<SseResponse>;
+};
+
+const nextEvent = async (signal: AbortSignal, stream: AsyncGenerator<SseResponse>) => {
+  if (signal.aborted) {
+    throw new Error("SSE test aborted");
+  }
+
+  return Promise.race([
+    stream.next(),
+    new Promise<never>((_, reject) => {
+      const onAbort = () => {
+        signal.removeEventListener("abort", onAbort);
+        reject(new Error("SSE test aborted"));
+      };
+      signal.addEventListener("abort", onAbort, { once: true });
+    }),
+  ]);
+};
 
 describe("Pool swaps stream", { timeout: 30000 }, async () => {
-  let updatesStream: EventSource;
+  it("Receives swap", async ({ signal }) => {
+    const stream = await createStream(signal);
 
-  beforeAll(async () => {
-    updatesStream = await getSseUpdatesStream();
-  });
-
-  afterAll(() => {
-    updatesStream.close();
-  });
-
-  it("Receives swap", async () => {
-    const firstEvent = (await once(updatesStream, "message")) as MessageEvent<string>[];
-    const rawData = normalizeResponseJson(JSON.parse(firstEvent[0].data)) as SseResponse;
+    const firstEvent = await nextEvent(signal, stream);
+    const rawData = firstEvent.value;
     let streamId: string | undefined;
     if (eventIsInitialMessage(rawData)) {
       streamId = rawData.streamId;
@@ -44,15 +72,24 @@ describe("Pool swaps stream", { timeout: 30000 }, async () => {
       pools: [
         {
           address: SOL_USDC_ORCA_POOL_ADDRESS,
-          topics: [PoolSubscriptionTopic.poolSwaps, PoolSubscriptionTopic.orderBook, PoolSubscriptionTopic.poolPrices],
+          topics: [
+            PoolSubscriptionTopic.POOL_SWAPS,
+            PoolSubscriptionTopic.ORDER_BOOK,
+            PoolSubscriptionTopic.POOL_PRICES,
+          ],
         },
       ],
     };
-    await updateStreamSubscription(streamId!, subscription);
+    await unwrap(
+      sdk.updateStreamSubscription({
+        path: { streamId: streamId! },
+        body: subscription,
+      }),
+    );
     let poolSwapFound = false;
     while (!poolSwapFound) {
-      const event = (await once(updatesStream, "message")) as MessageEvent<string>[];
-      const rawData = normalizeResponseJson(JSON.parse(event[0].data)) as SseResponse;
+      const event = await nextEvent(signal, stream);
+      const rawData = event.value;
       if (eventIsStateSnapshot(rawData)) {
         continue;
       }
@@ -66,19 +103,11 @@ describe("Pool swaps stream", { timeout: 30000 }, async () => {
 });
 
 describe("Order book stream", { timeout: 30000 }, async () => {
-  let updatesStream: EventSource;
+  it("Receives order book", async ({ signal }) => {
+    const stream = await createStream(signal);
 
-  beforeAll(async () => {
-    updatesStream = await getSseUpdatesStream();
-  });
-
-  afterAll(() => {
-    updatesStream.close();
-  });
-
-  it("Receives order book", async () => {
-    const firstEvent = (await once(updatesStream, "message")) as MessageEvent<string>[];
-    const rawData = normalizeResponseJson(JSON.parse(firstEvent[0].data)) as SseResponse;
+    const firstEvent = await nextEvent(signal, stream);
+    const rawData = firstEvent.value;
     let streamId: string | undefined;
     if (eventIsInitialMessage(rawData)) {
       streamId = rawData.streamId;
@@ -86,25 +115,30 @@ describe("Order book stream", { timeout: 30000 }, async () => {
     expect(streamId).toBeDefined();
 
     const subscription: SubscriptionOptions = {
-      markets: ["GVpfbqj7Bwhy9FnxhNcmqwzcascf9N2fPd6ZXqNeA2Lb"],
+      markets: [SOL_USDC_FUSION_MARKET_ADDRESS],
       pools: [
         {
-          address: "Czfq3xZZDmsdGdUyrNLtRhGc47cXcZtLG4crryfu44zE",
-          topics: ["order_book"],
+          address: SOL_USDC_ORCA_POOL_ADDRESS,
+          topics: [PoolSubscriptionTopic.ORDER_BOOK],
           orderBookPriceStep: 1,
           isInverted: false,
         },
       ],
       wallet: {
-        address: "5a27nXEhSrdLxkgp3kdBEwyhfvYNkdoe4jF4qM4mwBYK",
-        topics: ["tuna_positions"],
+        address: TEST_WALLET_ADDRESS,
+        topics: [WalletSubscriptionTopic.TUNA_POSITIONS],
       },
     };
-    await updateStreamSubscription(streamId!, subscription);
+    await unwrap(
+      sdk.updateStreamSubscription({
+        path: { streamId: streamId! },
+        body: subscription,
+      }),
+    );
     let orderBookFound = false;
     while (!orderBookFound) {
-      const event = (await once(updatesStream, "message")) as MessageEvent<string>[];
-      const rawData = normalizeResponseJson(JSON.parse(event[0].data)) as SseResponse;
+      const event = await nextEvent(signal, stream);
+      const rawData = event.value;
       if (eventIsStateSnapshot(rawData)) {
         if (rawData.data.orderBooks !== undefined) {
           orderBookFound = true;

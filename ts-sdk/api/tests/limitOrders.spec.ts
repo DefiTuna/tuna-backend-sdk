@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { getLimitOrder, getLimitOrders, LimitOrderStatus, setTunaBaseUrl, unwrap } from "../src";
+import { LimitOrderStatus, unwrap } from "../src";
 
 import {
   CANCELLED_LIMIT_ORDER,
@@ -12,13 +12,16 @@ import {
   TUNA_USDC_FUSION_POOL_ADDRESS,
   USDC_MINT,
 } from "./consts";
-
-import "dotenv/config";
-
-setTunaBaseUrl(process.env.API_BASE_URL!);
+import { sdk } from "./sdk";
 
 describe("All limit orders", async () => {
-  const data = await unwrap(getLimitOrders(TEST_WALLET_ADDRESS));
+  const data = await unwrap(
+    sdk.getLimitOrders({
+      path: {
+        userAddress: TEST_WALLET_ADDRESS,
+      },
+    }),
+  );
 
   it("Has three limit orders", () => {
     expect(data.length).toBeGreaterThanOrEqual(3);
@@ -30,8 +33,13 @@ describe("All limit orders", async () => {
 
 describe("Limit orders filter by pool", async () => {
   const data = await unwrap(
-    getLimitOrders(TEST_WALLET_ADDRESS, {
-      pool: [SOL_USDC_FUSION_POOL_ADDRESS],
+    sdk.getLimitOrders({
+      path: {
+        userAddress: TEST_WALLET_ADDRESS,
+      },
+      query: {
+        pool: [SOL_USDC_FUSION_POOL_ADDRESS],
+      },
     }),
   );
   it("Can filter by pool", () => {
@@ -42,8 +50,13 @@ describe("Limit orders filter by pool", async () => {
 
 describe("Limit orders filter by two pools", async () => {
   const data = await unwrap(
-    getLimitOrders(TEST_WALLET_ADDRESS, {
-      pool: [SOL_USDC_FUSION_POOL_ADDRESS, TUNA_USDC_FUSION_POOL_ADDRESS],
+    sdk.getLimitOrders({
+      path: {
+        userAddress: TEST_WALLET_ADDRESS,
+      },
+      query: {
+        pool: [SOL_USDC_FUSION_POOL_ADDRESS, TUNA_USDC_FUSION_POOL_ADDRESS],
+      },
     }),
   );
   it("Can filter by two pools", () => {
@@ -54,19 +67,33 @@ describe("Limit orders filter by two pools", async () => {
 });
 
 describe("Limit orders filter by status", async () => {
-  const data = await unwrap(getLimitOrders(TEST_WALLET_ADDRESS, { status: [LimitOrderStatus.complete] }));
+  const data = await unwrap(
+    sdk.getLimitOrders({
+      path: {
+        userAddress: TEST_WALLET_ADDRESS,
+      },
+      query: {
+        status: [LimitOrderStatus.COMPLETE],
+      },
+    }),
+  );
   it("Can filter by status", () => {
     expect(data.length).toBeGreaterThan(0);
-    expect(data.every(item => item.state === LimitOrderStatus.complete)).toBe(true);
+    expect(data.every(item => item.state === LimitOrderStatus.COMPLETE)).toBe(true);
   });
 });
 
 describe("Limit orders filter by time", async () => {
   // 2025-10-09 - 2025-10-10
   const data = await unwrap(
-    getLimitOrders(TEST_WALLET_ADDRESS, {
-      openedAtFrom: 1759968000000,
-      openedAtTo: 1760054400000,
+    sdk.getLimitOrders({
+      path: {
+        userAddress: TEST_WALLET_ADDRESS,
+      },
+      query: {
+        openedAtFrom: 1759968000000n,
+        openedAtTo: 1760054400000n,
+      },
     }),
   );
   it("Can filter by time", () => {
@@ -78,7 +105,14 @@ describe("Limit orders filter by time", async () => {
 });
 
 describe("Single limit order", async () => {
-  const data = await unwrap(getLimitOrder(TEST_WALLET_ADDRESS, COMPLETED_LIMIT_ORDER));
+  const data = await unwrap(
+    sdk.getLimitOrder({
+      path: {
+        userAddress: TEST_WALLET_ADDRESS,
+        limitOrderAddress: COMPLETED_LIMIT_ORDER,
+      },
+    }),
+  );
 
   it("Order found", () => {
     expect(data).toBeDefined();
@@ -100,7 +134,7 @@ describe("Single limit order", async () => {
   });
 
   it("Correct values", () => {
-    expect(data?.state).toBe(LimitOrderStatus.complete);
+    expect(data?.state).toBe(LimitOrderStatus.COMPLETE);
     expect(data?.fillRatio).toBe(1);
     expect(data?.aToB).toBe(true);
     expect(data?.tickIndex).toBe(-14936);

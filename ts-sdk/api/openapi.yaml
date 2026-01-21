@@ -2658,17 +2658,17 @@ components:
           format: double
           description: Confirmed position decrease percentage (100% = 1.0)
         estimated_withdrawn_collateral:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
+          description: Estimated amount of the withdrawn collateral
         price_impact:
           type: number
           format: double
           description: Price impact in percents (100% = 1.0)
         required_swap_amount:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
+          description: |-
+            The maximum acceptable swap input amount for position decrease according to the provided slippage
+                 * (if collateral_token == position_token) OR the minimum swap output amount (if collateral_token != position_token).
     DecreaseSpotPositionQuoteDto:
       type: object
       required:
@@ -2684,13 +2684,11 @@ components:
           format: double
           description: Position decrease percentage
         estimated_amount:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
+          description: Estimated total amount of the adjusted position
         estimated_withdrawn_collateral:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
+          description: Estimated amount of the withdrawn collateral
         liquidation_price:
           type: number
           format: double
@@ -2700,9 +2698,10 @@ components:
           format: double
           description: Price impact in percents (100% = 1.0)
         required_swap_amount:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
+          description: |-
+            The maximum acceptable swap input amount for position decrease according to the provided slippage
+                 * (if collateral_token == position_token) OR the minimum swap output amount (if collateral_token != position_token).
     FeeAmountWithUsd:
       type: object
       required:
@@ -2710,9 +2709,7 @@ components:
       - usd
       properties:
         amount:
-          type: string
-          format: int64
-          description: Signed 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/I64Dto'
         usd:
           type: number
           format: double
@@ -2885,9 +2882,7 @@ components:
       - running_total_collected_fees
       properties:
         pool:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
+          $ref: '#/components/schemas/PubkeyDto'
         running_total_collected_fees:
           type: number
           format: double
@@ -2925,12 +2920,12 @@ components:
     I128Dto:
       type: string
       format: int128
-      description: Signed 128-bit integer represented as decimal string in JSON and OpenAPI.
+      description: Signed 128-bit integer encoded as a decimal string.
       example: '-1'
     I64Dto:
       type: string
       format: int64
-      description: Signed 64-bit integer represented as decimal string in JSON and OpenAPI.
+      description: Signed 64-bit integer encoded as a decimal string.
       example: '-1'
     IncreaseSpotPositionQuoteDto:
       type: object
@@ -2946,41 +2941,34 @@ components:
       - liquidation_price
       properties:
         borrow_amount:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
+          description: Required amount to borrow
         collateral_amount:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
+          description: Required collateral amount
         estimated_amount:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
+          description: Estimated position size in the position token.
         liquidation_price:
           type: number
           format: double
           description: Liquidation price
         min_swap_output_amount:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
+          description: Minimum swap output amount according to the provided slippage.
         price_impact:
           type: number
           format: double
           description: Price impact in percents
         protocol_fee_a:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
+          description: Protocol fee in token A
         protocol_fee_b:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
+          description: Protocol fee in token B
         swap_input_amount:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
+          description: Swap input amount.
     InternalErrorCodeErrorBody:
       type: object
       required:
@@ -3037,9 +3025,7 @@ components:
       - total_period_pnl_percent
       properties:
         authority:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
+          $ref: '#/components/schemas/PubkeyDto'
         lp_base_value_usd:
           type: number
           format: double
@@ -3095,33 +3081,21 @@ components:
       - updated_at_slot
       properties:
         address:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
+          $ref: '#/components/schemas/PubkeyDto'
         authority:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
+          $ref: '#/components/schemas/PubkeyDto'
         earned:
           $ref: '#/components/schemas/TokenAmountWithUsd'
         funds:
           $ref: '#/components/schemas/TokenAmountWithUsd'
         mint:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
+          $ref: '#/components/schemas/PubkeyDto'
         shares:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
         updated_at_slot:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
         vault:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
+          $ref: '#/components/schemas/PubkeyDto'
     LimitOrderDto:
       type: object
       required:
@@ -3142,17 +3116,13 @@ components:
         a_to_b:
           type: boolean
         address:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
+          $ref: '#/components/schemas/PubkeyDto'
         amount_in:
           $ref: '#/components/schemas/TokenAmountWithUsd'
         amount_out:
           $ref: '#/components/schemas/TokenAmountWithUsd'
         authority:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
+          $ref: '#/components/schemas/PubkeyDto'
         close_tx_signature:
           type:
           - string
@@ -3173,9 +3143,7 @@ components:
           type: string
           format: date-time
         order_mint:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
+          $ref: '#/components/schemas/PubkeyDto'
         pool:
           $ref: '#/components/schemas/PoolDto'
         state:
@@ -3189,18 +3157,14 @@ components:
       - amount_out
       properties:
         amount_out:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
     LimitOrderQuoteByOutputDto:
       type: object
       required:
       - amount_in
       properties:
         amount_in:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
     LimitOrderStatus:
       type: string
       enum:
@@ -3263,13 +3227,9 @@ components:
       - created_at
       properties:
         address:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
+          $ref: '#/components/schemas/PubkeyDto'
         address_lookup_table:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
+          $ref: '#/components/schemas/PubkeyDto'
         borrow_limit_a:
           $ref: '#/components/schemas/TokenAmountWithUsd'
         borrow_limit_b:
@@ -3349,9 +3309,7 @@ components:
       - decimals
       properties:
         address:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
+          $ref: '#/components/schemas/PubkeyDto'
         decimals:
           type: integer
           format: int32
@@ -3384,398 +3342,6 @@ components:
       enum:
       - create
       - update
-    NotificationDto_LendingPositionDto:
-      type: object
-      required:
-      - entity
-      - action
-      - id
-      - data
-      properties:
-        action:
-          $ref: '#/components/schemas/NotificationAction'
-        authority:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
-        data:
-          type: object
-          required:
-          - address
-          - authority
-          - shares
-          - funds
-          - earned
-          - mint
-          - vault
-          - updated_at_slot
-          properties:
-            address:
-              type: string
-              format: pubkey
-              description: Solana public key (base58)
-            authority:
-              type: string
-              format: pubkey
-              description: Solana public key (base58)
-            earned:
-              $ref: '#/components/schemas/TokenAmountWithUsd'
-            funds:
-              $ref: '#/components/schemas/TokenAmountWithUsd'
-            mint:
-              type: string
-              format: pubkey
-              description: Solana public key (base58)
-            shares:
-              type: string
-              format: uint64
-              description: Unsigned 64-bit integer encoded as a decimal string
-            updated_at_slot:
-              type: string
-              format: uint64
-              description: Unsigned 64-bit integer encoded as a decimal string
-            vault:
-              type: string
-              format: pubkey
-              description: Solana public key (base58)
-        entity:
-          $ref: '#/components/schemas/NotificationEntity'
-        id:
-          type: string
-    NotificationDto_OrderHistoryEntryDto:
-      type: object
-      required:
-      - entity
-      - action
-      - id
-      - data
-      properties:
-        action:
-          $ref: '#/components/schemas/NotificationAction'
-        authority:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
-        data:
-          type: object
-          required:
-          - id
-          - ts
-          - slot
-          - pool
-          - authority
-          - order_type
-          - is_reduce_only
-          - a_to_b
-          - ui_direction
-          - status
-          - base_token
-          - quote_token
-          properties:
-            a_to_b:
-              type: boolean
-              description: |-
-                Mints (Tokens) Pair direction in pool
-                When TRUE  - Base token is Mint A, Quote token is Mint B
-                WHEN FALSE - Base token is Mint B, Quote token is MInt A
-            authority:
-              type: string
-              format: pubkey
-              description: Solana public key (base58)
-            base_token:
-              $ref: '#/components/schemas/TokenAmountWithUsd'
-            base_token_consumed_amount:
-              oneOf:
-              - type: 'null'
-              - $ref: '#/components/schemas/TokenAmountWithUsd'
-                description: Filled only for limit orders (consumed_amount_in)
-            id:
-              type: string
-              format: uuid
-            is_reduce_only:
-              type: boolean
-            ix_index:
-              type:
-              - integer
-              - 'null'
-              format: int32
-              description: |-
-                Filled for swaps (spot)
-                Flatten transaction instruction index
-            order_type:
-              $ref: '#/components/schemas/OrderHistoryType'
-            pool:
-              $ref: '#/components/schemas/PoolDto'
-            position_address:
-              type: string
-              format: pubkey
-              description: Solana public key (base58)
-            quote_token:
-              $ref: '#/components/schemas/TokenAmountWithUsd'
-            quote_token_filled_amount:
-              oneOf:
-              - type: 'null'
-              - $ref: '#/components/schemas/TokenAmountWithUsd'
-                description: Filled only for limit orders (filled_amount_out)
-            slot:
-              type: string
-              format: uint64
-              description: Unsigned 64-bit integer encoded as a decimal string
-            status:
-              $ref: '#/components/schemas/OrderHistoryStatus'
-            ts:
-              type: string
-              format: date-time
-              description: Block time of slot this entry was create from
-            tx_signature:
-              type:
-              - string
-              - 'null'
-              description: Filled for swaps (spot) and margin positions
-            ui_direction:
-              $ref: '#/components/schemas/OrderHistoryUIDirection'
-            ui_execution_price:
-              type:
-              - number
-              - 'null'
-              format: double
-              description: |-
-                A decimal price based on the action.
-                For market (swaps + margin) orders, displays average execution price for the order excluding the fee
-            ui_price:
-              type:
-              - number
-              - 'null'
-              format: double
-              description: |-
-                A decimal price based on the action.
-                Only for limit orders & trigger actions.
-
-                * For limit order fills - price derived from order tick_index
-                * For take profit / stop loss / liquidation - trigger price
-        entity:
-          $ref: '#/components/schemas/NotificationEntity'
-        id:
-          type: string
-    NotificationDto_PoolSwapDto:
-      type: object
-      required:
-      - entity
-      - action
-      - id
-      - data
-      properties:
-        action:
-          $ref: '#/components/schemas/NotificationAction'
-        authority:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
-        data:
-          type: object
-          required:
-          - id
-          - amount_in
-          - amount_out
-          - amount_usd
-          - a_to_b
-          - pool
-          - time
-          - tx_signature
-          properties:
-            a_to_b:
-              type: boolean
-            amount_in:
-              type: string
-              format: uint64
-              description: Unsigned 64-bit integer encoded as a decimal string
-            amount_out:
-              type: string
-              format: uint64
-              description: Unsigned 64-bit integer encoded as a decimal string
-            amount_usd:
-              type: number
-              format: double
-            id:
-              type: string
-            pool:
-              type: string
-              format: pubkey
-              description: Solana public key (base58)
-            time:
-              type: string
-              format: date-time
-            tx_signature:
-              type: string
-        entity:
-          $ref: '#/components/schemas/NotificationEntity'
-        id:
-          type: string
-    NotificationDto_StakingPositionDto:
-      type: object
-      required:
-      - entity
-      - action
-      - id
-      - data
-      properties:
-        action:
-          $ref: '#/components/schemas/NotificationAction'
-        authority:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
-        data:
-          type: object
-          required:
-          - address
-          - owner
-          - staked
-          - unclaimed_reward
-          - claimed_reward
-          - unstaked
-          - vesting
-          properties:
-            address:
-              type: string
-              format: pubkey
-              description: Solana public key (base58)
-            claimed_reward:
-              $ref: '#/components/schemas/TokenAmountWithUsd'
-            last_unstaked_at:
-              type:
-              - string
-              - 'null'
-              format: date-time
-            owner:
-              type: string
-              format: pubkey
-              description: Solana public key (base58)
-            rank:
-              type:
-              - integer
-              - 'null'
-              format: int32
-              minimum: 0
-            staked:
-              $ref: '#/components/schemas/TokenAmountWithUsd'
-            unclaimed_reward:
-              $ref: '#/components/schemas/TokenAmountWithUsd'
-            unstaked:
-              $ref: '#/components/schemas/TokenAmountWithUsd'
-            vesting:
-              $ref: '#/components/schemas/VestingDto'
-            withdraw_available_at:
-              type:
-              - string
-              - 'null'
-              format: date-time
-        entity:
-          $ref: '#/components/schemas/NotificationEntity'
-        id:
-          type: string
-    NotificationDto_TradeHistoryEntryDto:
-      type: object
-      required:
-      - entity
-      - action
-      - id
-      - data
-      properties:
-        action:
-          $ref: '#/components/schemas/NotificationAction'
-        authority:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
-        data:
-          type: object
-          required:
-          - id
-          - ts
-          - slot
-          - pool
-          - authority
-          - a_to_b
-          - action
-          - ui_direction
-          - ui_price
-          - base_token
-          - quote_token
-          - fee
-          properties:
-            a_to_b:
-              type: boolean
-              description: |-
-                Mints (Tokens) Pair direction in pool
-                When TRUE  - Base token is Mint A, Quote token is Mint B
-                WHEN FALSE - Base token is Mint B, Quote token is MInt A
-            action:
-              $ref: '#/components/schemas/TradeHistoryAction'
-            authority:
-              type: string
-              format: pubkey
-              description: Solana public key (base58)
-            base_token:
-              $ref: '#/components/schemas/TokenAmountWithUsd'
-            fee:
-              $ref: '#/components/schemas/FeeAmountWithUsd'
-              description: |-
-                Positive for taker trades (swaps + spot) and negative for maker trades (limit orders)
-                Measured in quote tokens for limit orders
-            id:
-              type: string
-              format: uuid
-            ix_index:
-              type:
-              - integer
-              - 'null'
-              format: int32
-              description: |-
-                Filled for swaps (spot)
-                Flatten transaction instruction index
-            pnl:
-              oneOf:
-              - type: 'null'
-              - $ref: '#/components/schemas/TradeHistoryEntryPnlUsd'
-                description: |-
-                  Only for margin positions,
-                  will be calculated based on the price of collateral when opening a position
-                  and the position value on decrease/close.
-            pool:
-              $ref: '#/components/schemas/PoolDto'
-            position_address:
-              type: string
-              format: pubkey
-              description: Solana public key (base58)
-            quote_token:
-              $ref: '#/components/schemas/TokenAmountWithUsd'
-            slot:
-              type: string
-              format: uint64
-              description: Unsigned 64-bit integer encoded as a decimal string
-            ts:
-              type: string
-              format: date-time
-            tx_signature:
-              type:
-              - string
-              - 'null'
-              description: Filled for swaps (spot) and margin positions
-            ui_direction:
-              $ref: '#/components/schemas/TradeHistoryUIDirection'
-            ui_price:
-              type: number
-              format: double
-              description: |-
-                A decimal price based on the action.
-
-                * For spot and margin positions - average execution price excluding the fee.
-                * For limit order fills - price derived from order tick_index.
-        entity:
-          $ref: '#/components/schemas/NotificationEntity'
-        id:
-          type: string
     NotificationEntity:
       type: string
       enum:
@@ -3804,13 +3370,9 @@ components:
           type: integer
           format: int32
         mint:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
+          $ref: '#/components/schemas/PubkeyDto'
         price:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
         time:
           type: string
           format: date-time
@@ -3844,9 +3406,7 @@ components:
           items:
             $ref: '#/components/schemas/OrderBookEntryDto'
         pool_address:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
+          $ref: '#/components/schemas/PubkeyDto'
         pool_price:
           type: number
           format: double
@@ -3867,37 +3427,21 @@ components:
         ask_side:
           type: boolean
         concentrated_amount:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
         concentrated_amount_quote:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
         concentrated_total:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
         concentrated_total_quote:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
         limit_amount:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
         limit_amount_quote:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
         limit_total:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
         limit_total_quote:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
         price:
           type: number
           format: double
@@ -3919,6 +3463,7 @@ components:
       - status
       - base_token
       - quote_token
+      - position_address
       properties:
         a_to_b:
           type: boolean
@@ -3927,9 +3472,8 @@ components:
             When TRUE  - Base token is Mint A, Quote token is Mint B
             WHEN FALSE - Base token is Mint B, Quote token is MInt A
         authority:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
+          $ref: '#/components/schemas/PubkeyDto'
+          description: Owner (account/wallet) of this history entry
         base_token:
           $ref: '#/components/schemas/TokenAmountWithUsd'
         base_token_consumed_amount:
@@ -3955,9 +3499,10 @@ components:
         pool:
           $ref: '#/components/schemas/PoolDto'
         position_address:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/PubkeyDto'
+            description: Filled for both limit orders and margin positions
         quote_token:
           $ref: '#/components/schemas/TokenAmountWithUsd'
         quote_token_filled_amount:
@@ -3966,9 +3511,8 @@ components:
           - $ref: '#/components/schemas/TokenAmountWithUsd'
             description: Filled only for limit orders (filled_amount_out)
         slot:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
+          description: Block's slot this entry was created from
         status:
           $ref: '#/components/schemas/OrderHistoryStatus'
         ts:
@@ -4055,17 +3599,13 @@ components:
       - tick_current_index
       properties:
         address:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
+          $ref: '#/components/schemas/PubkeyDto'
         fee_rate:
           type: integer
           format: int32
           minimum: 0
         liquidity:
-          type: string
-          format: uint128
-          description: Unsigned 128-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U128Dto'
         mint_a:
           $ref: '#/components/schemas/MintDto'
         mint_b:
@@ -4085,9 +3625,7 @@ components:
         provider:
           $ref: '#/components/schemas/PoolProvider'
         sqrt_price:
-          type: string
-          format: uint128
-          description: Unsigned 128-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U128Dto'
         stats:
           oneOf:
           - type: 'null'
@@ -4100,13 +3638,9 @@ components:
           format: int32
           minimum: 0
         token_a_vault:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
+          $ref: '#/components/schemas/PubkeyDto'
         token_b_vault:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
+          $ref: '#/components/schemas/PubkeyDto'
     PoolPriceCandleDto:
       type: object
       required:
@@ -4215,22 +3749,16 @@ components:
         a_to_b:
           type: boolean
         amount_in:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
         amount_out:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
         amount_usd:
           type: number
           format: double
         id:
           type: string
         pool:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
+          $ref: '#/components/schemas/PubkeyDto'
         time:
           type: string
           format: date-time
@@ -4386,23 +3914,200 @@ components:
           - internal_error
     SseResponse:
       oneOf:
-      - $ref: '#/components/schemas/StreamInitalMessage'
-      - $ref: '#/components/schemas/NotificationDto_PoolSwapDto'
-      - $ref: '#/components/schemas/NotificationDto_StakingPositionDto'
-      - $ref: '#/components/schemas/NotificationDto_LendingPositionDto'
-      - $ref: '#/components/schemas/NotificationDto_TradeHistoryEntryDto'
-      - $ref: '#/components/schemas/NotificationDto_OrderHistoryEntryDto'
-      - $ref: '#/components/schemas/SnapshotContainer'
+      - $ref: '#/components/schemas/SseResponseInitialMessage'
+      - $ref: '#/components/schemas/SseResponsePoolSwap'
+      - $ref: '#/components/schemas/SseResponseStakingPosition'
+      - $ref: '#/components/schemas/SseResponseLendingPosition'
+      - $ref: '#/components/schemas/SseResponseTradeHistoryEntry'
+      - $ref: '#/components/schemas/SseResponseOrderHistoryEntry'
+      - $ref: '#/components/schemas/SseResponseSnapshot'
       discriminator:
         propertyName: entity
         mapping:
-          initial_message: '#/components/schemas/StreamInitalMessage'
-          lending_position: '#/components/schemas/NotificationDto_LendingPositionDto'
-          order_history_entry: '#/components/schemas/NotificationDto_OrderHistoryEntryDto'
-          pool_swap: '#/components/schemas/NotificationDto_PoolSwapDto'
-          staking_position: '#/components/schemas/NotificationDto_StakingPositionDto'
-          state_snapshot: '#/components/schemas/SnapshotContainer'
-          trade_history_entry: '#/components/schemas/NotificationDto_TradeHistoryEntryDto'
+          initial_message: '#/components/schemas/SseResponseInitialMessage'
+          lending_position: '#/components/schemas/SseResponseLendingPosition'
+          order_history_entry: '#/components/schemas/SseResponseOrderHistoryEntry'
+          pool_swap: '#/components/schemas/SseResponsePoolSwap'
+          staking_position: '#/components/schemas/SseResponseStakingPosition'
+          state_snapshot: '#/components/schemas/SseResponseSnapshot'
+          trade_history_entry: '#/components/schemas/SseResponseTradeHistoryEntry'
+    SseResponseInitialMessage:
+      allOf:
+      - $ref: '#/components/schemas/StreamInitalMessage'
+      - type: object
+        required:
+        - entity
+        properties:
+          entity:
+            type: string
+            enum:
+            - initial_message
+    SseResponseLendingPosition:
+      allOf:
+      - $ref: '#/components/schemas/SseResponseLendingPositionPayload'
+      - type: object
+        required:
+        - entity
+        properties:
+          entity:
+            type: string
+            enum:
+            - lending_position
+    SseResponseLendingPositionPayload:
+      type: object
+      required:
+      - entity
+      - action
+      - id
+      - data
+      properties:
+        action:
+          $ref: '#/components/schemas/NotificationAction'
+        authority:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/PubkeyDto'
+        data:
+          $ref: '#/components/schemas/LendingPositionDto'
+        entity:
+          $ref: '#/components/schemas/NotificationEntity'
+        id:
+          type: string
+    SseResponseOrderHistoryEntry:
+      allOf:
+      - $ref: '#/components/schemas/SseResponseOrderHistoryEntryPayload'
+      - type: object
+        required:
+        - entity
+        properties:
+          entity:
+            type: string
+            enum:
+            - order_history_entry
+    SseResponseOrderHistoryEntryPayload:
+      type: object
+      required:
+      - entity
+      - action
+      - id
+      - data
+      properties:
+        action:
+          $ref: '#/components/schemas/NotificationAction'
+        authority:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/PubkeyDto'
+        data:
+          $ref: '#/components/schemas/OrderHistoryEntryDto'
+        entity:
+          $ref: '#/components/schemas/NotificationEntity'
+        id:
+          type: string
+    SseResponsePoolSwap:
+      allOf:
+      - $ref: '#/components/schemas/SseResponsePoolSwapPayload'
+      - type: object
+        required:
+        - entity
+        properties:
+          entity:
+            type: string
+            enum:
+            - pool_swap
+    SseResponsePoolSwapPayload:
+      type: object
+      required:
+      - entity
+      - action
+      - id
+      - data
+      properties:
+        action:
+          $ref: '#/components/schemas/NotificationAction'
+        authority:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/PubkeyDto'
+        data:
+          $ref: '#/components/schemas/PoolSwapDto'
+        entity:
+          $ref: '#/components/schemas/NotificationEntity'
+        id:
+          type: string
+    SseResponseSnapshot:
+      allOf:
+      - $ref: '#/components/schemas/SnapshotContainer'
+      - type: object
+        required:
+        - entity
+        properties:
+          entity:
+            type: string
+            enum:
+            - state_snapshot
+    SseResponseStakingPosition:
+      allOf:
+      - $ref: '#/components/schemas/SseResponseStakingPositionPayload'
+      - type: object
+        required:
+        - entity
+        properties:
+          entity:
+            type: string
+            enum:
+            - staking_position
+    SseResponseStakingPositionPayload:
+      type: object
+      required:
+      - entity
+      - action
+      - id
+      - data
+      properties:
+        action:
+          $ref: '#/components/schemas/NotificationAction'
+        authority:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/PubkeyDto'
+        data:
+          $ref: '#/components/schemas/StakingPositionDto'
+        entity:
+          $ref: '#/components/schemas/NotificationEntity'
+        id:
+          type: string
+    SseResponseTradeHistoryEntry:
+      allOf:
+      - $ref: '#/components/schemas/SseResponseTradeHistoryEntryPayload'
+      - type: object
+        required:
+        - entity
+        properties:
+          entity:
+            type: string
+            enum:
+            - trade_history_entry
+    SseResponseTradeHistoryEntryPayload:
+      type: object
+      required:
+      - entity
+      - action
+      - id
+      - data
+      properties:
+        action:
+          $ref: '#/components/schemas/NotificationAction'
+        authority:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/PubkeyDto'
+        data:
+          $ref: '#/components/schemas/TradeHistoryEntryDto'
+        entity:
+          $ref: '#/components/schemas/NotificationEntity'
+        id:
+          type: string
     StakingDepositsStatsDto:
       type: object
       required:
@@ -4413,9 +4118,7 @@ components:
       - running_total_deposits_sol
       properties:
         running_total_deposits_sol:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
         running_total_deposits_usd:
           type: number
           format: double
@@ -4423,9 +4126,7 @@ components:
           type: string
           format: date-time
         total_deposits_sol:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
         total_deposits_usd:
           type: number
           format: double
@@ -4468,13 +4169,9 @@ components:
       - staked
       properties:
         address:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
+          $ref: '#/components/schemas/PubkeyDto'
         owner:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
+          $ref: '#/components/schemas/PubkeyDto'
         rank:
           type: integer
           format: int32
@@ -4493,13 +4190,9 @@ components:
         action:
           $ref: '#/components/schemas/StakingPositionActionType'
         amount:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
         position:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
+          $ref: '#/components/schemas/PubkeyDto'
         time:
           type: string
           format: date-time
@@ -4525,9 +4218,7 @@ components:
       - vesting
       properties:
         address:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
+          $ref: '#/components/schemas/PubkeyDto'
         claimed_reward:
           $ref: '#/components/schemas/TokenAmountWithUsd'
         last_unstaked_at:
@@ -4536,9 +4227,7 @@ components:
           - 'null'
           format: date-time
         owner:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
+          $ref: '#/components/schemas/PubkeyDto'
         rank:
           type:
           - integer
@@ -4635,20 +4324,14 @@ components:
       - price_impact
       properties:
         estimated_amount_out:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
         fee_amount:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
         fee_usd:
           type: number
           format: double
         min_amount_out:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
         price_impact:
           type: number
           format: double
@@ -4663,20 +4346,14 @@ components:
       - price_impact
       properties:
         estimated_amount_in:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
         fee_amount:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
         fee_usd:
           type: number
           format: double
         max_amount_in:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
         price_impact:
           type: number
           format: double
@@ -4691,9 +4368,7 @@ components:
           type: integer
           format: int32
         liquidity:
-          type: string
-          format: int128
-          description: Signed 128-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/I128Dto'
     TokenAmountWithUsd:
       type: object
       required:
@@ -4701,9 +4376,7 @@ components:
       - usd
       properties:
         amount:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
         usd:
           type: number
           format: double
@@ -4714,9 +4387,7 @@ components:
       - usd
       properties:
         amount:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
         usd:
           type: number
           format: double
@@ -4745,6 +4416,7 @@ components:
       - base_token
       - quote_token
       - fee
+      - position_address
       properties:
         a_to_b:
           type: boolean
@@ -4755,9 +4427,8 @@ components:
         action:
           $ref: '#/components/schemas/TradeHistoryAction'
         authority:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
+          $ref: '#/components/schemas/PubkeyDto'
+          description: Owner (account/wallet) of this history entry
         base_token:
           $ref: '#/components/schemas/TokenAmountWithUsd'
         fee:
@@ -4787,15 +4458,15 @@ components:
         pool:
           $ref: '#/components/schemas/PoolDto'
         position_address:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/PubkeyDto'
+            description: Filled for both limit orders and margin positions
         quote_token:
           $ref: '#/components/schemas/TokenAmountWithUsd'
         slot:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
+          description: Block's slot this entry was created from
         ts:
           type: string
           format: date-time
@@ -4851,9 +4522,7 @@ components:
       - is_withdraw_enabled
       properties:
         address:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
+          $ref: '#/components/schemas/PubkeyDto'
         apy:
           type: number
           format: double
@@ -4864,13 +4533,9 @@ components:
         is_withdraw_enabled:
           type: boolean
         reward_token_mint:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
+          $ref: '#/components/schemas/PubkeyDto'
         staked_token_mint:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
+          $ref: '#/components/schemas/PubkeyDto'
         total_reward:
           $ref: '#/components/schemas/TokenAmountWithUsd'
         total_staked:
@@ -4999,9 +4664,7 @@ components:
       - entry_price
       properties:
         authority:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
+          $ref: '#/components/schemas/PubkeyDto'
         closed_at:
           type:
           - string
@@ -5043,9 +4706,7 @@ components:
         pool:
           $ref: '#/components/schemas/PoolDto'
         position_address:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
+          $ref: '#/components/schemas/PubkeyDto'
         state:
           $ref: '#/components/schemas/TunaPositionDtoState'
         total_deposit_usd:
@@ -5324,13 +4985,9 @@ components:
       - opened_at
       properties:
         address:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
+          $ref: '#/components/schemas/PubkeyDto'
         authority:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
+          $ref: '#/components/schemas/PubkeyDto'
         closed_at:
           type:
           - string
@@ -5371,9 +5028,7 @@ components:
           type: number
           format: double
         liquidity:
-          type: string
-          format: uint128
-          description: Unsigned 128-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U128Dto'
         lower_limit_order_price:
           type: number
           format: double
@@ -5396,9 +5051,7 @@ components:
         pool:
           $ref: '#/components/schemas/PoolDto'
         position_mint:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
+          $ref: '#/components/schemas/PubkeyDto'
         state:
           $ref: '#/components/schemas/TunaPositionDtoState'
         tick_lower_index:
@@ -5446,9 +5099,7 @@ components:
       - usd
       properties:
         amount:
-          type: string
-          format: int128
-          description: Signed 128-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/I128Dto'
         usd:
           type: number
           format: double
@@ -5459,9 +5110,7 @@ components:
       - rate
       properties:
         amount:
-          type: string
-          format: int128
-          description: Signed 128-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/I128Dto'
         rate:
           type: number
           format: double
@@ -5502,13 +5151,9 @@ components:
       - opened_at
       properties:
         address:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
+          $ref: '#/components/schemas/PubkeyDto'
         authority:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
+          $ref: '#/components/schemas/PubkeyDto'
         closed_at:
           type:
           - string
@@ -5567,12 +5212,12 @@ components:
     U128Dto:
       type: string
       format: uint128
-      description: Unsigned 128-bit integer represented as decimal string in JSON and OpenAPI.
+      description: Unsigned 128-bit integer encoded as a decimal string.
       example: '0'
     U64Dto:
       type: string
       format: uint64
-      description: Unsigned 64-bit integer represented as decimal string in JSON and OpenAPI.
+      description: Unsigned 64-bit integer encoded as a decimal string.
       example: '0'
     UpdateStreamSubscriptionError404Error:
       type: object
@@ -5646,40 +5291,26 @@ components:
       - pyth_oracle_price_update
       properties:
         address:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
+          $ref: '#/components/schemas/PubkeyDto'
         borrow_apy:
           type: number
           format: double
         borrowed_funds:
           $ref: '#/components/schemas/TokenAmountWithUsd'
         borrowed_shares:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
         deposited_funds:
           $ref: '#/components/schemas/TokenAmountWithUsd'
         deposited_shares:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
         interest_rate:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
         mint:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
+          $ref: '#/components/schemas/PubkeyDto'
         pyth_oracle_feed_id:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
+          $ref: '#/components/schemas/PubkeyDto'
         pyth_oracle_price_update:
-          type: string
-          format: pubkey
-          description: Solana public key (base58)
+          $ref: '#/components/schemas/PubkeyDto'
         supply_apy:
           type: number
           format: double
@@ -5778,9 +5409,8 @@ components:
           description: How often tokens are unlocked in seconds
           minimum: 0
         unlock_rate:
-          type: string
-          format: uint64
-          description: Unsigned 64-bit integer encoded as a decimal string
+          $ref: '#/components/schemas/U64Dto'
+          description: The amount of tokens to unlock per unlock
         unlocked:
           $ref: '#/components/schemas/TokenAmountWithUsd'
           description: Amount of tokens unlocked since the beginning of lock
