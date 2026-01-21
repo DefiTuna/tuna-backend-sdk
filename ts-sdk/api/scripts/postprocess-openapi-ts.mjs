@@ -1,3 +1,5 @@
+// Once https://github.com/hey-api/openapi-ts/issues/558 resolved, snake_case transform can be removed
+
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 

@@ -1,3 +1,5 @@
+// Once https://github.com/hey-api/openapi-ts/issues/558 will be resolved this pre-processor can be removed
+
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import yaml from "yaml";
