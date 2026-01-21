@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 3.1.2
+
+### Patch Changes
+
+- cddbfe7: feat: Support new OpenAPI spec
+
 ## 3.1.1
 
 ### Patch Changes
