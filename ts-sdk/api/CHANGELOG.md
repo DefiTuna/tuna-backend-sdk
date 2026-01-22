@@ -1,5 +1,23 @@
 # @crypticdot/defituna-api
 
+## 4.0.2
+
+### Patch Changes
+
+- 975c755: chore: Export SSE types
+
+## 4.0.1
+
+### Patch Changes
+
+- a1dea00: fix: Remove excess .mjs file
+
+## 4.0.0
+
+### Major Changes
+
+- 7b62809: feat: New API SDK implementation based on hey-api
+
 ## 3.1.2
 
 ### Patch Changes

@@ -1,6 +1,7 @@
-export * from "./gen/defiTunaAPI";
-export { setTunaBaseUrl } from "./baseUrl";
+export * from "./client";
+export { createClient } from "./client/client";
+export * from "./client/zod.gen";
+export * from "./client/types.gen";
+export * from "./client/core/serverSentEvents.gen";
 export { unwrap } from "./unwrap";
-export type { ApiError } from "./unwrap";
-export { normalizeResponseJson } from "./customFetch";
-export * from "./sse";
+export { TunaBackendSdkError, isTunaSdkError, tunaSdkErrorInterceptor } from "./error";

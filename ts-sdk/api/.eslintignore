@@ -1,2 +1,4 @@
 dist/
 src/gen/
+src/client/
+src/caseTransforms.ts

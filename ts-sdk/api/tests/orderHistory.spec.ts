@@ -1,13 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import {
-  getOrderHistory,
-  OrderHistoryStatus,
-  OrderHistoryType,
-  OrderHistoryUIDirection,
-  setTunaBaseUrl,
-  unwrap,
-} from "../src";
+import { OrderHistoryStatus, OrderHistoryType, OrderHistoryUiDirection, unwrap } from "../src";
 
 import {
   CANCELLED_LIMIT_ORDER,
@@ -17,13 +10,14 @@ import {
   TEST_WALLET_ADDRESS,
   TUNA_USDC_FUSION_POOL_ADDRESS,
 } from "./consts";
-
-import "dotenv/config";
-
-setTunaBaseUrl(process.env.API_BASE_URL!);
+import { sdk } from "./sdk";
 
 describe("All order history", async () => {
-  const data = await unwrap(getOrderHistory(TEST_WALLET_ADDRESS));
+  const data = await unwrap(
+    sdk.getOrderHistory({
+      userAddress: TEST_WALLET_ADDRESS,
+    }),
+  );
 
   it("Has three orders", () => {
     expect(data.length).toBeGreaterThanOrEqual(3);
@@ -35,7 +29,8 @@ describe("All order history", async () => {
 
 describe("Order history filter by pool", async () => {
   const data = await unwrap(
-    getOrderHistory(TEST_WALLET_ADDRESS, {
+    sdk.getOrderHistory({
+      userAddress: TEST_WALLET_ADDRESS,
       pool: [SOL_USDC_FUSION_POOL_ADDRESS],
     }),
   );
@@ -47,7 +42,8 @@ describe("Order history filter by pool", async () => {
 
 describe("Order history filter by two pools", async () => {
   const data = await unwrap(
-    getOrderHistory(TEST_WALLET_ADDRESS, {
+    sdk.getOrderHistory({
+      userAddress: TEST_WALLET_ADDRESS,
       pool: [SOL_USDC_FUSION_POOL_ADDRESS, TUNA_USDC_FUSION_POOL_ADDRESS],
     }),
   );
@@ -59,23 +55,37 @@ describe("Order history filter by two pools", async () => {
 });
 
 describe("Order history filter by order type", async () => {
-  const data = await unwrap(getOrderHistory(TEST_WALLET_ADDRESS, { orderType: [OrderHistoryType.limit] }));
+  const data = await unwrap(
+    sdk.getOrderHistory({
+      userAddress: TEST_WALLET_ADDRESS,
+      orderType: [OrderHistoryType.LIMIT],
+    }),
+  );
   it("Can filter by order type", () => {
     expect(data.length).toBeGreaterThan(0);
-    expect(data.every(item => item.orderType === OrderHistoryType.limit)).toBe(true);
+    expect(data.every(item => item.orderType === OrderHistoryType.LIMIT)).toBe(true);
   });
 });
 
 describe("Order history filter by ui direction", async () => {
-  const data = await unwrap(getOrderHistory(TEST_WALLET_ADDRESS, { uiDirection: [OrderHistoryUIDirection.buy] }));
+  const data = await unwrap(
+    sdk.getOrderHistory({
+      userAddress: TEST_WALLET_ADDRESS,
+      uiDirection: [OrderHistoryUiDirection.BUY],
+    }),
+  );
   it("Can filter by ui direction", () => {
     expect(data.length).toBeGreaterThan(0);
-    expect(data.every(item => item.uiDirection === OrderHistoryUIDirection.buy)).toBe(true);
+    expect(data.every(item => item.uiDirection === OrderHistoryUiDirection.BUY)).toBe(true);
   });
 });
 
 describe("Single order history item", async () => {
-  const allData = await unwrap(getOrderHistory(TEST_WALLET_ADDRESS));
+  const allData = await unwrap(
+    sdk.getOrderHistory({
+      userAddress: TEST_WALLET_ADDRESS,
+    }),
+  );
   const data = allData.filter(item => item.positionAddress === COMPLETED_LIMIT_ORDER)[0] || undefined;
 
   it("Order history item found", () => {
@@ -89,11 +99,11 @@ describe("Single order history item", async () => {
   });
 
   it("Correct parameters", () => {
-    expect(data.orderType).toBe(OrderHistoryType.limit);
+    expect(data.orderType).toBe(OrderHistoryType.LIMIT);
     expect(data.isReduceOnly).toBe(false);
     expect(data.aToB).toBe(true);
-    expect(data.uiDirection).toBe(OrderHistoryUIDirection.sell);
-    expect(data.status).toBe(OrderHistoryStatus.claimed);
+    expect(data.uiDirection).toBe(OrderHistoryUiDirection.SELL);
+    expect(data.status).toBe(OrderHistoryStatus.CLAIMED);
   });
 
   it("Correct amounts", () => {

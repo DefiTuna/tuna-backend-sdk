@@ -1,17 +1,14 @@
 import { describe, expect, it } from "vitest";
 
-import { getVault, getVaultHistory, getVaults, setTunaBaseUrl, unwrap } from "../src";
+import { unwrap } from "../src";
 
 import { SOL_LENDING_VAULT, SOL_MINT } from "./consts";
 import { getVaultsFromRpc } from "./rpc";
-
-import "dotenv/config";
-
-setTunaBaseUrl(process.env.API_BASE_URL!);
+import { sdk } from "./sdk";
 
 describe("Vaults", async () => {
   const rpcVaults = await getVaultsFromRpc();
-  const vaults = await unwrap(getVaults());
+  const vaults = await unwrap(sdk.getVaults());
 
   it("Length matches rpc", () => {
     expect(rpcVaults.length).toBe(vaults.length);
@@ -35,22 +32,27 @@ describe("Vaults", async () => {
 describe("Abort signal", async () => {
   const ab = new AbortController();
   ab.abort();
-  const promise = getVaults({ signal: ab.signal });
+  const promise = sdk.getVaults({ signal: ab.signal, throwOnError: true });
   expect(promise).rejects.toThrow("This operation was aborted");
 });
 
 describe("Single Vault", async () => {
   const unsavedVaultAddress = "FeR8VBqNRSUD5NtXAj2n3j1dAHkZHfyDktKuLXD4pump";
-  const vault = await unwrap(getVault(SOL_LENDING_VAULT));
-  const response_history = await getVaultHistory(SOL_LENDING_VAULT, {
+  const vault = await unwrap(
+    sdk.getVault({
+      vaultAddress: SOL_LENDING_VAULT,
+    }),
+  );
+  const responseHistory = await sdk.getVaultHistory({
+    vaultAddress: SOL_LENDING_VAULT,
     from: new Date(2025, 3, 1).toISOString().slice(0, 10),
     to: new Date(2025, 5, 1).toISOString().slice(0, 10),
   });
-  expect(response_history.status).toBe(200);
-  if (response_history.status !== 200) {
-    throw new Error(`Expected 200 from getVaultHistory, got ${response_history.status}`);
+  expect(responseHistory.response.status).toBe(200);
+  if (responseHistory.response.status !== 200) {
+    throw new Error(`Expected 200 from getVaultHistory, got ${responseHistory.response.status}`);
   }
-  const history = response_history.data.data;
+  const history = await unwrap(Promise.resolve(responseHistory));
 
   it("Returns vault data", () => {
     expect(vault.address).toBe(SOL_LENDING_VAULT);
@@ -62,11 +64,15 @@ describe("Single Vault", async () => {
   });
 
   it("Returns 404 for unsaved vault", async () => {
-    const response = await getVault(unsavedVaultAddress);
+    const { response } = await sdk.getVault({
+      vaultAddress: unsavedVaultAddress,
+    });
     expect(response.status).toBe(404);
   });
   it("Returns 400 for invalid vault", async () => {
-    const response = await getVault("123");
+    const { response } = await sdk.getVault({
+      vaultAddress: "123",
+    });
     expect(response.status).toBe(400);
   });
 });

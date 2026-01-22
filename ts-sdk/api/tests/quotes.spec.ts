@@ -2,25 +2,11 @@ import { HUNDRED_PERCENT, PoolToken } from "@crypticdot/defituna-client";
 import { priceToTickIndex } from "@crypticdot/fusionamm-core";
 import { describe, expect, it } from "vitest";
 
-import {
-  getCloseSpotPositionQuote,
-  getDecreaseSpotPositionQuote,
-  getIncreaseSpotPositionQuote,
-  getLimitOrderQuoteByInput,
-  getLimitOrderQuoteByOutput,
-  getOraclePrices,
-  getSwapQuoteByInput,
-  getSwapQuoteByOutput,
-  setTunaBaseUrl,
-  unwrap,
-} from "../src";
+import { unwrap } from "../src";
 
 import { SOL_MINT, SOL_USDC_FUSION_MARKET_ADDRESS, SOL_USDC_FUSION_POOL_ADDRESS, USDC_MINT } from "./consts";
 import { bigintToNumber, numberToBigint } from "./rpc";
-
-import "dotenv/config";
-
-setTunaBaseUrl(process.env.API_BASE_URL!);
+import { sdk } from "./sdk";
 
 const SOL_DECIMALS = 9;
 const USDC_DECIMALS = 6;
@@ -32,7 +18,7 @@ describe("Limit Order Quotes", async () => {
     const tickIndex = priceToTickIndex(200, 0, 0);
     // Selling 1 SOL at ~200 USDC / SOL price
     const limitOrderQuoteByInput = await unwrap(
-      getLimitOrderQuoteByInput({
+      sdk.getLimitOrderQuoteByInput({
         pool: SOL_USDC_FUSION_POOL_ADDRESS,
         amountIn: solAmountIn,
         aToB: true,
@@ -48,7 +34,7 @@ describe("Limit Order Quotes", async () => {
     const tickIndex = priceToTickIndex(200, 0, 0);
     // Selling 1 SOL at ~200 USDC / SOL price
     const limitOrderQuoteByOutput = await unwrap(
-      getLimitOrderQuoteByOutput({
+      sdk.getLimitOrderQuoteByOutput({
         pool: SOL_USDC_FUSION_POOL_ADDRESS,
         amountOut: usdcAmountOut,
         aToB: true,
@@ -61,7 +47,7 @@ describe("Limit Order Quotes", async () => {
 });
 
 describe("Quotes", async () => {
-  const oraclePrices = await unwrap(getOraclePrices());
+  const oraclePrices = await unwrap(sdk.getOraclePrices());
   const solOraclePrice = oraclePrices.find(oraclePrice => oraclePrice.mint == SOL_MINT)!;
   const usdcOraclePrice = oraclePrices.find(oraclePrice => oraclePrice.mint == USDC_MINT)!;
   const solPrice = bigintToNumber(solOraclePrice.price, solOraclePrice.decimals);
@@ -70,7 +56,7 @@ describe("Quotes", async () => {
   it("Calculates swap quote by input", async () => {
     const solAmountIn = numberToBigint(1, SOL_DECIMALS);
     const swapQuoteByInput = await unwrap(
-      getSwapQuoteByInput({
+      sdk.getSwapQuoteByInput({
         pool: SOL_USDC_FUSION_POOL_ADDRESS,
         amountIn: solAmountIn,
         aToB: true,
@@ -88,7 +74,7 @@ describe("Quotes", async () => {
   it("Calculates swap quote by output", async () => {
     const solAmountOut = numberToBigint(1, SOL_DECIMALS);
     const swapQuoteByOutput = await unwrap(
-      getSwapQuoteByOutput({
+      sdk.getSwapQuoteByOutput({
         pool: SOL_USDC_FUSION_POOL_ADDRESS,
         amountOut: solAmountOut,
         aToB: true,
@@ -107,7 +93,7 @@ describe("Quotes", async () => {
     const usdcIncreaseAmount = numberToBigint(2, USDC_DECIMALS);
     const leverage = 2;
     const increaseSpotPositionQuote = await unwrap(
-      getIncreaseSpotPositionQuote({
+      sdk.getIncreaseSpotPositionQuote({
         market: SOL_USDC_FUSION_MARKET_ADDRESS,
         increaseAmount: usdcIncreaseAmount,
         collateralToken: PoolToken.B,
@@ -128,7 +114,7 @@ describe("Quotes", async () => {
     const positionDebt = numberToBigint(150, USDC_DECIMALS);
     const leverage = 2;
     const increaseSpotPositionQuote = await unwrap(
-      getIncreaseSpotPositionQuote({
+      sdk.getIncreaseSpotPositionQuote({
         market: SOL_USDC_FUSION_MARKET_ADDRESS,
         increaseAmount: usdcIncreaseAmount,
         collateralToken: PoolToken.B,
@@ -150,7 +136,7 @@ describe("Quotes", async () => {
     const positionAmount = numberToBigint(10, SOL_DECIMALS);
     const positionDebt = numberToBigint(500, USDC_DECIMALS);
     const decreaseSpotPositionQuote = await unwrap(
-      getDecreaseSpotPositionQuote({
+      sdk.getDecreaseSpotPositionQuote({
         market: SOL_USDC_FUSION_MARKET_ADDRESS,
         decreaseAmount: usdcDecreaseAmount,
         collateralToken: PoolToken.B,
@@ -168,7 +154,7 @@ describe("Quotes", async () => {
     const positionAmount = numberToBigint(10, SOL_DECIMALS);
     const positionDebt = numberToBigint(500, USDC_DECIMALS);
     const decreaseSpotPositionQuote = await unwrap(
-      getCloseSpotPositionQuote({
+      sdk.getCloseSpotPositionQuote({
         market: SOL_USDC_FUSION_MARKET_ADDRESS,
         decreasePercent: HUNDRED_PERCENT,
         collateralToken: PoolToken.B,

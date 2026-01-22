@@ -1,6 +1,6 @@
 {
   "name": "@crypticdot/defituna-api",
-  "version": "3.1.2",
+  "version": "4.0.2",
   "private": false,
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -15,9 +15,9 @@
     "README.md"
   ],
   "scripts": {
-    "build": "pnpm build:clean && pnpm build:orval && pnpm build:dist",
-    "build:clean": "test -d src/gen && find src/gen -type f -name *.ts -delete || true",
-    "build:orval": "pnpm orval",
+    "generate": "pnpm openapi-ts",
+    "build": "pnpm build:dist",
+    "openapi-ts": "node scripts/camelize-openapi.mjs && openapi-ts && node scripts/postprocess-openapi-ts.mjs",
     "build:dist": "tsup src/index.ts --format cjs,esm --dts",
     "eslint": "eslint \"**/*.ts\"",
     "eslint:fix": "eslint \"**/*.ts\" --fix",
@@ -34,21 +34,18 @@
     "@crypticdot/fusionamm-core": "^1.0.62",
     "@crypticdot/prettier-config": "^1.0.0",
     "@crypticdot/typescript-config": "^1.0.0",
+    "@hey-api/openapi-ts": "0.90.4",
     "@solana/kit": "^2.1.0",
     "@types/node": "^22.13.14",
     "decimal.js": "^10.5.0",
     "dotenv": "^16.4.7",
     "eslint": "^8.57.0",
-    "eventsource": "^3.0.6",
     "express": "^4.21.2",
-    "openapi3-ts": "^4.5.0",
-    "orval": "^7.17.0",
     "tsup": "^8.3.5",
     "typescript": "5.8.3",
     "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^3.0.9"
-  },
-  "dependencies": {
-    "camelcase-keys": "^10.0.1"
+    "vitest": "^3.0.9",
+    "yaml": "^2.8.2",
+    "zod": "4.4.0-canary.20251231T055727"
   }
 }

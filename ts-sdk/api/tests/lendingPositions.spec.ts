@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { getLendingPosition, getLendingPositions, setTunaBaseUrl, unwrap } from "../src";
+import { unwrap } from "../src";
 
 import {
   SOL_LENDING_POSITION,
@@ -9,13 +9,14 @@ import {
   TEST_WALLET_ADDRESS,
   USDC_LENDING_POSITION,
 } from "./consts";
-
-import "dotenv/config";
-
-setTunaBaseUrl(process.env.API_BASE_URL!);
+import { sdk } from "./sdk";
 
 describe("All lending positions", async () => {
-  const data = await unwrap(getLendingPositions(TEST_WALLET_ADDRESS));
+  const data = await unwrap(
+    sdk.getLendingPositions({
+      userAddress: TEST_WALLET_ADDRESS,
+    }),
+  );
 
   it("Has two test positions", () => {
     expect(data.length).toBeGreaterThanOrEqual(2);
@@ -25,7 +26,12 @@ describe("All lending positions", async () => {
 });
 
 describe("Single lending position", async () => {
-  const data = await unwrap(getLendingPosition(TEST_WALLET_ADDRESS, SOL_LENDING_POSITION));
+  const data = await unwrap(
+    sdk.getLendingPosition({
+      userAddress: TEST_WALLET_ADDRESS,
+      lendingPositionAddress: SOL_LENDING_POSITION,
+    }),
+  );
 
   it("Poistion found", () => {
     expect(data).toBeDefined();
