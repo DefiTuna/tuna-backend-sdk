@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 4.0.3
+
+### Patch Changes
+
+- 6a74dfb: LP history actions api update
+
 ## 4.0.2
 
 ### Patch Changes
