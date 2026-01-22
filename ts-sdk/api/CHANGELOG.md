@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 4.0.1
+
+### Patch Changes
+
+- a1dea00: fix: Remove excess .mjs file
+
 ## 4.0.0
 
 ### Major Changes
