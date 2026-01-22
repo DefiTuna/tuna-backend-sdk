@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 4.0.2
+
+### Patch Changes
+
+- 975c755: chore: Export SSE types
+
 ## 4.0.1
 
 ### Patch Changes
