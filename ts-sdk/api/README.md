@@ -27,7 +27,7 @@ const sdk = new TunaBackendSdk({ client });
 
 const positions = await unwrap(
   sdk.getTunaPositions({
-    path: { userAddress: "CYCf8sBj4zLZheRovh37rWLe7pK8Yn5G7nb4SeBmgfMG" },
+    userAddress: "CYCf8sBj4zLZheRovh37rWLe7pK8Yn5G7nb4SeBmgfMG",
   }),
 );
 ```
