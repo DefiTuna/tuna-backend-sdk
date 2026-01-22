@@ -320,7 +320,9 @@ paths:
         in: query
         required: false
         schema:
-          type: string
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/PoolProvider'
       responses:
         '200':
           description: ''
@@ -4593,6 +4595,10 @@ components:
           oneOf:
           - type: 'null'
           - $ref: '#/components/schemas/TunaLpPositionTransfer'
+        swaps:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/TunaLpPositionInnerSwaps'
         to_lending:
           oneOf:
           - type: 'null'
@@ -4609,6 +4615,10 @@ components:
           oneOf:
           - type: 'null'
           - $ref: '#/components/schemas/TunaLpPositionValue'
+        trigger_order:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/TunaLpPositionTriggerOrder'
         withdraw_percent:
           type:
           - number
@@ -4748,6 +4758,33 @@ components:
           oneOf:
           - type: 'null'
           - $ref: '#/components/schemas/TunaPositionPoolToken'
+    TunaLpPositionInnerSwaps:
+      type: object
+      required:
+      - a_to_b
+      - amount_in
+      - amount_out
+      - fee_a
+      - fee_b
+      - fee_usd
+      properties:
+        a_to_b:
+          type: boolean
+        amount_in:
+          type: number
+          format: double
+        amount_out:
+          type: number
+          format: double
+        fee_a:
+          type: number
+          format: double
+        fee_b:
+          type: number
+          format: double
+        fee_usd:
+          type: number
+          format: double
     TunaLpPositionLimitOrderSwap:
       type: string
       enum:
@@ -4801,13 +4838,18 @@ components:
     TunaLpPositionTokenPrices:
       type: object
       required:
-      - token_price_a
-      - token_price_b
+      - price_usd_a
+      - price_usd_b
       properties:
-        token_price_a:
+        pool_price:
+          type:
+          - number
+          - 'null'
+          format: double
+        price_usd_a:
           type: number
           format: double
-        token_price_b:
+        price_usd_b:
           type: number
           format: double
     TunaLpPositionTransfer:
@@ -4826,6 +4868,24 @@ components:
         amount_usd:
           type: number
           format: double
+    TunaLpPositionTriggerOrder:
+      type: object
+      required:
+      - trigger_type
+      properties:
+        trigger_price:
+          type:
+          - number
+          - 'null'
+          format: double
+        trigger_type:
+          $ref: '#/components/schemas/TunaLpPositionTriggerOrderType'
+    TunaLpPositionTriggerOrderType:
+      type: string
+      enum:
+      - lower_limit_order
+      - upper_limit_order
+      - liquidation
     TunaLpPositionValue:
       type: object
       required:
@@ -4836,7 +4896,10 @@ components:
       - loan_funds_b
       - loan_funds_usd
       - leverage
+      - closed
       properties:
+        closed:
+          type: boolean
         leverage:
           type: number
           format: double
