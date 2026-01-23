@@ -70,3 +70,28 @@ describe("Pool swaps", async () => {
     expect(swapTimestampSeconds).closeTo(nowTimestampSeconds, 60);
   });
 });
+
+describe("Pool Candles", async () => {
+  it("Have candles", async () => {
+    const to = new Date();
+    const from = new Date(to.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const candles = 7;
+    const result = await unwrap(
+      sdk.getPoolCandles({
+        poolAddress: SOL_USDC_ORCA_POOL_ADDRESS,
+        from,
+        to,
+        candles,
+        interval: "1d",
+      }),
+    );
+    expect(result.length).toBeGreaterThan(0);
+    expect(result.length).toBeLessThanOrEqual(candles);
+    const sampleCandle = result[0];
+    expect(sampleCandle.high).toBeGreaterThan(0);
+    expect(sampleCandle.low).toBeGreaterThan(0);
+    expect(sampleCandle.open).toBeGreaterThan(0);
+    expect(sampleCandle.close).toBeGreaterThan(0);
+    expect(sampleCandle.time).toBeGreaterThan(0);
+  });
+});

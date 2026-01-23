@@ -62,6 +62,24 @@ export default defineConfig({
           infer: true, // `z.infer` types only for response schemas
         },
       },
+      "~resolvers": {
+        string(ctx) {
+          const { $, schema, symbols } = ctx;
+          if (schema.format !== "date-time") return;
+          const { z } = symbols;
+          const dateTimeSchema = ctx.nodes.format(ctx) ?? ctx.nodes.base(ctx);
+          const isDate = ts.factory.createBinaryExpression(
+            ts.factory.createIdentifier("value"),
+            ts.SyntaxKind.InstanceOfKeyword,
+            ts.factory.createIdentifier("Date"),
+          );
+          const toIso = $.expr("value").attr("toISOString").call();
+          const preprocess = $.func()
+            .param("value", p => p.type("unknown"))
+            .do($.return($.ternary(isDate).do(toIso).otherwise("value")));
+          return $(z).attr("preprocess").call(preprocess, dateTimeSchema);
+        },
+      },
     },
     {
       name: "@hey-api/sdk",
