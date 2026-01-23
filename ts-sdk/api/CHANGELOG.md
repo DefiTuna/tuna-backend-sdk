@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 4.0.4
+
+### Patch Changes
+
+- 5c12138: fix: Allow date objects in getPoolCandles request
+
 ## 4.0.3
 
 ### Patch Changes
