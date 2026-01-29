@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 4.0.5
+
+### Patch Changes
+
+- 60df21d: [TUNA-1724] Realized yield added to LP positions and actions
+
 ## 4.0.4
 
 ### Patch Changes
