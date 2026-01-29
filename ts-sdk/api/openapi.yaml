@@ -4595,6 +4595,11 @@ components:
           oneOf:
           - type: 'null'
           - $ref: '#/components/schemas/TunaLpPositionTransfer'
+        realized_yield_usd:
+          type:
+          - number
+          - 'null'
+          format: double
         swaps:
           oneOf:
           - type: 'null'
@@ -4671,6 +4676,7 @@ components:
       - total_withdrawn_usd
       - fees_sum_usd
       - closed_pnl_sum_usd
+      - realized_yield_usd
       - entry_price
       properties:
         authority:
@@ -4717,6 +4723,9 @@ components:
           $ref: '#/components/schemas/PoolDto'
         position_address:
           $ref: '#/components/schemas/PubkeyDto'
+        realized_yield_usd:
+          type: number
+          format: double
         state:
           $ref: '#/components/schemas/TunaPositionDtoState'
         total_deposit_usd:
