@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 4.0.6
+
+### Patch Changes
+
+- 63a1f2f: [TUNA-1725] New state values for closed after liquidation or limit order (#322)
+
 ## 4.0.5
 
 ### Patch Changes
