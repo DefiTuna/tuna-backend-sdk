@@ -119,7 +119,12 @@ describe("Historical LP positions by non-existing states", async () => {
   const data = await unwrap(
     sdk.getLpPositions({
       userAddress: TEST_WALLET_ADDRESS,
-      state: [TunaPositionDtoState.LIQUIDATED, TunaPositionDtoState.CLOSED_BY_LIMIT_ORDER],
+      state: [
+        TunaPositionDtoState.LIQUIDATION_WITHDRAW,
+        TunaPositionDtoState.LIQUIDATION_CLOSED,
+        TunaPositionDtoState.LIMIT_ORDER_WITHDRAW,
+        TunaPositionDtoState.LIMIT_ORDER_CLOSED,
+      ],
     }),
   );
   it("Can filter by state", () => {
