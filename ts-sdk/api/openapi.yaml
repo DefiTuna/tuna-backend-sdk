@@ -3308,6 +3308,9 @@ components:
       - symbol
       - name
       - logo
+      - logo32
+      - logo64
+      - logo128
       - decimals
       properties:
         address:
@@ -3316,6 +3319,12 @@ components:
           type: integer
           format: int32
         logo:
+          type: string
+        logo128:
+          type: string
+        logo32:
+          type: string
+        logo64:
           type: string
         name:
           type: string
