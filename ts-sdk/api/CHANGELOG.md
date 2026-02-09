@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 4.0.7
+
+### Patch Changes
+
+- e45da59: feat: [TUNA-1721] Add logo fields
+
 ## 4.0.6
 
 ### Patch Changes
