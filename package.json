@@ -11,13 +11,12 @@
     "release": "changeset publish -v"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.28.1",
     "prettier": "^3.5.0",
-    "turbo": "^2.4.1",
-    "@changesets/cli": "^2.28.1"
+    "turbo": "^2.4.1"
   },
-  "packageManager": "pnpm@10.16.1+sha512.0e155aa2629db8672b49e8475da6226aa4bdea85fdcdfdc15350874946d4f3c91faaf64cbdc4a5d1ab8002f473d5c3fcedcd197989cf0390f9badd3c04678706",
+  "packageManager": "pnpm@10.29.3+sha512.498e1fb4cca5aa06c1dcf2611e6fafc50972ffe7189998c409e90de74566444298ffe43e6cd2acdc775ba1aa7cc5e092a8b7054c811ba8c5770f84693d33d2dc",
   "engines": {
     "node": ">=18"
-  },
-  "dependencies": {}
+  }
 }

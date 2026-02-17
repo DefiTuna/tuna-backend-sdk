@@ -1,49 +1,83 @@
-// Once https://github.com/hey-api/openapi-ts/issues/558 resolved, snake_case transform can be removed
+// Once https://github.com/hey-api/openapi-ts/issues/558 is resolved,
+// snake_case request/response post-processing can be removed.
 
-import { readFile, writeFile } from "node:fs/promises";
+import { access, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 
-const CLIENT_CORE_GEN_PATH = path.resolve("src/client/client/client.gen.ts");
-const CLIENT_SSE_GEN_PATH = path.resolve("src/client/core/serverSentEvents.gen.ts");
-const MARKER = "// case-transformer-patch";
+const toModulePath = absolutePath => {
+  const rel = path.relative(path.resolve("src"), absolutePath).replace(/\\/g, "/");
+  return rel.startsWith(".") ? rel : `./${rel}`;
+};
+
+const resolveImportPath = (fromFile, toFile) => {
+  const rel = path
+    .relative(path.dirname(fromFile), toFile)
+    .replace(/\\/g, "/")
+    .replace(/\.(ts|js|mjs|cjs)$/i, "");
+  return rel.startsWith(".") ? rel : `./${rel}`;
+};
+
+const ensureImport = (content, symbols, importPath) => {
+  const allSymbolsPresent = symbols.every(symbol => content.includes(symbol));
+  if (allSymbolsPresent) return content;
+
+  const typeImportPattern = /import type[\s\S]*?from '\.\/types\.gen';\n?/;
+  const typeImport = content.match(typeImportPattern);
+  if (!typeImport) {
+    throw new Error(`Unexpected format in ${importPath}: types import not found.`);
+  }
+  return content.replace(
+    typeImport[0],
+    `${typeImport[0]}import { ${symbols.join(", ")} } from '${importPath}';\n`,
+  );
+};
 
 const patchClientCoreGen = async () => {
-  const content = await readFile(CLIENT_CORE_GEN_PATH, "utf-8");
+  const candidates = [
+    path.resolve("src/client/client/client.gen.ts"),
+    path.resolve("src/client/client.gen.ts"),
+  ];
 
-  if (content.includes(MARKER) && content.includes("applySseResponseTransforms")) {
-    return;
+  const existing = [];
+  for (const file of candidates) {
+    try {
+      await access(file);
+      existing.push(file);
+    } catch {
+      // noop
+    }
   }
 
-  const importLine = "import type {\n  Client,\n  Config,\n  RequestOptions,\n  ResolvedRequestOptions,\n} from './types.gen';";
-
-  if (!content.includes(importLine)) {
-    throw new Error("Unexpected client/client.gen.ts format: types import not found.");
+  if (!existing.length) {
+    throw new Error("No generated client core file found.");
   }
 
-  let next = content.replace(
-    importLine,
-    `${importLine}\nimport { applyRequestCaseTransforms, applyResponseCaseTransforms } from '../../caseTransforms';\n${MARKER}`,
-  );
+  const caseTransformsPath = path.resolve("src/caseTransforms.ts");
 
-  const beforeRequestBlock = `    if (opts.requestValidator) {
-      await opts.requestValidator(opts);
+  for (const file of existing) {
+    let content = await readFile(file, "utf-8");
+    const original = content;
+
+    if (!content.includes("const beforeRequest = async")) {
+      continue;
     }
 
-    if (opts.body !== undefined && opts.bodySerializer) {
-      opts.serializedBody = opts.bodySerializer(opts.body);
+    const importPath = resolveImportPath(file, caseTransformsPath);
+    content = ensureImport(content, ["applyRequestCaseTransforms", "applyResponseCaseTransforms"], importPath);
+
+    if (
+      content.includes("const transformed = applyRequestCaseTransforms(opts);") &&
+      content.includes("data = applyResponseCaseTransforms(data);")
+    ) {
+      continue;
     }
 
-    // remove Content-Type header if body is empty to avoid sending invalid requests
-    if (opts.body === undefined || opts.serializedBody === '') {
-      opts.headers.delete('Content-Type');
-    }
+    const beforeRequestPattern =
+      /if \(opts\.requestValidator\) \{\s*await opts\.requestValidator\(opts\);\s*\}\s*if \(opts\.body !== undefined && opts\.bodySerializer\) \{\s*opts\.serializedBody = opts\.bodySerializer\(opts\.body\);\s*\}\s*\/\/ remove Content-Type header if body is empty to avoid sending invalid requests\s*if \(opts\.body === undefined \|\| opts\.serializedBody === ''\) \{\s*opts\.headers\.delete\('Content-Type'\);\s*\}\s*const url = buildUrl\(opts\);\s*return \{ opts, url \};/m;
 
-    const url = buildUrl(opts);
-
-    return { opts, url };
-`;
-
-  const updatedBeforeRequestBlock = `    if (opts.requestValidator) {
+    content = content.replace(
+      beforeRequestPattern,
+      `if (opts.requestValidator) {
       await opts.requestValidator(opts);
     }
 
@@ -60,113 +94,84 @@ const patchClientCoreGen = async () => {
 
     const url = buildUrl(transformed);
 
-    return { opts: transformed, url };
-`;
+    return { opts: transformed, url };`,
+    );
 
-  if (!next.includes(beforeRequestBlock)) {
-    throw new Error("Unexpected client/client.gen.ts format: beforeRequest block not found.");
+    if (!content.includes("const transformed = applyRequestCaseTransforms(opts);")) {
+      throw new Error(`Unexpected format in ${toModulePath(file)}: beforeRequest block not found.`);
+    }
+
+    const jsonBlockPattern =
+      /if \(parseAs === 'json'\) \{\s*(?!data = applyResponseCaseTransforms\(data\);)([\s\S]*?)\n\s*\}/m;
+
+    content = content.replace(jsonBlockPattern, match => {
+      const lines = match.split("\n");
+      lines.splice(1, 0, "        data = applyResponseCaseTransforms(data);", "");
+      return lines.join("\n");
+    });
+
+    if (!content.includes("data = applyResponseCaseTransforms(data);")) {
+      throw new Error(`Unexpected format in ${toModulePath(file)}: JSON response block not found.`);
+    }
+
+    content = content.replace("    // @ts-expect-error\n", "");
+    content = content.replace(/^\/\/ case-transformer-patch\n/gm, "");
+    content = content.replace(/(from '\.\.\/\.\.\/caseTransforms)\.ts';/g, "$1';");
+
+    if (content !== original) {
+      await writeFile(file, content, "utf-8");
+      console.log(`Patched ${toModulePath(file)}`);
+    }
   }
-
-  next = next.replace(beforeRequestBlock, updatedBeforeRequestBlock);
-
-  const responseBlock = `      if (parseAs === 'json') {
-        if (opts.responseValidator) {
-          await opts.responseValidator(data);
-        }
-
-        if (opts.responseTransformer) {
-          data = await opts.responseTransformer(data);
-        }
-      }
-`;
-
-  const updatedResponseBlock = `      if (parseAs === 'json') {
-        data = applyResponseCaseTransforms(data);
-
-        if (opts.responseValidator) {
-          await opts.responseValidator(data);
-        }
-
-        if (opts.responseTransformer) {
-          data = await opts.responseTransformer(data);
-        }
-      }
-`;
-
-  if (!next.includes(responseBlock)) {
-    throw new Error("Unexpected client/client.gen.ts format: response block not found.");
-  }
-
-  next = next.replace(responseBlock, updatedResponseBlock);
-  next = next.replace("    // @ts-expect-error\n", "");
-
-  await writeFile(CLIENT_CORE_GEN_PATH, next, "utf-8");
-  console.log(`Patched ${path.relative(process.cwd(), CLIENT_CORE_GEN_PATH)}`);
 };
 
-await patchClientCoreGen();
-
 const patchSseGen = async () => {
-  const content = await readFile(CLIENT_SSE_GEN_PATH, "utf-8");
+  const sseFile = path.resolve("src/client/core/serverSentEvents.gen.ts");
+  const caseTransformsPath = path.resolve("src/caseTransforms.ts");
+  const sseTransformsPath = path.resolve("src/sseTransforms.ts");
 
-  if (content.includes(MARKER) && content.includes("applySseResponseTransforms")) {
-    return;
+  let content = await readFile(sseFile, "utf-8");
+  const original = content;
+  const caseImportPath = resolveImportPath(sseFile, caseTransformsPath);
+  const sseImportPath = resolveImportPath(sseFile, sseTransformsPath);
+
+  content = ensureImport(content, ["applyResponseCaseTransforms"], caseImportPath);
+  content = ensureImport(content, ["applySseResponseTransforms"], sseImportPath);
+
+  if (!content.includes("data = applyResponseCaseTransforms(data);")) {
+    const parsedJsonPattern = /if \(parsedJson\) \{\n/;
+    if (!parsedJsonPattern.test(content)) {
+      throw new Error(`Unexpected format in ${toModulePath(sseFile)}: parsedJson block not found.`);
+    }
+    content = content.replace(parsedJsonPattern, "if (parsedJson) {\n                data = applyResponseCaseTransforms(data);\n\n");
   }
 
-  const importLine = "import type { Config } from './types.gen';";
-
-  if (!content.includes(importLine)) {
-    throw new Error("Unexpected serverSentEvents.gen.ts format: types import not found.");
-  }
-
-  let next = content;
-
-  if (!next.includes("applyResponseCaseTransforms")) {
-    next = next.replace(
-      importLine,
-      `${importLine}\nimport { applyResponseCaseTransforms } from '../../caseTransforms';\nimport { applySseResponseTransforms } from '../../sseTransforms';\n${MARKER}`,
-    );
-  } else if (!next.includes("applySseResponseTransforms")) {
-    next = next.replace(
-      "import { applyResponseCaseTransforms } from '../../caseTransforms';",
-      "import { applyResponseCaseTransforms } from '../../caseTransforms';\nimport { applySseResponseTransforms } from '../../sseTransforms';",
-    );
-  }
-
-  const responseBlock = `              if (parsedJson) {
-                if (responseValidator) {
-                  await responseValidator(data);
-                }
-
-                if (responseTransformer) {
-                  data = await responseTransformer(data);
-                }
-              }
-`;
-
-  const updatedResponseBlock = `              if (parsedJson) {
-                data = applyResponseCaseTransforms(data);
-
-                if (responseValidator) {
+  if (!content.includes("data = await applySseResponseTransforms(data);")) {
+    const validatorBlockPattern =
+      /if \(responseValidator\) \{\n\s*await responseValidator\(data\);\n\s*\}\n/m;
+    if (!validatorBlockPattern.test(content)) {
+      throw new Error(`Unexpected format in ${toModulePath(sseFile)}: responseValidator block not found.`);
+    }
+    content = content.replace(
+      validatorBlockPattern,
+      `if (responseValidator) {
                   await responseValidator(data);
                 }
 
                 data = await applySseResponseTransforms(data);
-
-                if (responseTransformer) {
-                  data = await responseTransformer(data);
-                }
-              }
-`;
-
-  if (next.includes(responseBlock)) {
-    next = next.replace(responseBlock, updatedResponseBlock);
-  } else if (!next.includes("applySseResponseTransforms")) {
-    throw new Error("Unexpected serverSentEvents.gen.ts format: response block not found.");
+`,
+    );
   }
 
-  await writeFile(CLIENT_SSE_GEN_PATH, next, "utf-8");
-  console.log(`Patched ${path.relative(process.cwd(), CLIENT_SSE_GEN_PATH)}`);
+  content = content.replace(/^\/\/ case-transformer-patch\n/gm, "");
+  content = content.replace(/(from '\.\.\/\.\.\/caseTransforms)\.ts';/g, "$1';");
+  content = content.replace(/(from '\.\.\/\.\.\/sseTransforms)\.ts';/g, "$1';");
+
+  if (content !== original) {
+    await writeFile(sseFile, content, "utf-8");
+    console.log(`Patched ${toModulePath(sseFile)}`);
+  }
 };
 
+await patchClientCoreGen();
 await patchSseGen();
