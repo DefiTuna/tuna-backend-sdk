@@ -101,9 +101,7 @@ paths:
                 - data
                 properties:
                   data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/MarketDto'
+                    $ref: '#/components/schemas/MarketsListResponse'
         '500':
           description: ''
           content:
@@ -134,7 +132,7 @@ paths:
                 - data
                 properties:
                   data:
-                    $ref: '#/components/schemas/MarketDto'
+                    $ref: '#/components/schemas/MarketResponse'
         '400':
           description: ''
           content:
@@ -1914,9 +1912,7 @@ paths:
                 - data
                 properties:
                   data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/TunaLpPositionDto'
+                    $ref: '#/components/schemas/LpPositionsHistoryListResponse'
         '400':
           description: ''
           content:
@@ -3312,6 +3308,29 @@ components:
           type: string
           enum:
           - internal_error
+    LpPositionsHistoryListResponse:
+      type: object
+      required:
+      - items
+      - markets
+      - mints
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/TunaLpPositionDto'
+        markets:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/MarketDto'
+          propertyNames:
+            type: string
+        mints:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/MintDto'
+          propertyNames:
+            type: string
     LpPositionsListResponse:
       type: object
       required:
@@ -3431,6 +3450,36 @@ components:
           type: string
           enum:
           - internal_error
+    MarketResponse:
+      type: object
+      required:
+      - item
+      - mints
+      properties:
+        item:
+          $ref: '#/components/schemas/MarketDto'
+        mints:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/MintDto'
+          propertyNames:
+            type: string
+    MarketsListResponse:
+      type: object
+      required:
+      - items
+      - mints
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/MarketDto'
+        mints:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/MintDto'
+          propertyNames:
+            type: string
     MintDto:
       type: object
       required:
@@ -4946,7 +4995,7 @@ components:
       required:
       - position_address
       - authority
-      - pool
+      - market
       - state
       - lower_price
       - upper_price
@@ -4998,13 +5047,13 @@ components:
         lower_price:
           type: number
           format: double
+        market:
+          $ref: '#/components/schemas/PubkeyDto'
         market_maker:
           $ref: '#/components/schemas/PoolProvider'
         opened_at:
           type: string
           format: date-time
-        pool:
-          $ref: '#/components/schemas/PoolDto'
         position_address:
           $ref: '#/components/schemas/PubkeyDto'
         realized_yield_usd:
