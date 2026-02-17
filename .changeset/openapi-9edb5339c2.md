@@ -1,5 +1,5 @@
 ---
-"@crypticdot/defituna-api": patch
+"@crypticdot/defituna-api": minor
 ---
 
 feat: [TUNA-1754] Update swap SSE event (#360)
