@@ -1628,9 +1628,7 @@ paths:
                 - data
                 properties:
                   data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/LendingPositionDto'
+                    $ref: '#/components/schemas/LendingPositionsListResponse'
         '400':
           description: ''
           content:
@@ -1679,15 +1677,19 @@ paths:
                 - data
                 properties:
                   data:
-                    oneOf:
-                    - type: 'null'
-                    - $ref: '#/components/schemas/LendingPositionDto'
+                    $ref: '#/components/schemas/LendingPositionResponse'
         '400':
           description: ''
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/BadRequestErrorCodeErrorBody'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LendingPositionError404Error'
         '422':
           description: ''
           content:
@@ -1699,7 +1701,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/InternalErrorCodeErrorBody'
+                $ref: '#/components/schemas/LendingPositionError500Error'
   /v1/users/{user_address}/limit-orders:
     get:
       tags:
@@ -1779,9 +1781,7 @@ paths:
                 - data
                 properties:
                   data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/LimitOrderDto'
+                    $ref: '#/components/schemas/LimitOrdersListResponse'
         '400':
           description: ''
           content:
@@ -1830,7 +1830,7 @@ paths:
                 - data
                 properties:
                   data:
-                    $ref: '#/components/schemas/LimitOrderDto'
+                    $ref: '#/components/schemas/LimitOrderResponse'
         '400':
           description: ''
           content:
@@ -2079,9 +2079,7 @@ paths:
                 - data
                 properties:
                   data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/OrderHistoryEntryDto'
+                    $ref: '#/components/schemas/OrderHistoryListResponse'
         '400':
           description: ''
           content:
@@ -2124,9 +2122,7 @@ paths:
                 - data
                 properties:
                   data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/TunaSpotPositionDto'
+                    $ref: '#/components/schemas/SpotPositionsListResponse'
         '400':
           description: ''
           content:
@@ -2175,7 +2171,7 @@ paths:
                 - data
                 properties:
                   data:
-                    $ref: '#/components/schemas/TunaSpotPositionDto'
+                    $ref: '#/components/schemas/SpotPositionResponse'
         '400':
           description: ''
           content:
@@ -2381,9 +2377,7 @@ paths:
                 - data
                 properties:
                   data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/TradeHistoryEntryDto'
+                    $ref: '#/components/schemas/TradeHistoryListResponse'
         '400':
           description: ''
           content:
@@ -2426,9 +2420,7 @@ paths:
                 - data
                 properties:
                   data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/TunaPositionDto'
+                    $ref: '#/components/schemas/LpPositionsListResponse'
         '400':
           description: ''
           content:
@@ -2479,7 +2471,7 @@ paths:
                   data:
                     oneOf:
                     - type: 'null'
-                    - $ref: '#/components/schemas/TunaPositionDto'
+                    - $ref: '#/components/schemas/LpPositionResponse'
         '400':
           description: ''
           content:
@@ -2515,9 +2507,7 @@ paths:
                 - data
                 properties:
                   data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/VaultDto'
+                    $ref: '#/components/schemas/VaultsListResponse'
         '500':
           description: ''
           content:
@@ -2548,7 +2538,7 @@ paths:
                 - data
                 properties:
                   data:
-                    $ref: '#/components/schemas/VaultDto'
+                    $ref: '#/components/schemas/VaultResponse'
         '400':
           description: ''
           content:
@@ -3080,6 +3070,7 @@ components:
       - earned
       - mint
       - vault
+      - supply_apy
       - updated_at_slot
       properties:
         address:
@@ -3094,10 +3085,61 @@ components:
           $ref: '#/components/schemas/PubkeyDto'
         shares:
           $ref: '#/components/schemas/U64Dto'
+        supply_apy:
+          type: number
+          format: double
         updated_at_slot:
           $ref: '#/components/schemas/U64Dto'
         vault:
           $ref: '#/components/schemas/PubkeyDto'
+    LendingPositionError404Error:
+      type: object
+      required:
+      - code
+      properties:
+        code:
+          type: string
+          enum:
+          - not_found
+    LendingPositionError500Error:
+      type: object
+      required:
+      - code
+      properties:
+        code:
+          type: string
+          enum:
+          - internal_error
+    LendingPositionResponse:
+      type: object
+      required:
+      - item
+      - mints
+      properties:
+        item:
+          $ref: '#/components/schemas/LendingPositionDto'
+        mints:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/MintDto'
+          propertyNames:
+            type: string
+    LendingPositionsListResponse:
+      type: object
+      required:
+      - items
+      - mints
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/LendingPositionDto'
+        mints:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/MintDto'
+          propertyNames:
+            type: string
     LimitOrderDto:
       type: object
       required:
@@ -3105,7 +3147,7 @@ components:
       - address
       - order_mint
       - authority
-      - pool
+      - market
       - state
       - fill_ratio
       - a_to_b
@@ -3139,6 +3181,8 @@ components:
           format: double
         id:
           type: string
+        market:
+          $ref: '#/components/schemas/PubkeyDto'
         open_tx_signature:
           type: string
         opened_at:
@@ -3146,8 +3190,6 @@ components:
           format: date-time
         order_mint:
           $ref: '#/components/schemas/PubkeyDto'
-        pool:
-          $ref: '#/components/schemas/PoolDto'
         state:
           $ref: '#/components/schemas/LimitOrderStatus'
         tick_index:
@@ -3167,6 +3209,27 @@ components:
       properties:
         amount_in:
           $ref: '#/components/schemas/U64Dto'
+    LimitOrderResponse:
+      type: object
+      required:
+      - item
+      - markets
+      - mints
+      properties:
+        item:
+          $ref: '#/components/schemas/LimitOrderDto'
+        markets:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/MarketDto'
+          propertyNames:
+            type: string
+        mints:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/MintDto'
+          propertyNames:
+            type: string
     LimitOrderStatus:
       type: string
       enum:
@@ -3175,6 +3238,50 @@ components:
       - filled
       - complete
       - cancelled
+    LimitOrdersListResponse:
+      type: object
+      required:
+      - items
+      - markets
+      - mints
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/LimitOrderDto'
+        markets:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/MarketDto'
+          propertyNames:
+            type: string
+        mints:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/MintDto'
+          propertyNames:
+            type: string
+    LpPositionResponse:
+      type: object
+      required:
+      - item
+      - markets
+      - mints
+      properties:
+        item:
+          $ref: '#/components/schemas/TunaPositionDto'
+        markets:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/MarketDto'
+          propertyNames:
+            type: string
+        mints:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/MintDto'
+          propertyNames:
+            type: string
     LpPositionsError400BadRequest:
       type: object
       required:
@@ -3205,6 +3312,29 @@ components:
           type: string
           enum:
           - internal_error
+    LpPositionsListResponse:
+      type: object
+      required:
+      - items
+      - markets
+      - mints
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/TunaPositionDto'
+        markets:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/MarketDto'
+          propertyNames:
+            type: string
+        mints:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/MintDto'
+          propertyNames:
+            type: string
     MarketDto:
       type: object
       required:
@@ -3465,7 +3595,7 @@ components:
       - id
       - ts
       - slot
-      - pool
+      - market
       - authority
       - order_type
       - is_reduce_only
@@ -3505,10 +3635,10 @@ components:
           description: |-
             Filled for swaps (spot)
             Flatten transaction instruction index
+        market:
+          $ref: '#/components/schemas/PubkeyDto'
         order_type:
           $ref: '#/components/schemas/OrderHistoryType'
-        pool:
-          $ref: '#/components/schemas/PoolDto'
         position_address:
           oneOf:
           - type: 'null'
@@ -3556,6 +3686,50 @@ components:
 
             * For limit order fills - price derived from order tick_index
             * For take profit / stop loss / liquidation - trigger price
+    OrderHistoryListResponse:
+      type: object
+      required:
+      - items
+      - markets
+      - mints
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderHistoryEntryDto'
+        markets:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/MarketDto'
+          propertyNames:
+            type: string
+        mints:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/MintDto'
+          propertyNames:
+            type: string
+    OrderHistoryNotificationResponse:
+      type: object
+      required:
+      - item
+      - markets
+      - mints
+      properties:
+        item:
+          $ref: '#/components/schemas/OrderHistoryEntryDto'
+        markets:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/MarketDto'
+          propertyNames:
+            type: string
+        mints:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/MintDto'
+          propertyNames:
+            type: string
     OrderHistoryStatus:
       type: string
       description: |-
@@ -3618,9 +3792,9 @@ components:
         liquidity:
           $ref: '#/components/schemas/U128Dto'
         mint_a:
-          $ref: '#/components/schemas/MintDto'
+          $ref: '#/components/schemas/PubkeyDto'
         mint_b:
-          $ref: '#/components/schemas/MintDto'
+          $ref: '#/components/schemas/PubkeyDto'
         olp_fee_rate:
           type:
           - integer
@@ -3770,6 +3944,9 @@ components:
           type: string
         pool:
           $ref: '#/components/schemas/PubkeyDto'
+        price:
+          type: number
+          format: double
         time:
           type: string
           format: date-time
@@ -3855,10 +4032,20 @@ components:
             $ref: '#/components/schemas/LimitOrderDto'
         markets:
           type:
-          - array
+          - object
           - 'null'
-          items:
+          additionalProperties:
             $ref: '#/components/schemas/MarketDto'
+          propertyNames:
+            type: string
+        mints:
+          type:
+          - object
+          - 'null'
+          additionalProperties:
+            $ref: '#/components/schemas/MintDto'
+          propertyNames:
+            type: string
         oracle_prices:
           type:
           - object
@@ -3923,6 +4110,50 @@ components:
           type: string
           enum:
           - internal_error
+    SpotPositionResponse:
+      type: object
+      required:
+      - item
+      - markets
+      - mints
+      properties:
+        item:
+          $ref: '#/components/schemas/TunaSpotPositionDto'
+        markets:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/MarketDto'
+          propertyNames:
+            type: string
+        mints:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/MintDto'
+          propertyNames:
+            type: string
+    SpotPositionsListResponse:
+      type: object
+      required:
+      - items
+      - markets
+      - mints
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/TunaSpotPositionDto'
+        markets:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/MarketDto'
+          propertyNames:
+            type: string
+        mints:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/MintDto'
+          propertyNames:
+            type: string
     SseResponse:
       oneOf:
       - $ref: '#/components/schemas/SseResponseInitialMessage'
@@ -4010,7 +4241,7 @@ components:
           - type: 'null'
           - $ref: '#/components/schemas/PubkeyDto'
         data:
-          $ref: '#/components/schemas/OrderHistoryEntryDto'
+          $ref: '#/components/schemas/OrderHistoryNotificationResponse'
         entity:
           $ref: '#/components/schemas/NotificationEntity'
         id:
@@ -4114,7 +4345,7 @@ components:
           - type: 'null'
           - $ref: '#/components/schemas/PubkeyDto'
         data:
-          $ref: '#/components/schemas/TradeHistoryEntryDto'
+          $ref: '#/components/schemas/TradeHistoryNotificationResponse'
         entity:
           $ref: '#/components/schemas/NotificationEntity'
         id:
@@ -4418,7 +4649,7 @@ components:
       - id
       - ts
       - slot
-      - pool
+      - market
       - authority
       - a_to_b
       - action
@@ -4458,6 +4689,8 @@ components:
           description: |-
             Filled for swaps (spot)
             Flatten transaction instruction index
+        market:
+          $ref: '#/components/schemas/PubkeyDto'
         pnl:
           oneOf:
           - type: 'null'
@@ -4466,8 +4699,6 @@ components:
               Only for margin positions,
               will be calculated based on the price of collateral when opening a position
               and the position value on decrease/close.
-        pool:
-          $ref: '#/components/schemas/PoolDto'
         position_address:
           oneOf:
           - type: 'null'
@@ -4508,6 +4739,50 @@ components:
         usd:
           type: number
           format: double
+    TradeHistoryListResponse:
+      type: object
+      required:
+      - items
+      - markets
+      - mints
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/TradeHistoryEntryDto'
+        markets:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/MarketDto'
+          propertyNames:
+            type: string
+        mints:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/MintDto'
+          propertyNames:
+            type: string
+    TradeHistoryNotificationResponse:
+      type: object
+      required:
+      - item
+      - markets
+      - mints
+      properties:
+        item:
+          $ref: '#/components/schemas/TradeHistoryEntryDto'
+        markets:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/MarketDto'
+          propertyNames:
+            type: string
+        mints:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/MintDto'
+          propertyNames:
+            type: string
     TradeHistoryUIDirection:
       type: string
       enum:
@@ -5040,7 +5315,7 @@ components:
       - upper_limit_order_price
       - entry_price
       - flags
-      - pool
+      - market
       - market_maker
       - deposited_collateral_a
       - deposited_collateral_b
@@ -5113,6 +5388,8 @@ components:
         lower_limit_order_price:
           type: number
           format: double
+        market:
+          $ref: '#/components/schemas/PubkeyDto'
         market_maker:
           $ref: '#/components/schemas/TunaPositionMarketMaker'
         max_leverage:
@@ -5129,8 +5406,6 @@ components:
           description: Total PnL denominated/expressed in token B
         pnl_usd:
           $ref: '#/components/schemas/TunaPositionUsdPnl'
-        pool:
-          $ref: '#/components/schemas/PoolDto'
         position_mint:
           $ref: '#/components/schemas/PubkeyDto'
         state:
@@ -5219,7 +5494,7 @@ components:
       - lower_limit_order_price
       - upper_limit_order_price
       - entry_price
-      - pool
+      - market
       - position_token
       - collateral_token
       - market_maker
@@ -5262,6 +5537,8 @@ components:
         lower_limit_order_price:
           type: number
           format: double
+        market:
+          $ref: '#/components/schemas/PubkeyDto'
         market_maker:
           $ref: '#/components/schemas/TunaPositionMarketMaker'
         max_leverage:
@@ -5272,8 +5549,6 @@ components:
           format: date-time
         pnl_usd:
           $ref: '#/components/schemas/TunaPositionUsdPnl'
-        pool:
-          $ref: '#/components/schemas/PoolDto'
         position_token:
           $ref: '#/components/schemas/TunaPositionPoolToken'
         state:
@@ -5441,6 +5716,20 @@ components:
           type: string
           enum:
           - internal_error
+    VaultResponse:
+      type: object
+      required:
+      - item
+      - mints
+      properties:
+        item:
+          $ref: '#/components/schemas/VaultDto'
+        mints:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/MintDto'
+          propertyNames:
+            type: string
     VaultStatsDto:
       type: object
       required:
@@ -5463,6 +5752,22 @@ components:
         supply_apy:
           type: number
           format: double
+    VaultsListResponse:
+      type: object
+      required:
+      - items
+      - mints
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/VaultDto'
+        mints:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/MintDto'
+          propertyNames:
+            type: string
     VestingDto:
       type: object
       required:
