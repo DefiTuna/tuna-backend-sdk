@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 4.1.2
+
+### Patch Changes
+
+- 956901f: feat: [TUNA-1753] Add markets/mints to remaining API routes (#362)
+
 ## 4.1.1
 
 ### Patch Changes
