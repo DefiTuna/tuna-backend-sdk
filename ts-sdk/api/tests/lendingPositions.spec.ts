@@ -19,9 +19,9 @@ describe("All lending positions", async () => {
   );
 
   it("Has two test positions", () => {
-    expect(data.length).toBeGreaterThanOrEqual(2);
-    expect(data.some(item => item.address === SOL_LENDING_POSITION)).toBe(true);
-    expect(data.some(item => item.address === USDC_LENDING_POSITION)).toBe(true);
+    expect(data.items.length).toBeGreaterThanOrEqual(2);
+    expect(data.items.some(item => item.address === SOL_LENDING_POSITION)).toBe(true);
+    expect(data.items.some(item => item.address === USDC_LENDING_POSITION)).toBe(true);
   });
 });
 
@@ -38,17 +38,17 @@ describe("Single lending position", async () => {
   });
 
   it("Correct addresses", () => {
-    expect(data?.address).toBe(SOL_LENDING_POSITION);
-    expect(data?.authority).toBe(TEST_WALLET_ADDRESS);
-    expect(data?.mint).toBe(SOL_MINT);
-    expect(data?.vault).toBe(SOL_LENDING_VAULT);
+    expect(data.item?.address).toBe(SOL_LENDING_POSITION);
+    expect(data.item?.authority).toBe(TEST_WALLET_ADDRESS);
+    expect(data.item?.mint).toBe(SOL_MINT);
+    expect(data.item?.vault).toBe(SOL_LENDING_VAULT);
   });
 
   it("Values greater than zero", () => {
-    expect(data?.shares).toBeGreaterThan(0);
-    expect(data?.funds.amount).toBeGreaterThan(0);
-    expect(data?.funds.usd).toBeGreaterThan(0);
-    expect(data?.earned.amount).toBeGreaterThan(0);
-    expect(data?.earned.usd).toBeGreaterThan(0);
+    expect(data.item?.shares).toBeGreaterThan(0);
+    expect(data.item?.funds.amount).toBeGreaterThan(0);
+    expect(data.item?.funds.usd).toBeGreaterThan(0);
+    expect(data.item?.earned.amount).toBeGreaterThan(0);
+    expect(data.item?.earned.usd).toBeGreaterThan(0);
   });
 });

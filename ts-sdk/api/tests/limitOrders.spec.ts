@@ -7,6 +7,7 @@ import {
   COMPLETED_LIMIT_ORDER,
   FILLED_LIMIT_ORDER,
   SOL_MINT,
+  SOL_USDC_FUSION_MARKET_ADDRESS,
   SOL_USDC_FUSION_POOL_ADDRESS,
   TEST_WALLET_ADDRESS,
   TUNA_USDC_FUSION_POOL_ADDRESS,
@@ -22,10 +23,10 @@ describe("All limit orders", async () => {
   );
 
   it("Has three limit orders", () => {
-    expect(data.length).toBeGreaterThanOrEqual(3);
-    expect(data.some(item => item.address === COMPLETED_LIMIT_ORDER)).toBe(true);
-    expect(data.some(item => item.address === CANCELLED_LIMIT_ORDER)).toBe(true);
-    expect(data.some(item => item.address === FILLED_LIMIT_ORDER)).toBe(true);
+    expect(data.items.length).toBeGreaterThanOrEqual(3);
+    expect(data.items.some(item => item.address === COMPLETED_LIMIT_ORDER)).toBe(true);
+    expect(data.items.some(item => item.address === CANCELLED_LIMIT_ORDER)).toBe(true);
+    expect(data.items.some(item => item.address === FILLED_LIMIT_ORDER)).toBe(true);
   });
 });
 
@@ -36,9 +37,12 @@ describe("Limit orders filter by pool", async () => {
       pool: [SOL_USDC_FUSION_POOL_ADDRESS],
     }),
   );
+
   it("Can filter by pool", () => {
-    expect(data.length).toBeGreaterThan(0);
-    expect(data.every(item => item.pool.address === SOL_USDC_FUSION_POOL_ADDRESS)).toBe(true);
+    expect(data.items.length).toBeGreaterThan(0);
+    expect(data.items.every(item => data.markets[item.market]?.pool.address === SOL_USDC_FUSION_POOL_ADDRESS)).toBe(
+      true,
+    );
   });
 });
 
@@ -49,10 +53,12 @@ describe("Limit orders filter by two pools", async () => {
       pool: [SOL_USDC_FUSION_POOL_ADDRESS, TUNA_USDC_FUSION_POOL_ADDRESS],
     }),
   );
+
   it("Can filter by two pools", () => {
-    expect(data.length).toBeGreaterThan(0);
-    expect(data.some(item => item.pool.address === SOL_USDC_FUSION_POOL_ADDRESS)).toBe(true);
-    expect(data.some(item => item.pool.address === TUNA_USDC_FUSION_POOL_ADDRESS)).toBe(true);
+    const pools = new Set(data.items.map(item => data.markets[item.market]?.pool.address));
+    expect(data.items.length).toBeGreaterThan(0);
+    expect(pools.has(SOL_USDC_FUSION_POOL_ADDRESS)).toBe(true);
+    expect(pools.has(TUNA_USDC_FUSION_POOL_ADDRESS)).toBe(true);
   });
 });
 
@@ -63,9 +69,10 @@ describe("Limit orders filter by status", async () => {
       status: [LimitOrderStatus.COMPLETE],
     }),
   );
+
   it("Can filter by status", () => {
-    expect(data.length).toBeGreaterThan(0);
-    expect(data.every(item => item.state === LimitOrderStatus.COMPLETE)).toBe(true);
+    expect(data.items.length).toBeGreaterThan(0);
+    expect(data.items.every(item => item.state === LimitOrderStatus.COMPLETE)).toBe(true);
   });
 });
 
@@ -78,11 +85,12 @@ describe("Limit orders filter by time", async () => {
       openedAtTo: 1760054400000,
     }),
   );
+
   it("Can filter by time", () => {
-    expect(data.length).toBeGreaterThan(0);
-    expect(data.every(item => item.openedAt > new Date("2025-10-09") && item.openedAt < new Date("2025-10-10"))).toBe(
-      true,
-    );
+    expect(data.items.length).toBeGreaterThan(0);
+    expect(
+      data.items.every(item => item.openedAt > new Date("2025-10-09") && item.openedAt < new Date("2025-10-10")),
+    ).toBe(true);
   });
 });
 
@@ -94,37 +102,43 @@ describe("Single limit order", async () => {
     }),
   );
 
+  const item = data?.item;
+  const market = item ? data?.markets[item.market] : undefined;
+  const mintA = market ? data?.mints[market.pool.mintA] : undefined;
+  const mintB = market ? data?.mints[market.pool.mintB] : undefined;
+
   it("Order found", () => {
-    expect(data).toBeDefined();
+    expect(item).toBeDefined();
   });
 
   it("Correct addresses", () => {
-    expect(data?.address).toBe(COMPLETED_LIMIT_ORDER);
-    expect(data?.authority).toBe(TEST_WALLET_ADDRESS);
-    expect(data?.orderMint).toBe("B9wtuHYXi9PEjnBx8snb9JqJJTRh9jyGELpfSjuSugCH");
-    expect(data?.openTxSignature).toBe(
+    expect(item?.address).toBe(COMPLETED_LIMIT_ORDER);
+    expect(item?.authority).toBe(TEST_WALLET_ADDRESS);
+    expect(item?.orderMint).toBe("B9wtuHYXi9PEjnBx8snb9JqJJTRh9jyGELpfSjuSugCH");
+    expect(item?.openTxSignature).toBe(
       "57kb2nBY4sHnkgZbJEByc7F6rd2SUhCJRXEqS6Bg5aJhBuUHuNibJUahExx24x64jY3xgCjrv3wna1RQoKyZdG4d",
     );
-    expect(data?.closeTxSignature).toBe(
+    expect(item?.closeTxSignature).toBe(
       "65c7RKe7HHuidCofPjHsy4iXFvXCLCzqMLvJ6HEq83S8BZBPxJXoPCakjqvN86jHGNk1AoDZmY7LWHo5W2txSzA6",
     );
-    expect(data?.pool.address).toBe(SOL_USDC_FUSION_POOL_ADDRESS);
-    expect(data?.pool.mintA.address).toBe(SOL_MINT);
-    expect(data?.pool.mintB.address).toBe(USDC_MINT);
+    expect(item?.market).toBe(SOL_USDC_FUSION_MARKET_ADDRESS);
+    expect(market?.pool.address).toBe(SOL_USDC_FUSION_POOL_ADDRESS);
+    expect(mintA?.address).toBe(SOL_MINT);
+    expect(mintB?.address).toBe(USDC_MINT);
   });
 
   it("Correct values", () => {
-    expect(data?.state).toBe(LimitOrderStatus.COMPLETE);
-    expect(data?.fillRatio).toBe(1);
-    expect(data?.aToB).toBe(true);
-    expect(data?.tickIndex).toBe(-14936);
-    expect(data?.amountIn.amount).toBe(445188n);
-    expect(data?.amountIn.amount).toBeTypeOf("bigint");
-    expect(data?.amountOut.amount).toBe(100017n);
-    expect(data?.amountOut.amount).toBeTypeOf("bigint");
-    expect(data?.openedAt).toEqual(new Date("2025-10-09T12:23:59Z"));
-    expect(data?.openedAt).toBeTypeOf("object");
-    expect(data?.closedAt).toEqual(new Date("2025-10-13T01:54:36Z"));
-    expect(data?.closedAt).toBeTypeOf("object");
+    expect(item?.state).toBe(LimitOrderStatus.COMPLETE);
+    expect(item?.fillRatio).toBe(1);
+    expect(item?.aToB).toBe(true);
+    expect(item?.tickIndex).toBe(-14936);
+    expect(item?.amountIn.amount).toBe(445188n);
+    expect(item?.amountIn.amount).toBeTypeOf("bigint");
+    expect(item?.amountOut.amount).toBe(100017n);
+    expect(item?.amountOut.amount).toBeTypeOf("bigint");
+    expect(item?.openedAt).toEqual(new Date("2025-10-09T12:23:59Z"));
+    expect(item?.openedAt).toBeTypeOf("object");
+    expect(item?.closedAt).toEqual(new Date("2025-10-13T01:54:36Z"));
+    expect(item?.closedAt).toBeTypeOf("object");
   });
 });

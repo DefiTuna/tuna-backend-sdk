@@ -19,11 +19,11 @@ describe("All trade history events", async () => {
   );
 
   it("Has three orders", () => {
-    expect(data.length).toBeGreaterThanOrEqual(3);
-    expect(data.some(item => item.positionAddress === COMPLETED_LIMIT_ORDER)).toBe(true);
+    expect(data.items.length).toBeGreaterThanOrEqual(3);
+    expect(data.items.some(item => item.positionAddress === COMPLETED_LIMIT_ORDER)).toBe(true);
     // This position returned with null address
-    //expect(data.some(item => item.positionAddress === CANCELLED_LIMIT_ORDER)).toBe(true);
-    expect(data.some(item => item.positionAddress === FILLED_LIMIT_ORDER)).toBe(true);
+    // expect(data.items.some(item => item.positionAddress === CANCELLED_LIMIT_ORDER)).toBe(true);
+    expect(data.items.some(item => item.positionAddress === FILLED_LIMIT_ORDER)).toBe(true);
   });
 });
 
@@ -34,9 +34,12 @@ describe("Trade history filter by pool", async () => {
       pool: [SOL_USDC_FUSION_POOL_ADDRESS],
     }),
   );
+
   it("Can filter by pool", () => {
-    expect(data.length).toBeGreaterThan(0);
-    expect(data.every(item => item.pool.address === SOL_USDC_FUSION_POOL_ADDRESS)).toBe(true);
+    expect(data.items.length).toBeGreaterThan(0);
+    expect(data.items.every(item => data.markets[item.market]?.pool.address === SOL_USDC_FUSION_POOL_ADDRESS)).toBe(
+      true,
+    );
   });
 });
 
@@ -47,10 +50,12 @@ describe("Trade history filter by two pools", async () => {
       pool: [SOL_USDC_FUSION_POOL_ADDRESS, TUNA_USDC_FUSION_POOL_ADDRESS],
     }),
   );
+
   it("Can filter by two pools", () => {
-    expect(data.length).toBeGreaterThan(0);
-    expect(data.some(item => item.pool.address === SOL_USDC_FUSION_POOL_ADDRESS)).toBe(true);
-    expect(data.some(item => item.pool.address === TUNA_USDC_FUSION_POOL_ADDRESS)).toBe(true);
+    const pools = new Set(data.items.map(item => data.markets[item.market]?.pool.address));
+    expect(data.items.length).toBeGreaterThan(0);
+    expect(pools.has(SOL_USDC_FUSION_POOL_ADDRESS)).toBe(true);
+    expect(pools.has(TUNA_USDC_FUSION_POOL_ADDRESS)).toBe(true);
   });
 });
 
@@ -61,9 +66,10 @@ describe("Trade history filter by action type", async () => {
       action: [TradeHistoryAction.LIMIT_ORDER_FILL],
     }),
   );
+
   it("Can filter by action type", () => {
-    expect(data.length).toBeGreaterThan(0);
-    expect(data.every(item => item.action === TradeHistoryAction.LIMIT_ORDER_FILL)).toBe(true);
+    expect(data.items.length).toBeGreaterThan(0);
+    expect(data.items.every(item => item.action === TradeHistoryAction.LIMIT_ORDER_FILL)).toBe(true);
   });
 });
 
@@ -74,9 +80,10 @@ describe("Trade history filter by ui direction", async () => {
       uiDirection: [TradeHistoryUiDirection.BUY],
     }),
   );
+
   it("Can filter by ui direction", () => {
-    expect(data.length).toBeGreaterThan(0);
-    expect(data.every(item => item.uiDirection === TradeHistoryUiDirection.BUY)).toBe(true);
+    expect(data.items.length).toBeGreaterThan(0);
+    expect(data.items.every(item => item.uiDirection === TradeHistoryUiDirection.BUY)).toBe(true);
   });
 });
 
@@ -86,27 +93,28 @@ describe("Single trade history item", async () => {
       userAddress: TEST_WALLET_ADDRESS,
     }),
   );
-  const data = allData.filter(item => item.positionAddress === COMPLETED_LIMIT_ORDER)[0] || undefined;
+  const data = allData.items.find(item => item.positionAddress === COMPLETED_LIMIT_ORDER);
 
   it("Trade history item found", () => {
     expect(data).toBeDefined();
   });
 
   it("Correct addresses", () => {
-    expect(data.positionAddress).toBe(COMPLETED_LIMIT_ORDER);
-    expect(data.authority).toBe(TEST_WALLET_ADDRESS);
-    expect(data.pool.address).toBe(SOL_USDC_FUSION_POOL_ADDRESS);
+    const market = data ? allData.markets[data.market] : undefined;
+    expect(data?.positionAddress).toBe(COMPLETED_LIMIT_ORDER);
+    expect(data?.authority).toBe(TEST_WALLET_ADDRESS);
+    expect(market?.pool.address).toBe(SOL_USDC_FUSION_POOL_ADDRESS);
   });
 
   it("Correct parameters", () => {
-    expect(data.action).toBe(TradeHistoryAction.LIMIT_ORDER_FILL);
-    expect(data.aToB).toBe(true);
-    expect(data.uiDirection).toBe(OrderHistoryUiDirection.SELL);
+    expect(data?.action).toBe(TradeHistoryAction.LIMIT_ORDER_FILL);
+    expect(data?.aToB).toBe(true);
+    expect(data?.uiDirection).toBe(OrderHistoryUiDirection.SELL);
   });
 
   it("Correct amounts", () => {
-    expect(data.baseToken.amount).toBe(445188n);
-    expect(data.quoteToken.amount).toBe(100017n);
-    expect(data.fee.amount).toBe(-37n);
+    expect(data?.baseToken.amount).toBe(445188n);
+    expect(data?.quoteToken.amount).toBe(100017n);
+    expect(data?.fee.amount).toBe(-37n);
   });
 });

@@ -26,9 +26,9 @@ describe("All LP positions", async () => {
   );
 
   it("Has two test positions", () => {
-    expect(data.length).toBeGreaterThanOrEqual(2);
-    expect(data.some(item => item.address === LP_POSITION_WITHOUT_LEVERAGE)).toBe(true);
-    expect(data.some(item => item.address === LP_POSITION_WITH_LEVERAGE)).toBe(true);
+    expect(data.items.length).toBeGreaterThanOrEqual(2);
+    expect(data.items.some(item => item.address === LP_POSITION_WITHOUT_LEVERAGE)).toBe(true);
+    expect(data.items.some(item => item.address === LP_POSITION_WITH_LEVERAGE)).toBe(true);
   });
 });
 
@@ -40,52 +40,57 @@ describe("Single LP position", async () => {
     }),
   );
 
+  const item = data?.item;
+  const market = item ? data?.markets[item.market] : undefined;
+  const mintA = market ? data?.mints[market.pool.mintA] : undefined;
+  const mintB = market ? data?.mints[market.pool.mintB] : undefined;
+
   it("Poistion found", () => {
-    expect(data).toBeDefined();
+    expect(item).toBeDefined();
   });
 
   it("Correct addresses", () => {
-    expect(data?.address).toBe(LP_POSITION_WITHOUT_LEVERAGE);
-    expect(data?.authority).toBe(TEST_WALLET_ADDRESS);
-    expect(data?.positionMint).toBe("AP4X27LEaVp9e6xtApjbdjkLRUKNKiciqyvF7VUtkxCJ");
+    expect(item?.address).toBe(LP_POSITION_WITHOUT_LEVERAGE);
+    expect(item?.authority).toBe(TEST_WALLET_ADDRESS);
+    expect(item?.positionMint).toBe("AP4X27LEaVp9e6xtApjbdjkLRUKNKiciqyvF7VUtkxCJ");
   });
 
   it("Correct mints", () => {
-    expect(data?.pool.mintA.address).toBe(SOL_MINT);
-    expect(data?.pool.mintA.name).toBe("Wrapped SOL");
-    expect(data?.pool.mintA.symbol).toBe("SOL");
-    expect(data?.pool.mintA.decimals).toBe(9);
-    expect(data?.pool.mintB.address).toBe(USDC_MINT);
-    expect(data?.pool.mintB.name).toBe("USD Coin");
-    expect(data?.pool.mintB.symbol).toBe("USDC");
-    expect(data?.pool.mintB.decimals).toBe(6);
+    expect(mintA?.address).toBe(SOL_MINT);
+    expect(mintA?.name).toBe("Wrapped SOL");
+    expect(mintA?.symbol).toBe("SOL");
+    expect(mintA?.decimals).toBe(9);
+    expect(mintB?.address).toBe(USDC_MINT);
+    expect(mintB?.name).toBe("USD Coin");
+    expect(mintB?.symbol).toBe("USDC");
+    expect(mintB?.decimals).toBe(6);
   });
 
   it("Correct pool", () => {
-    expect(data?.pool.address).toBe(SOL_USDC_ORCA_POOL_ADDRESS);
-    expect(data?.pool.price).toBeGreaterThan(0);
-    expect(data?.pool.tickSpacing).toBe(4);
+    expect(market?.pool.address).toBe(SOL_USDC_ORCA_POOL_ADDRESS);
+    expect(market?.pool.price).toBeGreaterThan(0);
+    expect(market?.pool.tickSpacing).toBe(4);
   });
 
   it("Correct deposit and debt", () => {
-    expect(data?.depositedCollateralA.amount).toBe(50000000n);
-    expect(data?.depositedCollateralA.amount).toBeTypeOf("bigint");
-    expect(data?.depositedCollateralA.usd).toBeGreaterThan(0);
-    expect(data?.depositedCollateralB.amount).toBe(0n);
-    expect(data?.depositedCollateralB.amount).toBeTypeOf("bigint");
-    expect(data?.depositedCollateralB.usd).toBe(0);
-    expect(data?.initialDebtA.amount).toBe(0n);
-    expect(data?.initialDebtB.amount).toBe(0n);
-    expect(data?.currentDebtA.amount).toBe(0n);
-    expect(data?.currentDebtB.amount).toBe(0n);
-    expect(data?.leverage).toBe(1);
+    expect(item?.depositedCollateralA.amount).toBe(50000000n);
+    expect(item?.depositedCollateralA.amount).toBeTypeOf("bigint");
+    expect(item?.depositedCollateralA.usd).toBeGreaterThan(0);
+    expect(item?.depositedCollateralB.amount).toBe(0n);
+    expect(item?.depositedCollateralB.amount).toBeTypeOf("bigint");
+    expect(item?.depositedCollateralB.usd).toBe(0);
+    expect(item?.initialDebtA.amount).toBe(0n);
+    expect(item?.initialDebtB.amount).toBe(0n);
+    expect(item?.currentDebtA.amount).toBe(0n);
+    expect(item?.currentDebtB.amount).toBe(0n);
+    expect(item?.leverage).toBe(1);
   });
 
   it("Correct flags", () => {
-    expect(data?.flags.lowerLimitOrderSwapToToken).toBeNull();
-    expect(data?.flags.upperLimitOrderSwapToToken).toBeNull();
-    expect(data?.flags.autoCompounding).toBeNull();
-    expect(data?.flags.autoRebalancing).toBe(false);
+    expect(item?.flags.lowerLimitOrderSwapToToken).toBeNull();
+    expect(item?.flags.upperLimitOrderSwapToToken).toBeNull();
+    expect(item?.flags.autoCompounding).toBeNull();
+    expect(item?.flags.autoRebalancing).toBe(false);
   });
 });
 
@@ -110,6 +115,7 @@ describe("Historical LP positions by open state", async () => {
       state: [TunaPositionDtoState.OPEN],
     }),
   );
+
   it("Can filter by state", () => {
     expect(data.length).toBeGreaterThanOrEqual(2);
   });
@@ -127,6 +133,7 @@ describe("Historical LP positions by non-existing states", async () => {
       ],
     }),
   );
+
   it("Can filter by state", () => {
     expect(data.length).toBe(0);
   });
@@ -139,6 +146,7 @@ describe("Historical LP positions by pool", async () => {
       liquidityPool: [SOL_USDC_ORCA_POOL_ADDRESS],
     }),
   );
+
   it("Can filter by pool", () => {
     expect(data.length).toBeGreaterThanOrEqual(2);
   });
