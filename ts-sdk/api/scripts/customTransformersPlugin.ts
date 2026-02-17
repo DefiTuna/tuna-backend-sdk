@@ -1,5 +1,5 @@
-// Delete this file when https://github.com/hey-api/openapi-ts/pull/3409 would be merged and released
-// will be merged and released
+// TODO: Delete this file when https://github.com/hey-api/openapi-ts/pull/3409 would be merged and released
+//   will be merged and released
 
 import { $, type IR } from "@hey-api/openapi-ts";
 
@@ -14,8 +14,7 @@ const toCamelCase = (value: string) =>
 const applyNaming = (value: string, options: { case: "camelCase"; name: string }) =>
   options.name.replace("{{name}}", options.case === "camelCase" ? toCamelCase(value) : value);
 
-const createOperationKey = ({ method, path }: { method: string; path: string }) =>
-  `${method.toUpperCase()} ${path}`;
+const createOperationKey = ({ method, path }: { method: string; path: string }) => `${method.toUpperCase()} ${path}`;
 
 const operationResponsesMap = (operation: any) => {
   const responses = operation.responses ?? {};
@@ -100,7 +99,7 @@ const processSchemaType = ({
     if (!symbol.node && !buildingSymbols.has(symbol.id)) {
       buildingSymbols.add(symbol.id);
       try {
-        const refSchema = plugin.context.resolveIrRef<IR.SchemaObject>(schema.$ref);
+        const refSchema = plugin.context.resolveIrRef(schema.$ref) as IR.SchemaObject;
         const nested = processSchemaType({
           dataExpression: $(dataVariableName),
           plugin,
