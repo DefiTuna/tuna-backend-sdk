@@ -1,5 +1,13 @@
 # @crypticdot/defituna-api
 
+## 4.1.0
+
+### Minor Changes
+
+- f420436: feat: [TUNA-1753] API refactoring (add market objects) (#358)
+  feat: [TUNA-1754] Update swap SSE event (#360)
+  feat: [TUNA-1755] Update (refactor) lending API (#359)
+
 ## 4.0.7
 
 ### Patch Changes
