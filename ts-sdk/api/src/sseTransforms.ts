@@ -1,7 +1,7 @@
 import {
   getLendingPositionResponseTransformer,
   getLimitOrdersResponseTransformer,
-  getMarketResponseTransformer,
+  getMarketsResponseTransformer,
   getOrderHistoryResponseTransformer,
   getPoolOrderBookResponseTransformer,
   getPoolSwapsResponseTransformer,
@@ -25,18 +25,29 @@ const toBigInt = (value: unknown): bigint => {
 };
 
 const transformMarketsMap = async (markets: Record<string, unknown>): Promise<Record<string, unknown>> => {
-  const transformed = await Promise.all(
-    Object.entries(markets).map(async ([address, market]) => {
-      if (!isRecord(market)) {
-        return [address, market] as const;
-      }
-      const response = await getMarketResponseTransformer({
-        data: market,
-      });
-      return [address, response.data] as const;
-    }),
-  );
-  return Object.fromEntries(transformed);
+  const entries = Object.entries(markets);
+  const marketEntries: Array<[string, Record<string, unknown>]> = [];
+  for (const [address, market] of entries) {
+    if (isRecord(market)) {
+      marketEntries.push([address, market]);
+    }
+  }
+  const transformedByAddress = new Map<string, unknown>();
+
+  if (marketEntries.length > 0) {
+    const response = await getMarketsResponseTransformer({
+      data: {
+        items: marketEntries.map(([, market]) => market),
+        mints: {},
+      },
+    });
+    const transformedItems = response.data.items;
+    marketEntries.forEach(([address], index) => {
+      transformedByAddress.set(address, transformedItems[index]);
+    });
+  }
+
+  return Object.fromEntries(entries.map(([address, market]) => [address, transformedByAddress.get(address) ?? market]));
 };
 
 const normalizeMintsMap = (mints: Record<string, unknown>): Record<string, unknown> =>
