@@ -102,9 +102,9 @@ describe("All historical LP positions", async () => {
   );
 
   it("Has two test positions", () => {
-    expect(data.length).toBeGreaterThanOrEqual(2);
-    expect(data.some(item => item.positionAddress === LP_POSITION_WITHOUT_LEVERAGE)).toBe(true);
-    expect(data.some(item => item.positionAddress === LP_POSITION_WITH_LEVERAGE)).toBe(true);
+    expect(data.items.length).toBeGreaterThanOrEqual(2);
+    expect(data.items.some(item => item.positionAddress === LP_POSITION_WITHOUT_LEVERAGE)).toBe(true);
+    expect(data.items.some(item => item.positionAddress === LP_POSITION_WITH_LEVERAGE)).toBe(true);
   });
 });
 
@@ -117,7 +117,7 @@ describe("Historical LP positions by open state", async () => {
   );
 
   it("Can filter by state", () => {
-    expect(data.length).toBeGreaterThanOrEqual(2);
+    expect(data.items.length).toBeGreaterThanOrEqual(2);
   });
 });
 
@@ -135,7 +135,7 @@ describe("Historical LP positions by non-existing states", async () => {
   );
 
   it("Can filter by state", () => {
-    expect(data.length).toBe(0);
+    expect(data.items.length).toBe(0);
   });
 });
 
@@ -148,7 +148,7 @@ describe("Historical LP positions by pool", async () => {
   );
 
   it("Can filter by pool", () => {
-    expect(data.length).toBeGreaterThanOrEqual(2);
+    expect(data.items.length).toBeGreaterThanOrEqual(2);
   });
 });
 

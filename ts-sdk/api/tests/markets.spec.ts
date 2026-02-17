@@ -11,14 +11,16 @@ describe("Markets", async () => {
   const markets = await unwrap(sdk.getMarkets());
 
   it("Length matches rpc", () => {
-    expect(markets.length).toBe(rpcMarkets.length);
+    expect(markets.items.length).toBe(rpcMarkets.length);
   });
   it("Match RPC markets addresses", () => {
-    expect(rpcMarkets.map(rpcMarket => rpcMarket.address).sort()).toEqual(markets.map(market => market.address).sort());
+    expect(rpcMarkets.map(rpcMarket => rpcMarket.address).sort()).toEqual(
+      markets.items.map(market => market.address).sort(),
+    );
   });
   it("Match RPC markets pool addresses", () => {
     expect(rpcMarkets.map(rpcMarket => rpcMarket.data.pool).sort()).toEqual(
-      markets.map(market => market.pool.address).sort(),
+      markets.items.map(market => market.pool.address).sort(),
     );
   });
 });
@@ -36,8 +38,8 @@ describe("Single Market", async () => {
   );
 
   it("Returns market data", () => {
-    expect(market.address).toBe(sampleMarketAddress);
-    expect(market.pool.feeRate).toBeGreaterThan(0);
+    expect(market.item.address).toBe(sampleMarketAddress);
+    expect(market.item.pool.feeRate).toBeGreaterThan(0);
   });
 
   it("Returns 404 for unsaved market", async () => {
