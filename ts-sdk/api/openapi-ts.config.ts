@@ -1,6 +1,8 @@
 import { $, defineConfig } from "@hey-api/openapi-ts";
 import ts from "typescript";
 
+import { customTransformersPlugin } from "./scripts/customTransformersPlugin";
+
 const stringIntFormats = new Set(["int64", "uint64", "int128", "uint128"]);
 
 type TransformerInput = {
@@ -38,8 +40,9 @@ export default defineConfig({
     },
     // ...other plugins
     // In your configuration, add @hey-api/transformers to your plugins and you'll be ready to generate transformers.
-    {
-      name: "@hey-api/transformers",
+    // name: "@hey-api/transformers",
+    // TODO: Uncomment when https://github.com/hey-api/openapi-ts/pull/3409 would be merged and released
+    customTransformersPlugin({
       dates: true,
       bigInt: false, // We use own transformer to bigint
       transformers: [stringIntToBigInt],
@@ -50,7 +53,7 @@ export default defineConfig({
           }
         },
       ],
-    },
+    }) as any,
     // https://heyapi.dev/openapi-ts/plugins/zod
     {
       name: "zod",

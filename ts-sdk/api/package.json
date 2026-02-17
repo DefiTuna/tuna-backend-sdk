@@ -34,7 +34,7 @@
     "@crypticdot/fusionamm-core": "^1.0.62",
     "@crypticdot/prettier-config": "^1.0.0",
     "@crypticdot/typescript-config": "^1.0.0",
-    "@hey-api/openapi-ts": "0.90.4",
+    "@hey-api/openapi-ts": "0.92.4",
     "@solana/kit": "^2.1.0",
     "@types/node": "^22.13.14",
     "decimal.js": "^10.5.0",

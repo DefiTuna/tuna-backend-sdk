@@ -3,5 +3,4 @@ packages:
 minimumReleaseAge: 28800
 minimumReleaseAgeExclude:
   - "@crypticdot/eslint-config"
-  - "@hey-api/openapi-ts"
-  - "@hey-api/codegen-core"
+  - "@hey-api/*"

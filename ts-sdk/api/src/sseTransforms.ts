@@ -2,7 +2,6 @@ import {
   getLendingPositionResponseTransformer,
   getLimitOrdersResponseTransformer,
   getMarketResponseTransformer,
-  getMarketsResponseTransformer,
   getOrderHistoryResponseTransformer,
   getPoolOrderBookResponseTransformer,
   getPoolSwapsResponseTransformer,
@@ -24,6 +23,24 @@ const toBigInt = (value: unknown): bigint => {
   if (typeof value === "bigint") return value;
   return BigInt(value.toString());
 };
+
+const transformMarketsMap = async (markets: Record<string, unknown>): Promise<Record<string, unknown>> => {
+  const transformed = await Promise.all(
+    Object.entries(markets).map(async ([address, market]) => {
+      if (!isRecord(market)) {
+        return [address, market] as const;
+      }
+      const response = await getMarketResponseTransformer({
+        data: market,
+      });
+      return [address, response.data] as const;
+    }),
+  );
+  return Object.fromEntries(transformed);
+};
+
+const normalizeMintsMap = (mints: Record<string, unknown>): Record<string, unknown> =>
+  Object.fromEntries(Object.entries(mints).map(([address, mint]) => [address, mint]));
 
 export const applySseResponseTransforms = async (payload: unknown): Promise<unknown> => {
   if (!isRecord(payload)) return payload;
@@ -54,19 +71,39 @@ export const applySseResponseTransforms = async (payload: unknown): Promise<unkn
       return payload;
     }
     case NotificationEntity.TRADE_HISTORY_ENTRY: {
-      if (!payload.data) return payload;
+      if (!payload.data || !isRecord(payload.data) || !payload.data.item) return payload;
       const response = await getTradeHistoryResponseTransformer({
-        data: [payload.data],
+        data: {
+          items: [payload.data.item],
+          markets: isRecord(payload.data.markets) ? payload.data.markets : {},
+          mints: isRecord(payload.data.mints) ? payload.data.mints : {},
+        },
       });
-      payload.data = response.data[0];
+      payload.data.item = response.data.items[0];
+      if (isRecord(payload.data.markets)) {
+        payload.data.markets = await transformMarketsMap(payload.data.markets);
+      }
+      if (isRecord(payload.data.mints)) {
+        payload.data.mints = normalizeMintsMap(payload.data.mints);
+      }
       return payload;
     }
     case NotificationEntity.ORDER_HISTORY_ENTRY: {
-      if (!payload.data) return payload;
+      if (!payload.data || !isRecord(payload.data) || !payload.data.item) return payload;
       const response = await getOrderHistoryResponseTransformer({
-        data: [payload.data],
+        data: {
+          items: [payload.data.item],
+          markets: isRecord(payload.data.markets) ? payload.data.markets : {},
+          mints: isRecord(payload.data.mints) ? payload.data.mints : {},
+        },
       });
-      payload.data = response.data[0];
+      payload.data.item = response.data.items[0];
+      if (isRecord(payload.data.markets)) {
+        payload.data.markets = await transformMarketsMap(payload.data.markets);
+      }
+      if (isRecord(payload.data.mints)) {
+        payload.data.mints = normalizeMintsMap(payload.data.mints);
+      }
       return payload;
     }
     case NotificationEntity.STATE_SNAPSHOT: {
@@ -80,24 +117,12 @@ export const applySseResponseTransforms = async (payload: unknown): Promise<unkn
         snapshot.slot = toBigInt(snapshot.slot);
       }
 
-      if (Array.isArray(snapshot.markets)) {
-        const response = await getMarketsResponseTransformer({
-          data: snapshot.markets,
-        });
-        snapshot.markets = response.data;
-      } else if (isRecord(snapshot.markets)) {
-        const transformed = await Promise.all(
-          Object.entries(snapshot.markets).map(async ([address, market]) => {
-            if (!isRecord(market)) {
-              return [address, market] as const;
-            }
-            const response = await getMarketResponseTransformer({
-              data: market,
-            });
-            return [address, response.data] as const;
-          }),
-        );
-        snapshot.markets = Object.fromEntries(transformed);
+      if (isRecord(snapshot.markets)) {
+        snapshot.markets = await transformMarketsMap(snapshot.markets);
+      }
+
+      if (isRecord(snapshot.mints)) {
+        snapshot.mints = normalizeMintsMap(snapshot.mints);
       }
 
       if (Array.isArray(snapshot.orderBooks)) {
@@ -116,6 +141,8 @@ export const applySseResponseTransforms = async (payload: unknown): Promise<unkn
         const response = await getLimitOrdersResponseTransformer({
           data: {
             items: snapshot.fusionLimitOrders,
+            markets: {},
+            mints: {},
           },
         });
         snapshot.fusionLimitOrders = response.data.items;
@@ -125,6 +152,8 @@ export const applySseResponseTransforms = async (payload: unknown): Promise<unkn
         const response = await getTunaPositionsResponseTransformer({
           data: {
             items: snapshot.tunaLpPositions,
+            markets: {},
+            mints: {},
           },
         });
         snapshot.tunaLpPositions = response.data.items;
@@ -134,6 +163,8 @@ export const applySseResponseTransforms = async (payload: unknown): Promise<unkn
         const response = await getSpotPositionsResponseTransformer({
           data: {
             items: snapshot.tunaSpotPositions,
+            markets: {},
+            mints: {},
           },
         });
         snapshot.tunaSpotPositions = response.data.items;
