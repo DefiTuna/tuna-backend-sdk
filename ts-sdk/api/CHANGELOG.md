@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 4.1.1
+
+### Patch Changes
+
+- c995b9d: fix: Missing transforms for additionalProps in openapi.yaml
+
 ## 4.1.0
 
 ### Minor Changes
