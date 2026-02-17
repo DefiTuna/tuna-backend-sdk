@@ -1,6 +1,7 @@
 import {
   getLendingPositionResponseTransformer,
   getLimitOrdersResponseTransformer,
+  getMarketResponseTransformer,
   getMarketsResponseTransformer,
   getOrderHistoryResponseTransformer,
   getPoolOrderBookResponseTransformer,
@@ -84,6 +85,19 @@ export const applySseResponseTransforms = async (payload: unknown): Promise<unkn
           data: snapshot.markets,
         });
         snapshot.markets = response.data;
+      } else if (isRecord(snapshot.markets)) {
+        const transformed = await Promise.all(
+          Object.entries(snapshot.markets).map(async ([address, market]) => {
+            if (!isRecord(market)) {
+              return [address, market] as const;
+            }
+            const response = await getMarketResponseTransformer({
+              data: market,
+            });
+            return [address, response.data] as const;
+          }),
+        );
+        snapshot.markets = Object.fromEntries(transformed);
       }
 
       if (Array.isArray(snapshot.orderBooks)) {
@@ -100,23 +114,29 @@ export const applySseResponseTransforms = async (payload: unknown): Promise<unkn
 
       if (Array.isArray(snapshot.fusionLimitOrders)) {
         const response = await getLimitOrdersResponseTransformer({
-          data: snapshot.fusionLimitOrders,
+          data: {
+            items: snapshot.fusionLimitOrders,
+          },
         });
-        snapshot.fusionLimitOrders = response.data;
+        snapshot.fusionLimitOrders = response.data.items;
       }
 
       if (Array.isArray(snapshot.tunaLpPositions)) {
         const response = await getTunaPositionsResponseTransformer({
-          data: snapshot.tunaLpPositions,
+          data: {
+            items: snapshot.tunaLpPositions,
+          },
         });
-        snapshot.tunaLpPositions = response.data;
+        snapshot.tunaLpPositions = response.data.items;
       }
 
       if (Array.isArray(snapshot.tunaSpotPositions)) {
         const response = await getSpotPositionsResponseTransformer({
-          data: snapshot.tunaSpotPositions,
+          data: {
+            items: snapshot.tunaSpotPositions,
+          },
         });
-        snapshot.tunaSpotPositions = response.data;
+        snapshot.tunaSpotPositions = response.data.items;
       }
 
       return payload;
