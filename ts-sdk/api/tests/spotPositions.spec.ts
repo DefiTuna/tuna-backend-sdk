@@ -13,6 +13,6 @@ describe("All spot positions", async () => {
   );
 
   it("Has zero test positions", () => {
-    expect(data.length).toBe(0);
+    expect(data.items.length).toBe(0);
   });
 });

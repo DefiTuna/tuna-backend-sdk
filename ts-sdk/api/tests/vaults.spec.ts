@@ -11,10 +11,10 @@ describe("Vaults", async () => {
   const vaults = await unwrap(sdk.getVaults());
 
   it("Length matches rpc", () => {
-    expect(rpcVaults.length).toBe(vaults.length);
+    expect(rpcVaults.length).toBe(vaults.items.length);
   });
   it("Match RPC vaults addresses", () => {
-    expect(rpcVaults.map(rpcVault => rpcVault.address).sort()).toEqual(vaults.map(vault => vault.address).sort());
+    expect(rpcVaults.map(rpcVault => rpcVault.address).sort()).toEqual(vaults.items.map(vault => vault.address).sort());
   });
   it("Match RPC vaults supply limits", () => {
     expect(
@@ -22,7 +22,7 @@ describe("Vaults", async () => {
         .map(rpcVault => [rpcVault.address, rpcVault.data.supplyLimit])
         .sort(([a], [b]) => a.toString().localeCompare(b.toString())),
     ).toEqual(
-      vaults
+      vaults.items
         .map(vault => [vault.address, vault.supplyLimit.amount])
         .sort(([a], [b]) => a.toString().localeCompare(b.toString())),
     );
@@ -55,8 +55,8 @@ describe("Single Vault", async () => {
   const history = await unwrap(Promise.resolve(responseHistory));
 
   it("Returns vault data", () => {
-    expect(vault.address).toBe(SOL_LENDING_VAULT);
-    expect(vault.mint).toBe(SOL_MINT);
+    expect(vault.item.address).toBe(SOL_LENDING_VAULT);
+    expect(vault.item.mint).toBe(SOL_MINT);
   });
 
   it("Returns vault historical data", () => {
