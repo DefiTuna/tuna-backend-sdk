@@ -4259,7 +4259,7 @@ components:
           - type: 'null'
           - $ref: '#/components/schemas/PubkeyDto'
         data:
-          $ref: '#/components/schemas/LendingPositionDto'
+          $ref: '#/components/schemas/LendingPositionResponse'
         entity:
           $ref: '#/components/schemas/NotificationEntity'
         id:
