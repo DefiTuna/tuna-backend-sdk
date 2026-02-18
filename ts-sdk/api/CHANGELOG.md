@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 4.1.3
+
+### Patch Changes
+
+- e31a245: feat: [TUNA-1755] Add mints to lending position DTO in SSE (#365)
+
 ## 4.1.2
 
 ### Patch Changes
