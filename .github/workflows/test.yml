@@ -34,11 +34,10 @@ jobs:
         run: pnpm lint
       - name: Test
         run: |
-          run: |
-            touch ts-sdk/api/.env
-            echo RPC_URL=$RPC_URL >> ts-sdk/api/.env
-            echo API_BASE_URL=$API_BASE_URL >> ts-sdk/api/.env
-            pnpm test
+          touch ts-sdk/api/.env
+          echo RPC_URL=$RPC_URL >> ts-sdk/api/.env
+          echo API_BASE_URL=$API_BASE_URL >> ts-sdk/api/.env
+          pnpm test
         env:
           RPC_URL: ${{ secrets.RPC_URL }}
           API_BASE_URL: "https://api-dev.defituna.com/api"

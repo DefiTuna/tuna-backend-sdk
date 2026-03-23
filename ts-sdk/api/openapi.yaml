@@ -3077,6 +3077,11 @@ components:
           $ref: '#/components/schemas/TokenAmountWithUsd'
         funds:
           $ref: '#/components/schemas/TokenAmountWithUsd'
+        market:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/PubkeyDto'
+            description: Vault market address (filled only for permissionless markets)
         mint:
           $ref: '#/components/schemas/PubkeyDto'
         shares:
@@ -3111,13 +3116,27 @@ components:
       required:
       - item
       - mints
+      - markets
+      - vaults
       properties:
         item:
           $ref: '#/components/schemas/LendingPositionDto'
+        markets:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/MarketDto'
+          propertyNames:
+            type: string
         mints:
           type: object
           additionalProperties:
             $ref: '#/components/schemas/MintDto'
+          propertyNames:
+            type: string
+        vaults:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/VaultDto'
           propertyNames:
             type: string
     LendingPositionsListResponse:
@@ -3125,15 +3144,29 @@ components:
       required:
       - items
       - mints
+      - markets
+      - vaults
       properties:
         items:
           type: array
           items:
             $ref: '#/components/schemas/LendingPositionDto'
+        markets:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/MarketDto'
+          propertyNames:
+            type: string
         mints:
           type: object
           additionalProperties:
             $ref: '#/components/schemas/MintDto'
+          propertyNames:
+            type: string
+        vaults:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/VaultDto'
           propertyNames:
             type: string
     LimitOrderDto:
@@ -3375,12 +3408,21 @@ components:
       - max_spot_position_size_b
       - pool
       - disabled
+      - vault_a
+      - vault_b
+      - is_permissionless
+      - is_verified
       - created_at
       properties:
         address:
           $ref: '#/components/schemas/PubkeyDto'
         address_lookup_table:
           $ref: '#/components/schemas/PubkeyDto'
+        authority:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/PubkeyDto'
+            description: Filled only for permissionless markets
         borrow_limit_a:
           $ref: '#/components/schemas/TokenAmountWithUsd'
         borrow_limit_b:
@@ -3394,6 +3436,12 @@ components:
           format: date-time
         disabled:
           type: boolean
+        is_permissionless:
+          type: boolean
+          description: Is market permissionless?
+        is_verified:
+          type: boolean
+          description: Is this permissionless market verified by DefiTuna team?
         liquidation_fee:
           type: integer
           format: int32
@@ -3432,6 +3480,12 @@ components:
           type: integer
           format: int32
           minimum: 0
+        vault_a:
+          $ref: '#/components/schemas/PubkeyDto'
+          description: Market's Vault A for Lending
+        vault_b:
+          $ref: '#/components/schemas/PubkeyDto'
+          description: Market's Vault B for Lending
     MarketError404Error:
       type: object
       required:
@@ -3455,6 +3509,7 @@ components:
       required:
       - item
       - mints
+      - vaults
       properties:
         item:
           $ref: '#/components/schemas/MarketDto'
@@ -3464,11 +3519,18 @@ components:
             $ref: '#/components/schemas/MintDto'
           propertyNames:
             type: string
+        vaults:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/VaultDto'
+          propertyNames:
+            type: string
     MarketsListResponse:
       type: object
       required:
       - items
       - mints
+      - vaults
       properties:
         items:
           type: array
@@ -3478,6 +3540,12 @@ components:
           type: object
           additionalProperties:
             $ref: '#/components/schemas/MintDto'
+          propertyNames:
+            type: string
+        vaults:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/VaultDto'
           propertyNames:
             type: string
     MintDto:
@@ -4125,6 +4193,14 @@ components:
           - 'null'
           items:
             $ref: '#/components/schemas/TunaSpotPositionDto'
+        vaults:
+          type:
+          - object
+          - 'null'
+          additionalProperties:
+            $ref: '#/components/schemas/VaultDto'
+          propertyNames:
+            type: string
     SnapshotContainer:
       type: object
       required:
@@ -5699,6 +5775,11 @@ components:
       properties:
         address:
           $ref: '#/components/schemas/PubkeyDto'
+        authority:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/PubkeyDto'
+            description: Filled only for vaults created for permissionless markets
         borrow_apy:
           type: number
           format: double
@@ -5712,6 +5793,11 @@ components:
           $ref: '#/components/schemas/U64Dto'
         interest_rate:
           $ref: '#/components/schemas/U64Dto'
+        market:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/PubkeyDto'
+            description: Filled only for vaults created for permissionless markets
         mint:
           $ref: '#/components/schemas/PubkeyDto'
         pyth_oracle_feed_id:

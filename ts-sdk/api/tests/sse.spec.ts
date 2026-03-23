@@ -31,8 +31,15 @@ const createStream = async (signal: AbortSignal) => {
   const result = await sdk.sse({
     headers: { Accept: "text/event-stream" },
     onSseError: error => {
-      process.stderr.write(`SSE error: ${String(error)}\n`);
+      const isError = error instanceof Error;
+      const header = isError ? `${error.name}: ${error.message}` : String(error);
+      const stack = isError && error.stack ? `\n${error.stack}` : "";
+      const serialized =
+        error && typeof error === "object" ? `\n${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}` : "";
+      process.stderr.write(`SSE error: ${header}${stack}${serialized}\n`);
     },
+    sseDefaultRetryDelay: 500,
+    sseMaxRetryDelay: 2000,
     signal,
   });
 
@@ -56,8 +63,8 @@ const nextEvent = async (signal: AbortSignal, stream: AsyncGenerator<SseResponse
   ]);
 };
 
-describe("Pool swaps stream", { timeout: 30000 }, async () => {
-  it("Receives swap", async ({ signal }) => {
+describe("Pool swaps stream", { timeout: 90000 }, async () => {
+  it("Receives swap", { retry: 1 }, async ({ signal }) => {
     const stream = await createStream(signal);
     const firstEvent = await stream.next();
     const rawData = firstEvent.value;
@@ -101,7 +108,7 @@ describe("Pool swaps stream", { timeout: 30000 }, async () => {
   });
 });
 
-describe("Order book stream", { timeout: 30000 }, async () => {
+describe("Order book stream", { timeout: 60000 }, async () => {
   it("Receives order book", async ({ signal }) => {
     const stream = await createStream(signal);
 
@@ -139,7 +146,7 @@ describe("Order book stream", { timeout: 30000 }, async () => {
       const event = await nextEvent(signal, stream);
       const rawData = event.value;
       if (eventIsStateSnapshot(rawData)) {
-        if (rawData.data.orderBooks !== undefined) {
+        if (Array.isArray(rawData.data.orderBooks) && rawData.data.orderBooks.length > 0) {
           orderBookFound = true;
         }
       }
