@@ -26,28 +26,30 @@ const toBigInt = (value: unknown): bigint => {
 
 const transformMarketsMap = async (markets: Record<string, unknown>): Promise<Record<string, unknown>> => {
   const entries = Object.entries(markets);
-  const marketEntries: Array<[string, Record<string, unknown>]> = [];
-  for (const [address, market] of entries) {
-    if (isRecord(market)) {
-      marketEntries.push([address, market]);
-    }
-  }
   const transformedByAddress = new Map<string, unknown>();
 
-  if (marketEntries.length > 0) {
-    const response = await getMarketsResponseTransformer({
-      data: {
-        items: marketEntries.map(([, market]) => market),
-        mints: {},
-      },
-    });
-    const transformedItems = response.data.items;
-    marketEntries.forEach(([address], index) => {
-      transformedByAddress.set(address, transformedItems[index]);
-    });
+  for (const [address, market] of entries) {
+    if (!isRecord(market)) {
+      transformedByAddress.set(address, market);
+      continue;
+    }
+
+    try {
+      const response = await getMarketsResponseTransformer({
+        data: {
+          items: [market],
+          mints: {},
+          vaults: {},
+        },
+      });
+      transformedByAddress.set(address, response.data.items[0] ?? market);
+    } catch (error) {
+      // SSE snapshots can contain partial market payloads; keep raw value instead of aborting stream.
+      transformedByAddress.set(address, market);
+    }
   }
 
-  return Object.fromEntries(entries.map(([address, market]) => [address, transformedByAddress.get(address) ?? market]));
+  return Object.fromEntries(entries.map(([address]) => [address, transformedByAddress.get(address)]));
 };
 
 const normalizeMintsMap = (mints: Record<string, unknown>): Record<string, unknown> =>

@@ -63,7 +63,7 @@ const nextEvent = async (signal: AbortSignal, stream: AsyncGenerator<SseResponse
   ]);
 };
 
-describe("Pool swaps stream", { timeout: 60000 }, async () => {
+describe("Pool swaps stream", { timeout: 30000 }, async () => {
   it("Receives swap", async ({ signal }) => {
     const stream = await createStream(signal);
     const firstEvent = await stream.next();
@@ -108,7 +108,7 @@ describe("Pool swaps stream", { timeout: 60000 }, async () => {
   });
 });
 
-describe("Order book stream", { timeout: 60000 }, async () => {
+describe("Order book stream", { timeout: 30000 }, async () => {
   it("Receives order book", async ({ signal }) => {
     const stream = await createStream(signal);
 
