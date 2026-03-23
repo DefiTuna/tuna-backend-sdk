@@ -43,7 +43,7 @@ const transformMarketsMap = async (markets: Record<string, unknown>): Promise<Re
         },
       });
       transformedByAddress.set(address, response.data.items[0] ?? market);
-    } catch (error) {
+    } catch (_) {
       // SSE snapshots can contain partial market payloads; keep raw value instead of aborting stream.
       transformedByAddress.set(address, market);
     }
