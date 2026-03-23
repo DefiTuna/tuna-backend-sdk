@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 4.2.0
+
+### Minor Changes
+
+- f75cf26: chore: Add pool prices backfill utility into Docker image (#389)
+
 ## 4.1.3
 
 ### Patch Changes
