@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 4.3.0
+
+### Minor Changes
+
+- bd69ea4: feat: [TUNA-1774] Create tokens API to integrate permission-less markets (#390)
+
 ## 4.2.0
 
 ### Minor Changes
