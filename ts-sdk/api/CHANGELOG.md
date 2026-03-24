@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 4.3.1
+
+### Patch Changes
+
+- bd42103: fix: [TUNA-1774] Tokens search API updates (#391)
+
 ## 4.3.0
 
 ### Minor Changes
