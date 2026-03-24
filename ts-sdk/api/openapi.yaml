@@ -1682,6 +1682,8 @@ paths:
         required: true
         schema:
           type: string
+          maxLength: 44
+          minLength: 2
       responses:
         '200':
           description: ''
@@ -1693,7 +1695,9 @@ paths:
                 - data
                 properties:
                   data:
-                    $ref: '#/components/schemas/TokenSearchResponseDto'
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TokenSearchItemDto'
         '400':
           description: ''
           content:
@@ -5063,15 +5067,6 @@ components:
           - number
           - 'null'
           format: double
-    TokenSearchResponseDto:
-      type: object
-      required:
-      - items
-      properties:
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/TokenSearchItemDto'
     TokenStatsWindowDto:
       type: object
       properties:
