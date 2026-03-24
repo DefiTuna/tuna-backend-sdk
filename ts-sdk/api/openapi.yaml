@@ -1602,6 +1602,134 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UpdateStreamSubscriptionError500Error'
+  /v1/tokens/price:
+    get:
+      tags:
+      - Tokens
+      summary: Get USD prices for token_a and token_b
+      operationId: get_pair_price
+      parameters:
+      - name: token_a
+        in: query
+        description: Token A mint address (base58)
+        required: true
+        schema:
+          $ref: '#/components/schemas/PubkeyDto'
+      - name: token_b
+        in: query
+        description: Token B mint address (base58)
+        required: true
+        schema:
+          $ref: '#/components/schemas/PubkeyDto'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    $ref: '#/components/schemas/TokenPairPriceResponseDto'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokensError400Error'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokensError404Error'
+        '422':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorCodeErrorBody'
+        '429':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokensError429Error'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokensError500Error'
+        '502':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokensError502Error'
+  /v1/tokens/search:
+    get:
+      tags:
+      - Tokens
+      summary: Search tokens by mint or name/symbol
+      operationId: search_tokens
+      parameters:
+      - name: q
+        in: query
+        description: Token search query by mint address or token name/symbol.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    $ref: '#/components/schemas/TokenSearchResponseDto'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokensError400Error'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokensError404Error'
+        '422':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorCodeErrorBody'
+        '429':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokensError429Error'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokensError500Error'
+        '502':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokensError502Error'
   /v1/users/{user_address}/lending-positions:
     get:
       tags:
@@ -4132,6 +4260,23 @@ components:
         - OpenAPI: `type: string`, pattern for base58, optional format
       example: '11111111111111111111111111111111'
       pattern: ^[1-9A-HJ-NP-Za-km-z]+$
+    RateLimitSource:
+      type: string
+      enum:
+      - internal
+      - upstream
+    RetryAfterHint:
+      type: object
+      required:
+      - retry_after_seconds
+      - source
+      properties:
+        retry_after_seconds:
+          type: integer
+          format: int64
+          minimum: 0
+        source:
+          $ref: '#/components/schemas/RateLimitSource'
     Snapshot:
       type: object
       required:
@@ -4747,6 +4892,336 @@ components:
         usd:
           type: number
           format: double
+    TokenAuditDto:
+      type: object
+      properties:
+        freeze_authority_disabled:
+          type:
+          - boolean
+          - 'null'
+        mint_authority_disabled:
+          type:
+          - boolean
+          - 'null'
+        top_holders_percentage:
+          type:
+          - number
+          - 'null'
+          format: double
+    TokenFirstPoolDto:
+      type: object
+      required:
+      - id
+      - created_at
+      properties:
+        created_at:
+          type: string
+        id:
+          type: string
+    TokenPairPriceResponseDto:
+      type: object
+      required:
+      - token_a
+      - token_b
+      properties:
+        token_a:
+          $ref: '#/components/schemas/TokenPriceDto'
+        token_b:
+          $ref: '#/components/schemas/TokenPriceDto'
+    TokenPriceDto:
+      type: object
+      required:
+      - mint
+      - usd_price
+      properties:
+        mint:
+          type: string
+        price_block_id:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          minimum: 0
+        price_change_24h:
+          type:
+          - number
+          - 'null'
+          format: double
+        usd_price:
+          type: number
+          format: double
+    TokenSearchItemDto:
+      type: object
+      required:
+      - mint
+      - symbol
+      - name
+      - decimals
+      - is_verified
+      - tags
+      properties:
+        audit:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/TokenAuditDto'
+        circ_supply:
+          type:
+          - number
+          - 'null'
+          format: double
+        decimals:
+          type: integer
+          format: int32
+          minimum: 0
+        fdv:
+          type:
+          - number
+          - 'null'
+          format: double
+        first_pool:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/TokenFirstPoolDto'
+        holder_count:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          minimum: 0
+        icon_url:
+          type:
+          - string
+          - 'null'
+        is_verified:
+          type: boolean
+        liquidity:
+          type:
+          - number
+          - 'null'
+          format: double
+        mcap:
+          type:
+          - number
+          - 'null'
+          format: double
+        mint:
+          type: string
+        name:
+          type: string
+        organic_score:
+          type:
+          - number
+          - 'null'
+          format: double
+        organic_score_label:
+          type:
+          - string
+          - 'null'
+        price_block_id:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          minimum: 0
+        stats_1h:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/TokenStatsWindowDto'
+        stats_24h:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/TokenStatsWindowDto'
+        stats_5m:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/TokenStatsWindowDto'
+        stats_6h:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/TokenStatsWindowDto'
+        symbol:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        token_program:
+          type:
+          - string
+          - 'null'
+        total_supply:
+          type:
+          - number
+          - 'null'
+          format: double
+        updated_at:
+          type:
+          - string
+          - 'null'
+        usd_price:
+          type:
+          - number
+          - 'null'
+          format: double
+    TokenSearchResponseDto:
+      type: object
+      required:
+      - items
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/TokenSearchItemDto'
+    TokenStatsWindowDto:
+      type: object
+      properties:
+        buy_organic_volume:
+          type:
+          - number
+          - 'null'
+          format: double
+        buy_volume:
+          type:
+          - number
+          - 'null'
+          format: double
+        liquidity_change:
+          type:
+          - number
+          - 'null'
+          format: double
+        num_buys:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          minimum: 0
+        num_net_buyers:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          minimum: 0
+        num_organic_buyers:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          minimum: 0
+        num_sells:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          minimum: 0
+        num_traders:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          minimum: 0
+        price_change:
+          type:
+          - number
+          - 'null'
+          format: double
+        sell_organic_volume:
+          type:
+          - number
+          - 'null'
+          format: double
+        sell_volume:
+          type:
+          - number
+          - 'null'
+          format: double
+        volume_change:
+          type:
+          - number
+          - 'null'
+          format: double
+    TokensError400BadRequest:
+      type: object
+      required:
+      - code
+      properties:
+        code:
+          type: string
+          enum:
+          - bad_request
+    TokensError400Error:
+      oneOf:
+      - $ref: '#/components/schemas/TokensError400BadRequest'
+      - $ref: '#/components/schemas/BadRequestErrorCodeErrorBody'
+      type: object
+      discriminator:
+        propertyName: code
+        mapping:
+          bad_request: '#/components/schemas/TokensError400BadRequest'
+          invalid_body: '#/components/schemas/BadRequestErrorCodeErrorBody'
+          invalid_path: '#/components/schemas/BadRequestErrorCodeErrorBody'
+          invalid_query: '#/components/schemas/BadRequestErrorCodeErrorBody'
+    TokensError404Error:
+      type: object
+      required:
+      - code
+      properties:
+        code:
+          type: string
+          enum:
+          - not_found
+    TokensError429Error:
+      oneOf:
+      - $ref: '#/components/schemas/TokensError429TooManyRequests'
+      - $ref: '#/components/schemas/TokensError429UpstreamRateLimited'
+      type: object
+      discriminator:
+        propertyName: code
+        mapping:
+          too_many_requests: '#/components/schemas/TokensError429TooManyRequests'
+          upstream_rate_limited: '#/components/schemas/TokensError429UpstreamRateLimited'
+    TokensError429TooManyRequests:
+      type: object
+      required:
+      - code
+      - data
+      properties:
+        code:
+          type: string
+          enum:
+          - too_many_requests
+        data:
+          $ref: '#/components/schemas/RetryAfterHint'
+    TokensError429UpstreamRateLimited:
+      type: object
+      required:
+      - code
+      - data
+      properties:
+        code:
+          type: string
+          enum:
+          - upstream_rate_limited
+        data:
+          $ref: '#/components/schemas/RetryAfterHint'
+    TokensError500Error:
+      type: object
+      required:
+      - code
+      properties:
+        code:
+          type: string
+          enum:
+          - internal_error
+    TokensError502Error:
+      type: object
+      required:
+      - code
+      properties:
+        code:
+          type: string
+          enum:
+          - upstream_unavailable
     TradableAmountDto:
       type: object
       required:
@@ -5986,6 +6461,8 @@ tags:
   description: Vaults
 - name: Mints
   description: Mint data
+- name: Tokens
+  description: External token search and pricing
 - name: OraclePrices
   description: Oracle prices
 - name: Stats
