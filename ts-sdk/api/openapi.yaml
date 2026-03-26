@@ -5980,6 +5980,22 @@ components:
           format: double
         liquidity:
           $ref: '#/components/schemas/U128Dto'
+        lock_type:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/TunaPositionDtoLockType'
+            description: Which lock type is applied to position
+        locked_at_block_time:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: When positon was locked
+        locked_at_slot:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/U64Dto'
+            description: At what slot position was locked
         lower_limit_order_price:
           type: number
           format: double
@@ -6026,6 +6042,10 @@ components:
           $ref: '#/components/schemas/TokenAmountWithUsd'
         yield_b:
           $ref: '#/components/schemas/TokenAmountWithUsd'
+    TunaPositionDtoLockType:
+      type: string
+      enum:
+      - permanent
     TunaPositionDtoState:
       type: string
       enum:
