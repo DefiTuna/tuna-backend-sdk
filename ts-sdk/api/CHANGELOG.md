@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 4.3.2
+
+### Patch Changes
+
+- 7d8ee5d: feat: [TUNA-1777] Support LP Positions lock (#392)
+
 ## 4.3.1
 
 ### Patch Changes
