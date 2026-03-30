@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 4.3.3
+
+### Patch Changes
+
+- 698df53: feat: Add is_permissionless filter flag to markets API (#395)
+
 ## 4.3.2
 
 ### Patch Changes
