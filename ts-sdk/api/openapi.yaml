@@ -90,6 +90,15 @@ paths:
       - Markets
       summary: Request all markets
       operationId: get_markets
+      parameters:
+      - name: is_permissionless
+        in: query
+        description: 'Filter by market permissionless flag: `0` = false, `1` = true.'
+        required: false
+        schema:
+          type: integer
+          format: int32
+          minimum: 0
       responses:
         '200':
           description: ''
@@ -102,6 +111,18 @@ paths:
                 properties:
                   data:
                     $ref: '#/components/schemas/MarketsListResponse'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorCodeErrorBody'
+        '422':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorCodeErrorBody'
         '500':
           description: ''
           content:
