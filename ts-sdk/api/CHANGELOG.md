@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 4.3.4
+
+### Patch Changes
+
+- 0d32a5c: feat: [TUNA-1780] Invite codes total stats (#403)
+
 ## 4.3.3
 
 ### Patch Changes
