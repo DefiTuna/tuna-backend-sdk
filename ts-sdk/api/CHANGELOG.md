@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 4.3.5
+
+### Patch Changes
+
+- 2f46eb5: chore(docs): Add openapi sync workflow PAT token instructions
+
 ## 4.3.4
 
 ### Patch Changes
