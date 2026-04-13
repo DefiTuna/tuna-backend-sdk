@@ -39,19 +39,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/InviteApiError400Error'
+                $ref: '#/components/schemas/InviteBindChallengeApiError400Error'
         '404':
           description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/InviteApiError404Error'
+                $ref: '#/components/schemas/InviteBindChallengeApiError404Error'
         '409':
           description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/InviteApiError409Error'
+                $ref: '#/components/schemas/InviteBindChallengeApiError409Error'
         '422':
           description: ''
           content:
@@ -63,7 +63,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/InviteApiError500Error'
+                $ref: '#/components/schemas/InviteBindChallengeApiError500Error'
   /v1/invites/bind/confirm:
     post:
       tags:
@@ -93,19 +93,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/InviteApiError400Error'
+                $ref: '#/components/schemas/InviteBindConfirmApiError400Error'
         '404':
           description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/InviteApiError404Error'
+                $ref: '#/components/schemas/InviteBindConfirmApiError404Error'
         '409':
           description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/InviteApiError409Error'
+                $ref: '#/components/schemas/InviteBindConfirmApiError409Error'
         '422':
           description: ''
           content:
@@ -117,7 +117,50 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/InviteApiError500Error'
+                $ref: '#/components/schemas/InviteBindConfirmApiError500Error'
+  /v1/invites/eligibility/{wallet}:
+    get:
+      tags:
+      - Invites
+      summary: Check invite bind eligibility for wallet
+      operationId: get_invite_bind_eligibility
+      parameters:
+      - name: wallet
+        in: path
+        description: Wallet address (base58).
+        required: true
+        schema:
+          $ref: '#/components/schemas/PubkeyDto'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    $ref: '#/components/schemas/InviteEligibilityResponse'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorCodeErrorBody'
+        '422':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorCodeErrorBody'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InviteEligibilityApiError500Error'
   /v1/lp-spot-leaderboard:
     get:
       tags:
@@ -2929,6 +2972,7 @@ components:
       properties:
         invite_code:
           type: string
+          description: Human-readable invite code.
           maxLength: 64
           minLength: 3
         message_b64:
@@ -2964,6 +3008,7 @@ components:
       properties:
         invite_code:
           type: string
+          description: Human-readable invite code.
           maxLength: 64
           minLength: 3
         wallet:
@@ -3294,19 +3339,19 @@ components:
           type: string
           enum:
           - internal_error
-    InviteApiError400Error:
+    InviteBindChallengeApiError400Error:
       oneOf:
-      - $ref: '#/components/schemas/InviteApiError400InvalidBindRequest'
+      - $ref: '#/components/schemas/InviteBindChallengeApiError400InvalidBindRequest'
       - $ref: '#/components/schemas/BadRequestErrorCodeErrorBody'
       type: object
       discriminator:
         propertyName: code
         mapping:
-          invalid_bind_request: '#/components/schemas/InviteApiError400InvalidBindRequest'
+          invalid_bind_request: '#/components/schemas/InviteBindChallengeApiError400InvalidBindRequest'
           invalid_body: '#/components/schemas/BadRequestErrorCodeErrorBody'
           invalid_path: '#/components/schemas/BadRequestErrorCodeErrorBody'
           invalid_query: '#/components/schemas/BadRequestErrorCodeErrorBody'
-    InviteApiError400InvalidBindRequest:
+    InviteBindChallengeApiError400InvalidBindRequest:
       type: object
       required:
       - code
@@ -3315,7 +3360,7 @@ components:
           type: string
           enum:
           - invalid_bind_request
-    InviteApiError404Error:
+    InviteBindChallengeApiError404Error:
       type: object
       required:
       - code
@@ -3324,7 +3369,7 @@ components:
           type: string
           enum:
           - invite_code_not_found
-    InviteApiError409Error:
+    InviteBindChallengeApiError409Error:
       type: object
       required:
       - code
@@ -3332,8 +3377,8 @@ components:
         code:
           type: string
           enum:
-          - wallet_already_bound
-    InviteApiError500Error:
+          - wallet_not_eligible_for_bind
+    InviteBindChallengeApiError500Error:
       type: object
       required:
       - code
@@ -3342,6 +3387,85 @@ components:
           type: string
           enum:
           - internal_error
+    InviteBindConfirmApiError400Error:
+      oneOf:
+      - $ref: '#/components/schemas/InviteBindConfirmApiError400InvalidBindRequest'
+      - $ref: '#/components/schemas/BadRequestErrorCodeErrorBody'
+      type: object
+      discriminator:
+        propertyName: code
+        mapping:
+          invalid_bind_request: '#/components/schemas/InviteBindConfirmApiError400InvalidBindRequest'
+          invalid_body: '#/components/schemas/BadRequestErrorCodeErrorBody'
+          invalid_path: '#/components/schemas/BadRequestErrorCodeErrorBody'
+          invalid_query: '#/components/schemas/BadRequestErrorCodeErrorBody'
+    InviteBindConfirmApiError400InvalidBindRequest:
+      type: object
+      required:
+      - code
+      properties:
+        code:
+          type: string
+          enum:
+          - invalid_bind_request
+    InviteBindConfirmApiError404Error:
+      type: object
+      required:
+      - code
+      properties:
+        code:
+          type: string
+          enum:
+          - invite_code_not_found
+    InviteBindConfirmApiError409Error:
+      type: object
+      required:
+      - code
+      properties:
+        code:
+          type: string
+          enum:
+          - wallet_already_bound
+          - wallet_has_opened_positions
+    InviteBindConfirmApiError500Error:
+      type: object
+      required:
+      - code
+      properties:
+        code:
+          type: string
+          enum:
+          - internal_error
+    InviteEligibilityApiError500Error:
+      type: object
+      required:
+      - code
+      properties:
+        code:
+          type: string
+          enum:
+          - internal_error
+    InviteEligibilityResponse:
+      type: object
+      required:
+      - wallet
+      - has_opened_positions
+      - is_eligible_for_invite_bind
+      properties:
+        first_opened_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Earliest known position open timestamp.
+        has_opened_positions:
+          type: boolean
+          description: '`true` if wallet has any historical LP/Spot position open event.'
+        is_eligible_for_invite_bind:
+          type: boolean
+          description: '`true` when wallet can be bound to an invite code.'
+        wallet:
+          type: string
     LeaderboardError400BadRequest:
       type: object
       required:
