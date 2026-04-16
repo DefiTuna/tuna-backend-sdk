@@ -10,114 +10,6 @@ servers:
 - url: /api
   description: API base path
 paths:
-  /v1/invites/bind/challenge:
-    post:
-      tags:
-      - Invites
-      summary: Create invite bind challenge
-      operationId: create_bind_challenge
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateBindChallengeRequest'
-        required: true
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - data
-                properties:
-                  data:
-                    $ref: '#/components/schemas/CreateBindChallengeResponse'
-        '400':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/InviteBindChallengeApiError400Error'
-        '404':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/InviteBindChallengeApiError404Error'
-        '409':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/InviteBindChallengeApiError409Error'
-        '422':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ValidationErrorCodeErrorBody'
-        '500':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/InviteBindChallengeApiError500Error'
-  /v1/invites/bind/confirm:
-    post:
-      tags:
-      - Invites
-      summary: Confirm invite bind by signature
-      operationId: confirm_bind
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ConfirmBindRequest'
-        required: true
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - data
-                properties:
-                  data:
-                    $ref: '#/components/schemas/ConfirmBindResponse'
-        '400':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/InviteBindConfirmApiError400Error'
-        '404':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/InviteBindConfirmApiError404Error'
-        '409':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/InviteBindConfirmApiError409Error'
-        '422':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ValidationErrorCodeErrorBody'
-        '500':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/InviteBindConfirmApiError500Error'
   /v1/invites/eligibility/{wallet}:
     get:
       tags:
@@ -2961,75 +2853,6 @@ components:
           description: |-
             The maximum acceptable swap input amount for position decrease according to the provided slippage
                  * (if collateral_token == position_token) OR the minimum swap output amount (if collateral_token != position_token).
-    ConfirmBindRequest:
-      type: object
-      required:
-      - invite_code
-      - wallet
-      - nonce
-      - message_b64
-      - signature_b64
-      properties:
-        invite_code:
-          type: string
-          description: Human-readable invite code.
-          maxLength: 64
-          minLength: 3
-        message_b64:
-          type: string
-          description: Base64-encoded message returned by `/bind/challenge`.
-          maxLength: 2048
-          minLength: 16
-        nonce:
-          type: string
-          maxLength: 64
-          minLength: 26
-        signature_b64:
-          type: string
-          description: Base64-encoded Ed25519 signature of `message_b64`.
-          maxLength: 128
-          minLength: 86
-        wallet:
-          $ref: '#/components/schemas/PubkeyDto'
-    ConfirmBindResponse:
-      type: object
-      required:
-      - bound_at
-      properties:
-        bound_at:
-          type: string
-          format: date-time
-          description: Binding timestamp in UTC. Only fees after this time are attributed.
-    CreateBindChallengeRequest:
-      type: object
-      required:
-      - invite_code
-      - wallet
-      properties:
-        invite_code:
-          type: string
-          description: Human-readable invite code.
-          maxLength: 64
-          minLength: 3
-        wallet:
-          $ref: '#/components/schemas/PubkeyDto'
-    CreateBindChallengeResponse:
-      type: object
-      required:
-      - nonce
-      - message_b64
-      - expires_at
-      properties:
-        expires_at:
-          type: string
-          format: date-time
-          description: Challenge expiration timestamp in UTC.
-        message_b64:
-          type: string
-          description: Base64-encoded message that must be signed by the wallet.
-        nonce:
-          type: string
-          description: One-time challenge id to be echoed back in `/bind/confirm`.
     DecreaseSpotPositionQuoteDto:
       type: object
       required:
@@ -3037,6 +2860,8 @@ components:
       - required_swap_amount
       - estimated_amount
       - estimated_withdrawn_collateral
+      - swap_input_amount
+      - swap_output_amount
       - price_impact
       - liquidation_price
       properties:
@@ -3063,6 +2888,12 @@ components:
           description: |-
             The maximum acceptable swap input amount for position decrease according to the provided slippage
                  * (if collateral_token == position_token) OR the minimum swap output amount (if collateral_token != position_token).
+        swap_input_amount:
+          $ref: '#/components/schemas/U64Dto'
+          description: Swap input amount.
+        swap_output_amount:
+          $ref: '#/components/schemas/U64Dto'
+          description: Swap output amount.
     FeeAmountWithUsd:
       type: object
       required:
@@ -3331,103 +3162,6 @@ components:
           $ref: '#/components/schemas/U64Dto'
           description: Swap input amount.
     InternalErrorCodeErrorBody:
-      type: object
-      required:
-      - code
-      properties:
-        code:
-          type: string
-          enum:
-          - internal_error
-    InviteBindChallengeApiError400Error:
-      oneOf:
-      - $ref: '#/components/schemas/InviteBindChallengeApiError400InvalidBindRequest'
-      - $ref: '#/components/schemas/BadRequestErrorCodeErrorBody'
-      type: object
-      discriminator:
-        propertyName: code
-        mapping:
-          invalid_bind_request: '#/components/schemas/InviteBindChallengeApiError400InvalidBindRequest'
-          invalid_body: '#/components/schemas/BadRequestErrorCodeErrorBody'
-          invalid_path: '#/components/schemas/BadRequestErrorCodeErrorBody'
-          invalid_query: '#/components/schemas/BadRequestErrorCodeErrorBody'
-    InviteBindChallengeApiError400InvalidBindRequest:
-      type: object
-      required:
-      - code
-      properties:
-        code:
-          type: string
-          enum:
-          - invalid_bind_request
-    InviteBindChallengeApiError404Error:
-      type: object
-      required:
-      - code
-      properties:
-        code:
-          type: string
-          enum:
-          - invite_code_not_found
-    InviteBindChallengeApiError409Error:
-      type: object
-      required:
-      - code
-      properties:
-        code:
-          type: string
-          enum:
-          - wallet_not_eligible_for_bind
-    InviteBindChallengeApiError500Error:
-      type: object
-      required:
-      - code
-      properties:
-        code:
-          type: string
-          enum:
-          - internal_error
-    InviteBindConfirmApiError400Error:
-      oneOf:
-      - $ref: '#/components/schemas/InviteBindConfirmApiError400InvalidBindRequest'
-      - $ref: '#/components/schemas/BadRequestErrorCodeErrorBody'
-      type: object
-      discriminator:
-        propertyName: code
-        mapping:
-          invalid_bind_request: '#/components/schemas/InviteBindConfirmApiError400InvalidBindRequest'
-          invalid_body: '#/components/schemas/BadRequestErrorCodeErrorBody'
-          invalid_path: '#/components/schemas/BadRequestErrorCodeErrorBody'
-          invalid_query: '#/components/schemas/BadRequestErrorCodeErrorBody'
-    InviteBindConfirmApiError400InvalidBindRequest:
-      type: object
-      required:
-      - code
-      properties:
-        code:
-          type: string
-          enum:
-          - invalid_bind_request
-    InviteBindConfirmApiError404Error:
-      type: object
-      required:
-      - code
-      properties:
-        code:
-          type: string
-          enum:
-          - invite_code_not_found
-    InviteBindConfirmApiError409Error:
-      type: object
-      required:
-      - code
-      properties:
-        code:
-          type: string
-          enum:
-          - wallet_already_bound
-          - wallet_has_opened_positions
-    InviteBindConfirmApiError500Error:
       type: object
       required:
       - code
