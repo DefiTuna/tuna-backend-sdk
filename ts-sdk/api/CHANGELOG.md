@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 4.3.6
+
+### Patch Changes
+
+- 2787324: feat: Add swap_input_amount / swap_output_amount to decrease_spot_position_quote (#421)
+
 ## 4.3.5
 
 ### Patch Changes
