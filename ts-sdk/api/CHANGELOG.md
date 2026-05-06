@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 4.3.7
+
+### Patch Changes
+
+- 937cba6: feat: Automatically reconcile pools and their tick array to resist to missing account updated from geyser (#441)
+
 ## 4.3.6
 
 ### Patch Changes
