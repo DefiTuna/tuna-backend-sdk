@@ -4,19 +4,25 @@ import { describe, expect, it } from "vitest";
 import { unwrap } from "../src";
 
 import { SOL_MINT, USDC_MINT } from "./consts";
-import { getVaultsFromRpc } from "./rpc";
 import { sdk } from "./sdk";
 
 describe("Oracle Prices", async () => {
-  const rpcVaults = await getVaultsFromRpc();
   const nowTimestampSeconds = Date.now() / 1000;
   const oraclePrices = await unwrap(sdk.getOraclePrices());
+  const mints = await unwrap(sdk.getMints());
+  const vaults = await unwrap(sdk.getVaults());
+  const oracleMintSet = new Set(oraclePrices.map(price => price.mint));
+  const mintSet = new Set(mints.map(mint => mint.address));
+  const vaultMintSet = new Set(vaults.items.map(vault => vault.mint));
 
-  it("Length matches RPC vaults", () => {
-    expect(oraclePrices.length).toBe(rpcVaults.length);
+  it("Length matches mints", () => {
+    expect(oraclePrices.length).toBe(mints.length);
   });
-  it("Match RPC vaults mints", () => {
-    expect(rpcVaults.map(rpcVault => rpcVault.data.mint).sort()).toEqual(oraclePrices.map(price => price.mint).sort());
+  it("Match mints addresses", () => {
+    expect([...mintSet].sort()).toEqual([...oracleMintSet].sort());
+  });
+  it("Contains all vault mints", () => {
+    expect([...vaultMintSet].every(vaultMint => oracleMintSet.has(vaultMint))).toBe(true);
   });
   it("Returns recent prices", () => {
     const price = oraclePrices.find(price => price.mint == SOL_MINT)!;

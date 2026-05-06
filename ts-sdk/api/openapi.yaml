@@ -3627,13 +3627,13 @@ components:
       - address
       - address_lookup_table
       - max_leverage
-      - max_swap_slippage
       - protocol_fee
       - protocol_fee_on_collateral
       - liquidation_fee
       - liquidation_threshold
       - oracle_price_deviation_threshold
       - rebalance_protocol_fee
+      - max_swap_slippage
       - borrowed_funds_a
       - borrowed_funds_b
       - borrow_limit_a
