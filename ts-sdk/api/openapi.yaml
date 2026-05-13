@@ -6357,6 +6357,7 @@ components:
       - borrowed_funds
       - supply_limit
       - borrowed_shares
+      - unpaid_debt_shares
       - deposited_shares
       - interest_rate
       - utilization
@@ -6401,6 +6402,8 @@ components:
           format: double
         supply_limit:
           $ref: '#/components/schemas/TokenAmountWithUsd'
+        unpaid_debt_shares:
+          $ref: '#/components/schemas/U64Dto'
         utilization:
           type: number
           format: double
