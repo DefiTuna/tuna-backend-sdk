@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 4.3.8
+
+### Patch Changes
+
+- 504c7e0: feat: Add unpaid_debt_shares to VaultDto (#444)
+
 ## 4.3.7
 
 ### Patch Changes
