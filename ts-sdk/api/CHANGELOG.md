@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 4.3.9
+
+### Patch Changes
+
+- 108990d: feat: Add is_2022_token to jupiter token search API (#449)
+
 ## 4.3.8
 
 ### Patch Changes
