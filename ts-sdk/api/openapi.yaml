@@ -3793,12 +3793,15 @@ components:
       - logo64
       - logo128
       - decimals
+      - is_2022_token
       properties:
         address:
           $ref: '#/components/schemas/PubkeyDto'
         decimals:
           type: integer
           format: int32
+        is_2022_token:
+          type: boolean
         logo:
           type: string
         logo128:
@@ -5063,6 +5066,7 @@ components:
       - symbol
       - name
       - decimals
+      - is_2022_token
       - is_verified
       - tags
       properties:
@@ -5098,6 +5102,8 @@ components:
           type:
           - string
           - 'null'
+        is_2022_token:
+          type: boolean
         is_verified:
           type: boolean
         liquidity:
