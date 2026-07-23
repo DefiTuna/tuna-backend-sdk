@@ -1,5 +1,11 @@
 # @crypticdot/defituna-api
 
+## 4.3.10
+
+### Patch Changes
+
+- 5f99d4b: chore: Update openapi
+
 ## 4.3.9
 
 ### Patch Changes
