@@ -3308,9 +3308,9 @@ components:
         authority:
           $ref: '#/components/schemas/PubkeyDto'
         earned:
-          $ref: '#/components/schemas/TokenAmountWithUsd'
+          $ref: '#/components/schemas/UnsaturatedTokenAmountWithUsd'
         funds:
-          $ref: '#/components/schemas/TokenAmountWithUsd'
+          $ref: '#/components/schemas/UnsaturatedTokenAmountWithUsd'
         market:
           oneOf:
           - type: 'null'
@@ -6300,6 +6300,17 @@ components:
       format: uint64
       description: Unsigned 64-bit integer encoded as a decimal string.
       example: '0'
+    UnsaturatedTokenAmountWithUsd:
+      type: object
+      required:
+      - amount
+      - usd
+      properties:
+        amount:
+          $ref: '#/components/schemas/I128Dto'
+        usd:
+          type: number
+          format: double
     UpdateStreamSubscriptionError404Error:
       type: object
       required:
